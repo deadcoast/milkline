@@ -59,12 +59,12 @@ export async function updatePlaylist(playlistId: string, name?: string): Promise
 }
 
 // Skin commands
-export async function loadSkin(skinPath: string): Promise<void> {
-    await invoke('load_skin', { skinPath });
+export async function loadSkin(skinPath: string): Promise<import('../types').ParsedSkin> {
+    return await invoke('load_skin', { skinPath });
 }
 
-export async function applySkin(skinPath: string): Promise<void> {
-    await invoke('apply_skin', { skinPath });
+export async function applySkin(skinPath: string): Promise<import('../types').ParsedSkin> {
+    return await invoke('apply_skin', { skinPath });
 }
 
 // Streaming service commands

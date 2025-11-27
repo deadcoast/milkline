@@ -3,12 +3,14 @@ mod secure_storage;
 mod library;
 mod metadata;
 mod playlist;
+mod skin;
 
 use config::{Config, ConfigManager, FileConfigManager};
 use secure_storage::{PlatformSecureStorage, SecureStorage};
 use library::{LibraryScanner, Track};
 use metadata::{MetadataExtractor, TrackMetadata};
 use playlist::{PlaylistManager, Playlist, Track as PlaylistTrack};
+use skin::{SkinParser, ParsedSkin};
 use std::sync::{OnceLock, Mutex};
 
 // Global metadata extractor instance
@@ -133,6 +135,72 @@ fn update_playlist(playlist_id: String, name: Option<String>) -> Result<Playlist
     manager.update_playlist(&playlist_id, name).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+fn load_skin(skin_path: String) -> Result<ParsedSkin, String> {
+    use std::path::Path;
+    let path = Path::new(&skin_path);
+    
+    // Try to parse as .wsz or .wal
+    let result = if skin_path.to_lowercase().ends_with(".wsz") {
+        SkinParser::parse_wsz(path)
+    } else if skin_path.to_lowercase().ends_with(".wal") {
+        SkinParser::parse_wal(path)
+    } else {
+        return Err("Unsupported skin format. Use .wsz or .wal files.".to_string());
+    };
+
+    match result {
+        Ok(skin) => {
+            // Validate the skin
+            SkinParser::validate_skin(&skin).map_err(|e| e.to_string())?;
+            Ok(skin)
+        }
+        Err(e) => {
+            // Return default skin on error
+            eprintln!("Failed to load skin: {}", e);
+            Ok(SkinParser::get_default_skin())
+        }
+    }
+}
+
+#[tauri::command]
+fn apply_skin(skin_path: String) -> Result<ParsedSkin, String> {
+    use std::path::Path;
+    let path = Path::new(&skin_path);
+    
+    // Load and validate the skin
+    let skin = if skin_path.to_lowercase().ends_with(".wsz") {
+        SkinParser::parse_wsz(path)
+    } else if skin_path.to_lowercase().ends_with(".wal") {
+        SkinParser::parse_wal(path)
+    } else {
+        return Err("Unsupported skin format. Use .wsz or .wal files.".to_string());
+    };
+
+    match skin {
+        Ok(skin) => {
+            // Validate the skin
+            match SkinParser::validate_skin(&skin) {
+                Ok(_) => {
+                    // Save the skin path to config
+                    let mut config = FileConfigManager::load().unwrap_or_else(|_| FileConfigManager::get_default());
+                    config.last_skin = Some(skin_path);
+                    let _ = FileConfigManager.save(&config);
+                    Ok(skin)
+                }
+                Err(e) => {
+                    eprintln!("Skin validation failed: {}", e);
+                    Ok(SkinParser::get_default_skin())
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Failed to apply skin: {}", e);
+            Ok(SkinParser::get_default_skin())
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -154,7 +222,9 @@ pub fn run() {
             add_track_to_playlist,
             remove_track_from_playlist,
             reorder_playlist_tracks,
-            update_playlist
+            update_playlist,
+            load_skin,
+            apply_skin
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

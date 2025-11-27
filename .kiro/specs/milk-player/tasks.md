@@ -204,7 +204,12 @@
 
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Build Winamp skin parser and renderer
+- [x] 10. Build Winamp skin parser and renderer
+
+
+
+
+
   - Create SkinParser struct for .wsz file handling
   - Implement ZIP archive extraction for .wsz files
   - Parse skin assets (BMP/PNG) and map to UI regions
@@ -215,19 +220,27 @@
   - Add Tauri IPC commands for skin operations (load_skin, apply_skin)
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 10.1 Write property test for skin parsing and asset mapping
+- [x] 10.1 Write property test for skin parsing and asset mapping
+
+
   - **Property 8: Skin parsing and asset mapping**
   - **Validates: Requirements 4.1, 4.2**
 
-- [ ] 10.2 Write property test for skin application completeness
+- [x] 10.2 Write property test for skin application completeness
+
+
   - **Property 9: Skin application completeness**
   - **Validates: Requirements 4.3**
 
-- [ ] 10.3 Write property test for skin error fallback
+- [x] 10.3 Write property test for skin error fallback
+
+
   - **Property 10: Skin error fallback**
   - **Validates: Requirements 4.4**
 
-- [ ] 10.4 Write property test for skin persistence round-trip
+- [x] 10.4 Write property test for skin persistence round-trip
+
+
   - **Property 11: Skin persistence round-trip**
   - **Validates: Requirements 4.5**
 

@@ -48,3 +48,24 @@ export interface PlaylistState {
     playlists: Playlist[];
     currentPlaylist: Playlist | null;
 }
+
+export interface SkinAssets {
+    [key: string]: number[];  // Asset name → byte array
+}
+
+export interface Region {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+export interface RegionConfig {
+    main: Region;
+}
+
+export interface ParsedSkin {
+    name: string;
+    assets: SkinAssets;
+    regions: RegionConfig | null;
+}
