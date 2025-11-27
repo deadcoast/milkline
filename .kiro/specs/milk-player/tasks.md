@@ -13,7 +13,10 @@
   - Configure Tauri window properties (size, resizable, decorations)
   - _Requirements: 8.1, 8.3_
 
-- [-] 2. Implement configuration management system
+- [x] 2. Implement configuration management system
+
+
+
 
 
   - Create Rust Config struct with all application settings
@@ -23,15 +26,22 @@
   - Create Tauri IPC commands for config operations (load_config, save_config)
   - _Requirements: 10.1, 10.2, 10.3_
 
-- [ ] 2.1 Write property test for configuration round-trip
+- [x] 2.1 Write property test for configuration round-trip
+
   - **Property 22: Configuration persistence round-trip**
   - **Validates: Requirements 10.1, 10.2**
 
-- [ ] 2.2 Write property test for configuration corruption recovery
+
+- [x] 2.2 Write property test for configuration corruption recovery
+
   - **Property 23: Configuration corruption recovery**
   - **Validates: Requirements 10.3**
 
-- [ ] 3. Implement secure credential storage
+- [x] 3. Implement secure credential storage
+
+
+
+
   - Integrate platform-native secure storage library (keyring-rs)
   - Create SecureStorage trait with store/retrieve/delete methods
   - Implement Windows Credential Manager integration
@@ -39,7 +49,12 @@
   - Create Tauri IPC commands for credential operations
   - _Requirements: 2.1, 3.1, 10.4_
 
-- [ ] 4. Build local audio library scanner and indexer
+- [x] 4. Build local audio library scanner and indexer
+
+
+
+
+
   - Create LibraryScanner struct with directory scanning logic
   - Implement recursive directory traversal with file filtering
   - Add support for mp3, flac, wav file detection
@@ -47,7 +62,9 @@
   - Implement Tauri IPC command for library scanning (scan_library)
   - _Requirements: 1.2_
 
-- [ ] 4.1 Write property test for library scanning completeness
+- [x] 4.1 Write property test for library scanning completeness
+
+
   - **Property 2: Library scanning completeness**
   - **Validates: Requirements 1.2**
 
