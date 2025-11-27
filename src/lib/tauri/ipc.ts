@@ -30,16 +30,32 @@ export async function createPlaylist(name: string): Promise<Playlist> {
     return await invoke<Playlist>('create_playlist', { name });
 }
 
-export async function loadPlaylists(): Promise<Playlist[]> {
-    return await invoke<Playlist[]>('load_playlists');
+export async function listPlaylists(): Promise<Playlist[]> {
+    return await invoke<Playlist[]>('list_playlists');
 }
 
-export async function savePlaylist(playlist: Playlist): Promise<void> {
-    await invoke('save_playlist', { playlist });
+export async function loadPlaylist(playlistId: string): Promise<Playlist> {
+    return await invoke<Playlist>('load_playlist', { playlistId });
 }
 
 export async function deletePlaylist(playlistId: string): Promise<void> {
     await invoke('delete_playlist', { playlistId });
+}
+
+export async function addTrackToPlaylist(playlistId: string, track: Track): Promise<Playlist> {
+    return await invoke<Playlist>('add_track_to_playlist', { playlistId, track });
+}
+
+export async function removeTrackFromPlaylist(playlistId: string, trackId: string): Promise<Playlist> {
+    return await invoke<Playlist>('remove_track_from_playlist', { playlistId, trackId });
+}
+
+export async function reorderPlaylistTracks(playlistId: string, trackIds: string[]): Promise<Playlist> {
+    return await invoke<Playlist>('reorder_playlist_tracks', { playlistId, trackIds });
+}
+
+export async function updatePlaylist(playlistId: string, name?: string): Promise<Playlist> {
+    return await invoke<Playlist>('update_playlist', { playlistId, name });
 }
 
 // Skin commands

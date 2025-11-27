@@ -30,6 +30,9 @@ rand = "0.8"
 id3 = "1"
 metaflac = "0.2"
 lru = "0.12"
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "1"
 
 [dev-dependencies]
 proptest = "1"

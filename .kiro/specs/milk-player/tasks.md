@@ -158,7 +158,12 @@
   - **Property 5: Playback control state transitions**
   - **Validates: Requirements 1.5**
 
-- [ ] 8. Implement playlist management system
+- [x] 8. Implement playlist management system
+
+
+
+
+
   - Create Playlist data model with id, name, tracks, timestamps
   - Implement Rust playlist persistence (JSON files in AppData)
   - Create Tauri IPC commands for playlist CRUD operations
@@ -167,23 +172,33 @@
   - Implement playlist loading into playback queue
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 8.1 Write property test for playlist persistence
+- [x] 8.1 Write property test for playlist persistence
+
+
   - **Property 18: Playlist persistence**
   - **Validates: Requirements 9.1, 9.2, 9.5**
 
-- [ ] 8.2 Write property test for playlist queue synchronization
+- [x] 8.2 Write property test for playlist queue synchronization
+
+
   - **Property 19: Playlist queue synchronization**
   - **Validates: Requirements 9.4**
 
-- [ ] 8.3 Write property test for playlist track reordering
+- [x] 8.3 Write property test for playlist track reordering
+
+
   - **Property 20: Playlist track reordering**
   - **Validates: Requirements 9.3**
 
-- [ ] 8.4 Write property test for track removal non-destructive
+- [x] 8.4 Write property test for track removal non-destructive
+
+
   - **Property 21: Track removal non-destructive**
   - **Validates: Requirements 9.5**
 
-- [ ] 9. Checkpoint - Ensure all tests pass
+- [-] 9. Checkpoint - Ensure all tests pass
+
+
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. Build Winamp skin parser and renderer
