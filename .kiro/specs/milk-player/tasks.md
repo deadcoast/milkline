@@ -277,7 +277,9 @@
   - **Property 14: Visualizer style switching**
   - **Validates: Requirements 5.5**
 
-- [-] 12. Create farmer buddy system with state machine
+- [x] 12. Create farmer buddy system with state machine
+
+
 
 
 
@@ -290,9 +292,13 @@
   - Create Svelte store for farmer state management
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 12.1 Write property test for farmer error state handling
+- [x] 12.1 Write property test for farmer error state handling
+
+
   - **Property 15: farmer error state handling**
   - **Validates: Requirements 6.3**
+
+
 
 - [ ] 12.2 Write property test for farmer state machine transitions
   - **Property 16: farmer state machine transitions**

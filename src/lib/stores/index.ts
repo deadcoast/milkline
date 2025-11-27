@@ -2,3 +2,4 @@
 export { playerStore } from './playerStore';
 export { playlistStore } from './playlistStore';
 export { configStore } from './configStore';
+export { farmerStore } from './farmerStore';
