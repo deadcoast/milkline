@@ -68,7 +68,12 @@
   - **Property 2: Library scanning completeness**
   - **Validates: Requirements 1.2**
 
-- [ ] 5. Implement audio metadata extraction
+- [x] 5. Implement audio metadata extraction
+
+
+
+
+
   - Integrate metadata parsing libraries (id3, metaflac)
   - Create MetadataExtractor with extract and extract_artwork methods
   - Implement ID3v2 tag parsing for mp3 files
@@ -77,19 +82,27 @@
   - Implement metadata caching with LRU eviction (max 1000 entries)
   - _Requirements: 12.1, 12.2, 12.3, 12.4_
 
-- [ ] 5.1 Write property test for metadata extraction completeness
+- [x] 5.1 Write property test for metadata extraction completeness
+
+
   - **Property 25: Metadata extraction completeness**
   - **Validates: Requirements 12.1**
 
-- [ ] 5.2 Write property test for metadata fallback parsing
+
+- [x] 5.2 Write property test for metadata fallback parsing
+
   - **Property 26: Metadata fallback parsing**
   - **Validates: Requirements 12.2**
 
-- [ ] 5.3 Write property test for album art extraction
+- [x] 5.3 Write property test for album art extraction
+
+
   - **Property 27: Album art extraction**
   - **Validates: Requirements 12.3**
 
-- [ ] 5.4 Write property test for metadata caching efficiency
+
+- [x] 5.4 Write property test for metadata caching efficiency
+
   - **Property 28: Metadata caching efficiency**
   - **Validates: Requirements 12.4**
 

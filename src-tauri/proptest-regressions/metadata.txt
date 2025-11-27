@@ -1,0 +1,9 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 4438e64e23c3156fedb59298375219da05c618b081a05ccda749a07738027c2c # shrinks to artist = "A", title = "A", album = "a"
+cc 18541a0c5acdf1772a758e1eb7a24557ebb166ad0410024e9e403822758a7f11 # shrinks to artist = "A", title = " ", album = "0"
+cc 3c94ae9fa9173533e3a63b75180bede7b06ec30afc39fd3703f5a38d76d57a41 # shrinks to artist = "A", title = "a", album = " "

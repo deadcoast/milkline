@@ -1,10 +1,20 @@
 mod config;
 mod secure_storage;
 mod library;
+mod metadata;
 
 use config::{Config, ConfigManager, FileConfigManager};
 use secure_storage::{PlatformSecureStorage, SecureStorage};
 use library::{LibraryScanner, Track};
+use metadata::{MetadataExtractor, TrackMetadata};
+use std::sync::OnceLock;
+
+// Global metadata extractor instance
+static METADATA_EXTRACTOR: OnceLock<MetadataExtractor> = OnceLock::new();
+
+fn get_metadata_extractor() -> &'static MetadataExtractor {
+    METADATA_EXTRACTOR.get_or_init(|| MetadataExtractor::new())
+}
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -48,6 +58,22 @@ fn scan_library(path: String) -> Result<Vec<Track>, String> {
     LibraryScanner::scan_directory(library_path).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+fn extract_metadata(file_path: String) -> Result<TrackMetadata, String> {
+    use std::path::Path;
+    let path = Path::new(&file_path);
+    let extractor = get_metadata_extractor();
+    extractor.extract(path).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn extract_artwork(file_path: String) -> Result<Option<Vec<u8>>, String> {
+    use std::path::Path;
+    let path = Path::new(&file_path);
+    let extractor = get_metadata_extractor();
+    extractor.extract_artwork(path).map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -59,7 +85,9 @@ pub fn run() {
             store_credential,
             retrieve_credential,
             delete_credential,
-            scan_library
+            scan_library,
+            extract_metadata,
+            extract_artwork
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

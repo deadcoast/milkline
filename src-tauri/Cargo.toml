@@ -27,6 +27,9 @@ keyring = "3"
 aes-gcm = "0.10"
 base64 = "0.22"
 rand = "0.8"
+id3 = "1"
+metaflac = "0.2"
+lru = "0.12"
 
 [dev-dependencies]
 proptest = "1"
