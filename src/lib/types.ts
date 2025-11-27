@@ -69,3 +69,16 @@ export interface ParsedSkin {
     assets: SkinAssets;
     regions: RegionConfig | null;
 }
+
+export type FarmerState = 'idle' | 'listening' | 'prompting' | 'celebrating' | 'error';
+
+export interface FarmerExpression {
+    eyes: 'neutral' | 'blink' | 'look-left' | 'look-right';
+    mouth: 'neutral' | 'smile' | 'talk-1' | 'talk-2';
+}
+
+export interface FarmerStateData {
+    currentState: FarmerState;
+    message: string | null;
+    expression: FarmerExpression;
+}

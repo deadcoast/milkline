@@ -244,7 +244,12 @@
   - **Property 11: Skin persistence round-trip**
   - **Validates: Requirements 4.5**
 
-- [ ] 11. Implement audio visualizer with Web Audio API
+- [x] 11. Implement audio visualizer with Web Audio API
+
+
+
+
+
   - Create Visualizer.svelte component with Canvas element
   - Set up Web Audio API context and analyzer node
   - Implement FFT-based frequency analysis
@@ -254,19 +259,28 @@
   - Connect visualizer to audio source (local playback)
   - _Requirements: 5.1, 5.2, 5.3, 5.5_
 
-- [ ] 11.1 Write property test for visualizer activation
+- [x] 11.1 Write property test for visualizer activation
+
+
   - **Property 12: Visualizer activation**
   - **Validates: Requirements 5.1, 5.4**
 
-- [ ] 11.2 Write property test for visualizer frame rate
+- [x] 11.2 Write property test for visualizer frame rate
+
+
   - **Property 13: Visualizer frame rate**
   - **Validates: Requirements 5.3**
 
-- [ ] 11.3 Write property test for visualizer style switching
+- [x] 11.3 Write property test for visualizer style switching
+
+
   - **Property 14: Visualizer style switching**
   - **Validates: Requirements 5.5**
 
-- [ ] 12. Create farmer buddy system with state machine
+- [-] 12. Create farmer buddy system with state machine
+
+
+
   - Create FarmerBuddy.svelte component with SVG container
   - Implement state machine (idle, listening, prompting, celebrating, error)
   - Load farmer SVG assets (face, eyes, mouth variations)

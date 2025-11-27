@@ -2,9 +2,11 @@
   import { onMount, onDestroy } from 'svelte';
   import { playerStore } from '$lib/stores';
   import type { Track } from '$lib/types';
+  import Visualizer from './Visualizer.svelte';
 
   let audioElement: HTMLAudioElement | null = null;
   let positionUpdateInterval: number | null = null;
+  let visualizerComponent: any = null;
 
   // Subscribe to player state
   let currentTrack = $derived($playerStore.currentTrack);
@@ -108,16 +110,28 @@
   function handlePlay() {
     playerStore.setPlaying(true);
     startPositionTracking();
+    // Start visualizer when playback starts
+    if (visualizerComponent) {
+      visualizerComponent.start();
+    }
   }
 
   function handlePause() {
     playerStore.setPlaying(false);
     stopPositionTracking();
+    // Stop visualizer when playback pauses
+    if (visualizerComponent) {
+      visualizerComponent.stop();
+    }
   }
 
   function handleEnded() {
     playerStore.setPlaying(false);
     stopPositionTracking();
+    // Stop visualizer when track ends
+    if (visualizerComponent) {
+      visualizerComponent.stop();
+    }
     next(); // Auto-play next track
   }
 
@@ -262,6 +276,15 @@
   <div class="queue-info">
     <span>Queue: {queue.length} track{queue.length !== 1 ? 's' : ''}</span>
   </div>
+
+  <!-- Visualizer -->
+  <Visualizer 
+    bind:this={visualizerComponent}
+    {audioElement}
+    style="bars"
+    width={600}
+    height={150}
+  />
 </div>
 
 <style>
