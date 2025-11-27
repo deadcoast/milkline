@@ -1,0 +1,167 @@
+<groupdef id="seeker.bg">
+	<layer 
+		id="seeker.bg.left" 
+		x="0" y="0" 
+		image="seeker.bg.left" 
+		resize="left"
+	/>
+	<layer 
+		id="seeker.bg.middle" 
+		x="3" y="0" 
+		w="-6" relatw="1" 
+		image="seeker.bg.middle" 
+	/>
+	<layer 
+		id="seeker.bg.right" 
+		x="-3" y="0" 
+		relatx="1" 
+		image="seeker.bg.right" 
+	/>
+</groupdef>
+
+<groupdef id="button.volume" name="Volume">
+	<button
+		id="mute"
+		x="0" y="0"
+		image="shade.mute.base"
+		downImage="mute.pressed"
+		hoverImage="mute.hover"
+		tooltip="Toggle Mute"
+	/>
+	<button
+		id="mutec"
+		x="0" y="0"
+		image="shade.mute.base_c"
+		downImage="mute.pressed_c"
+		hoverImage="mute.hover_c"
+		tooltip="Toggle Mute"
+	/>
+	<layer
+		id="volumebar"
+		x="32" y="11"
+		w="1"
+		image="volume.line"
+	/>
+	<slider
+		id="Volume"
+		action="VOLUME"
+		x="29" y="6"
+		w="104" h="13"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+		tooltip="Volume"
+	/>
+  <script id="mute.script" file="scripts/muteeq.maki" />
+</groupdef>
+
+<groupdef id="control">
+	<group
+		id="seeker.bg"
+		x="29" y="-15"
+		relaty="1"
+		w="58"
+	/>
+	<slider
+		id="balance"
+		action="PAN"
+		x="28" y="6"
+		w="60" h="13"
+		orientation="horizontal"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg"
+		x="-181" y="-15"
+		relatx="1" relaty="1"
+		w="100"
+	/>
+	<group
+		id="button.volume"
+		x="-212"
+		relatx="1"
+	/>	
+</groupdef>
+
+<groupdef id="Eq.Title" name="EqualizerTitleContent">	
+	<layer id="btn.shadow"
+		x="0" y="0"
+		ghost="1" 
+		image="btnshadow.2"
+	/>
+	
+	<button
+		id="Mode"
+		action="SWITCH" param="normal"
+		x="2" y="0"
+		image="maximize2.base"
+		downImage="maximize2.pressed"
+		hoverImage="maximize2.hover"
+		tooltip="Mode"
+	/>
+	<button
+		id="Close"
+		action="CLOSE"
+		x="27" y="0"
+		image="close.base"
+		downImage="close.pressed"
+		hoverImage="close.hover"
+		tooltip="Close Playlist"
+	/>
+	<layer id="Mode"
+		x="2" y="0"
+		ghost="1" 
+		image="maximize.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	<layer id="Close"
+		x="27" y="0"
+		ghost="1" 
+		image="Close.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+
+<layout 
+	id="shade" 
+	background="main.mini.bg" 
+	droptarget="pldr" 
+	desktopalpha="1" 
+	tooltip="Playlist Mini Window"
+	appbar="left|top|right|bottom"
+>
+	<layer id="dblc"
+		x="0" y="0" 
+		w="0" h="25"
+		relatw="1"
+		ghost="0" 
+		dblClickAction="SWITCH;normal"
+	/>
+	
+	<group id="Sysmenu" x="3" y="-1" />
+
+	<group id="Eq.Title"
+		x="-77" y="0"
+		relatx="1"
+	/>
+	
+	<group id="control"
+		x="0" y="0"
+		w="0" h="0"
+		relatw="1" relath="1"
+	/>
+
+	<Snappoint
+		id="main"
+		x="0" y="0"
+	/>
+	<Snappoint
+		id="main"
+		x="0" y="0"
+		relatx="1"
+	/>
+</layout>

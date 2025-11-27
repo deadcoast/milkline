@@ -1,0 +1,52 @@
+<include file="player-shade-group.xml" />
+
+<layout 
+	id="shade" 
+	background="main.shade.bg" 
+	droptarget="pldr" 
+	desktopalpha="1" 
+	tooltip="WinAmp Main Window"
+	linkwidth="normal"
+>
+	
+	<layer id="dblc"
+		x="0" y="0" 
+		w="0" h="25"
+		relatw="1"
+		ghost="0" 
+		dblClickAction="SWITCH;normal"
+	/>
+	
+	<group 
+		id="shade.previous.next" 
+		x="0" y="0" 
+	/>
+	
+	<group 
+		id="player.shade.playbuttons" 
+		x="25" y="0" 
+	/>
+	
+	<!--layer 
+		id="player.button.glow"
+		x="40" y="0" 
+		ghost="1" 
+	/-->
+	
+	<!--group id="Sysmenu" x="3" y="-1" /-->
+	<group 
+		id="player.shade.captionbuttons" 
+		x="-102"
+		relatx="1"
+	/>
+	
+	<Snappoint
+		id="main"
+		x="0" y="25"
+	/>
+	<Snappoint
+		id="main"
+		x="0" y="25"
+		relatx="1"
+	/>
+</layout>

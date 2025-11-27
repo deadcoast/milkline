@@ -1,0 +1,14 @@
+<!--	component="guid:{45F3F7C1-A6F3-4ee6-A15E-125E92FC3F8D}" -->
+
+<container 
+	id="Pledit" 
+	name="Playlist" 
+	component="guid:{45F3F7C1-A6F3-4ee6-A15E-125E92FC3F8D}"
+	default_x="0" default_y="0" 
+	default_visible="1"
+>
+
+	<include file="pledit-normal.xml"/>
+	<include file="pledit-shade.xml"/>
+	
+</container>

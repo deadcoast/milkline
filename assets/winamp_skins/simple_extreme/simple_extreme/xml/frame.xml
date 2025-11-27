@@ -1,0 +1,34 @@
+<bitmap id="component.basetexture" file="player/bg.png"/>
+
+<bitmap id="component.region.top.left" file="player/Frame/region.png" x="0" y="0" h="4" w="4"/>
+<bitmap id="component.region.top.right" file="player/Frame/region.png" x="4" y="0" h="4" w="4"/>
+<bitmap id="component.region.bottom.left" file="player/Frame/region.png" x="0" y="4" h="4" w="4"/>
+<bitmap id="component.region.bottom.right" file="player/Frame/region.png" x="4" y="4" h="4" w="4"/>
+	
+
+<bitmap id="component.top.left" file="player/Frame/Frame.png" x="0" y="0" h="29" w="12"/>
+<bitmap id="component.top.middle" file="player/Frame/Frame.png" x="12" y="0" h="25" w="12"/>
+<bitmap id="component.top.right" file="player/Frame/Frame.png" x="24" y="0" h="29" w="12"/>
+
+<bitmap id="component.left" file="player/Frame/Frame.png" x="0" y="29" h="29" w="8"/>
+<bitmap id="component.right" file="player/Frame/Frame.png" x="28" y="29" h="29" w="8"/>
+
+<bitmap id="component.bottom.left" file="player/Frame/Frame.png" x="0" y="58" h="53" w="12"/>
+<bitmap id="component.bottom.middle" file="player/Frame/Frame.png" x="12" y="74" h="37" w="12"/>
+<bitmap id="component.bottom.right" file="player/Frame/Frame.png" x="24" y="58" h="53" w="12"/>
+
+<bitmap id="component.bottom.left.nostatus" file="player/Frame/Frame.png" x="36" y="99" h="12" w="12"/>
+<bitmap id="component.bottom.middle.nostatus" file="player/Frame/Frame.png" x="48" y="103" h="8" w="12"/>
+<bitmap id="component.bottom.right.nostatus" file="player/Frame/Frame.png" x="60" y="99" h="12" w="12"/>
+	
+<bitmap id="AVS.bottom.left" file="player/Frame/avs.png" x="0" y="0" h="69" w="20"/>
+<bitmap id="AVS.bottom.middle" file="player/Frame/avs.png" x="20" y="0" h="69" w="50"/>
+<bitmap id="AVS.bottom.right" file="player/Frame/avs.png" x="70" y="0" h="69" w="20"/>
+
+<bitmap id="AVS2.bottom.left" file="player/Frame/avs.png" x="0" y="69" h="69" w="20"/>
+<bitmap id="AVS2.bottom.middle" file="player/Frame/avs.png" x="20" y="69" h="69" w="50"/>
+<bitmap id="AVS2.bottom.right" file="player/Frame/avs.png" x="70" y="69" h="69" w="20"/>
+
+<bitmap id="AVS3.bottom.left" file="player/Frame/avs2.png" x="0" y="0" h="69" w="82"/>
+<bitmap id="AVS3.bottom.middle" file="player/Frame/avs2.png" x="82" y="0" h="69" w="2"/>
+<bitmap id="AVS3.bottom.right" file="player/Frame/avs2.png" x="84" y="0" h="69" w="82"/>

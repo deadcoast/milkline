@@ -1,0 +1,358 @@
+<groupdef id="Sysmenu" name="Sysmenu">
+  <!-- Sysmenu -->
+  <button
+    id="shadeSysmenu"
+    action="SYSMENU"
+    x="0" y="0"
+    image="logo.base"
+    downImage="logo.pressed"
+    hoverImage="logo.hover"
+    tooltip="Main Menu"
+	inactiveAlpha="150"
+  />
+</groupdef>
+
+<!-- Window Buttons Group Definition -->
+<groupdef id="player.normal.captionbuttons" name="Caption buttons">
+	<button
+		id="Minimize"
+		action="MINIMIZE"
+		x="42" y="7"
+		image="minimize.base"
+		downImage="minimize.pressed"
+		hoverImage="minimize.hover"
+		tooltip="Minimize"
+	/>
+	
+	<button
+		id="Close"
+		action="CLOSE"
+		x="62" y="7"
+		image="close.base"
+		downImage="close.pressed"
+		hoverImage="close.hover"
+		tooltip="Close Winamp"
+	/>
+	
+	<layer id="Minimize_i"
+		x="42" y="7"
+		ghost="1" 
+		image="minimize.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	
+	<layer id="Close_i"
+		x="62" y="7"
+		ghost="1" 
+		image="close.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+
+<!-- Winamp Caption Group Definition -->
+<groupdef id="Caption" name="WinAmp Caption">
+  <text
+    id="songticker" ticker="1"
+	display="songname" default="" showlen="1"
+	x="0" y="0"
+	w="216" h="14"
+	font="wasabi.font.default" fontsize="13" ghost="1"
+  />
+</groupdef>
+
+<!-- Playback Progress Group Definition -->
+<groupdef id="SeekerBar" name="Song Progress">
+  <ProgressGrid
+	w="-5" h="3" relatw="1"
+    orientation="right"
+    x="0" y="3"
+    middle="seeker.line"
+  />
+  
+  <Slider
+   id="Seeker"
+   action="SEEK"
+   x="0" y="0" 
+   w="-2" h="9"
+   relatw="1"
+   thumb="player/seeker/seeker_base.png"
+   downThumb="player/seeker/seeker_pressed.png"
+   hoverthumb="player/seeker/seeker_hover.png"
+   orientation="horizontal"  tooltip="Seek"
+  />
+</groupdef>
+
+<!-- Playback Buttons Group Definition -->
+<groupdef id="player.normal.playbuttons" name="Player buttons">
+	<button
+		id="Eject"
+		action="EJECT"
+		x="0" y="13"
+		image="player.button.openbase"
+		downImage="player.button.openpressed"
+		hoverImage="player.button.openhover"
+		tooltip="Open"
+	/>
+	<button
+		id="Stop"
+		action="STOP"
+		x="34" y="13"
+		image="player.button.stopbase"
+		downImage="player.button.stoppressed"
+		hoverImage="player.button.stophover"
+		tooltip="Stop"
+	/>
+	<button 
+		id="Previous"
+		action="PREV" 
+		x="68" y="13" 
+		image="player.button.previousbese" 
+		downImage="player.button.previouspressed"
+		hoverImage="player.button.previoushover"
+		tooltip="Previous"
+	/>
+	<button
+		id="Next"
+		action="NEXT"
+		x="160" y="13"
+		image="player.button.nextbese"
+		downImage="player.button.nextpressed"
+		hoverImage="player.button.nexthover"
+		tooltip="Next"
+	/>
+	<layer id="glow"
+		x="114" y="0" 
+		alpha="0"
+		ghost="1"
+		image="player.button.glow"	 
+	/>	
+	<button
+		id="Play"
+		action="PLAY"
+		x="114" y="0"
+		image="player.button.playbase" 
+		downImage="player.button.playpressed"
+		hoverImage="player.button.playhover"
+		tooltip="Play"
+	/>
+	<button
+		id="Pause"
+		action="PAUSE"
+		x="114" y="0"
+		image="player.button.pausebase"
+		downImage="player.button.pausepressed"
+		hoverImage="player.button.pausehover"
+		tooltip="Pause"
+	/>
+	<togglebutton
+		id="Repeat"
+		x="221" y="13"
+		image="repeat.base"
+		downImage="repeat.pressed"
+		hoverImage="repeat.hover"
+		activeImage="repeat.base_c"
+		cfgattrib="{45F3F7C1-A6F3-4EE6-A15E-125E92FC3F8D};Repeat"
+		cfgval="2"
+		tooltip="Repeat"
+	/>
+	<togglebutton
+		id="Shuffle"
+		x="255" y="13"
+		image="shuffle.base"
+		downImage="shuffle.pressed"
+		hoverImage="shuffle.hover"
+		activeImage="shuffle.base_c"
+		cfgattrib="{45F3F7C1-A6F3-4EE6-A15E-125E92FC3F8D};Shuffle"
+		tooltip="Shuffle"
+	/>
+	<script id="play2pause" file="scripts/glow.maki"/>
+	<script id="play2pause" file="scripts/play2pause.maki"/>
+</groupdef>
+
+<!-- Playlist and Equalizer Group Definition -->
+<groupdef id="eq.pl" name="Playlist Equalizer">
+  <!--button
+    id="eq"
+    action="TOGGLE"
+	param="eq"
+    x="0" y="0"
+	image="EQ.base"
+    downImage="EQ.pressed"
+	hoverImage="EQ.hover"
+	activeImage="EQ.base_c"
+    tooltip="Equalizer"
+  /-->
+  <button
+	id="eq"
+	action="TOGGLE" param="eq"
+    x="0" y="0"
+	image="EQ.base"
+    downImage="EQ.pressed"
+	hoverImage="EQ.hover"
+	activeImage="EQ.base_c"
+    tooltip="Equalizer"
+  />
+  
+<!--     hoverImage="player.button.stophover" 
+image="player.button.stopbase" 
+param="guid:pl"
+-->
+  <button
+	id="pl.btn"
+	action="TOGGLE"
+	param="guid:pl"
+	x="0" y="24"
+	image="PL.base"
+    downImage="PL.pressed"
+	hoverImage="PL.hover"
+	activeImage="PL.base_c"
+	tooltip="Playlist Editor"
+  />
+</groupdef>
+
+<!-- Song File Information and Visualization Group Definition -->
+<groupdef id="player.normal" name="Winamp">
+
+  <layer id="numbg"
+    x="-226" y="8"
+	relatx="1" 
+	ghost="1" 
+	image="num.bg"
+	alpha="25"
+  />
+
+  <!--Text Info-->
+  <text
+	id="timer"
+	display="time"
+	x="-227" y="4"
+	relatx="1" 
+	w="88" h="33"
+	font="player.BIGNUM3" fontsize="0" align="right"
+	timecolonwidth="7"
+  /><!--player.BIGNUM/21/w="70" h="18"/x="83" y="7"/timecolonwidth="7"-->
+    
+  <!-- Visualzation -->  
+  <layer id="net"
+    x="0" y="0" 
+	ghost="1" 
+	image="net"
+  />
+  <vis
+	id="vis"
+	x="7" y="6"
+	w="71" h="41"
+	alpha="196"
+	
+	colorband1="255,255,255"
+	colorband2="255,255,255"
+	colorband3="255,255,255"
+	colorband4="255,255,255"
+	colorband5="235,235,235"
+	colorband6="235,235,235"
+	colorband7="235,235,235"
+	colorband8="235,235,235"
+	colorband9="215,215,215"
+	colorband10="215,215,215"
+	colorband11="215,215,215"
+	colorband12="215,215,215"
+	colorband13="195,195,195"
+	colorband14="195,195,195"
+	colorband15="195,195,195"
+	colorband16="195,195,195"
+	colorbandpeak="255,189,48"
+	colorosc1="175,175,175"
+	colorosc2="215,215,215"
+	colorosc3="255,255,255"
+	colorosc4="215,215,215"
+	colorosc5="175,175,175"  
+	tooltip="Visualization"
+  />
+  
+  <layer id="netmask"
+    x="0" y="0" 
+	ghost="1" 
+	image="net.mask"
+  />
+
+  <!-- Song File Information-->
+  <text
+	id="infoline" ticker="1"
+	display="songinfo" default=""
+	x="85" y="38"
+	w="100" h="11"
+	font="a_LCDNova" fontsize="15" ghost="1"
+  />
+  <!-- Glass-->
+  <layer id="glassleft"
+    x="0" y="0" w="188" h="53"
+	ghost="1" 
+	image="glass.left"
+  />
+</groupdef>
+
+<groupdef id="player.volume" name="Volume">
+<!-- Volume -->
+  <layer
+    id="volumebar"
+    x="35" y="16"
+    w="1"
+    image="volume.line"
+  />
+  
+  <slider
+    id="Volume"
+    action="VOLUME"
+    x="29" y="11"
+    w="112" h="13"
+    thumb="volume.base"
+    downThumb="volume.pressed"
+    hoverThumb="volume.hover"
+    tooltip="Volume"
+  />
+  
+  <button
+	id="mute"
+	x="5" y="5"
+	image="mute.base"
+	downImage="mute.pressed"
+    hoverImage="mute.hover"
+	tooltip="Toggle Mute"
+  />
+  
+  <button
+	id="mutec"
+	x="5" y="5"
+	image="mute.base_c"
+	downImage="mute.pressed_c"
+    hoverImage="mute.hover_c"
+	tooltip="Toggle Mute"
+  />
+  
+  <!-- Songticker -->
+  <text
+    id="Songticker" ticker="1"
+    display="songname" showlen="1"
+    x="0" y="36"
+    w="141" h="20"
+    leftpadding="6"
+    rightpadding="6"
+    font="player.songticker.font"
+    align="center"
+    valign="top"
+    rightclickaction="trackmenu"
+    dblclickaction="trackinfo"
+    fontsize="13"
+    color="255,255,255"
+    altfont="a_LCDNova"
+	antialias="1"
+  />
+  <!--text
+	font="player.songticker.font" fontsize="16"
+  /-->
+  <script id="mute.script" file="scripts/mute.maki" />
+
+	<!-- Volume -->
+</groupdef>

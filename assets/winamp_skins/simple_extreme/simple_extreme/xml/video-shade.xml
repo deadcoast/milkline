@@ -1,0 +1,171 @@
+<groupdef id="miniavscontent">
+	<layer 
+		id="regiontopright" 
+		x="-4" y="0" 
+		relatx="1" 
+		image="component.region.top.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regiontopleft" 
+		x="0" y="0" 
+		image="component.region.top.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomright" 
+		x="-4" y="-4" 
+		relaty="1" relatx="1" 
+		image="component.region.bottom.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomleft" 
+		x="0" y="-4" 
+		relaty="1" 
+		image="component.region.bottom.left" 
+		sysregion="-2"
+	/>
+	
+	<layer 
+		id="bg" 
+		x="5" y="5"
+		w="-10" h="-10"
+		relatw="1" relath="1" 
+		image="component.basetexture" 
+	/>
+	
+	<layer 
+		id="mini.left" 
+		x="0" y="0" 
+		image="mini.left" 
+		resize="left"
+	/>
+	<layer 
+		id="mini.middle" 
+		x="8" y="0" 
+		w="-16" relatw="1" 
+		image="mini.middle" 
+	/>
+	<layer 
+		id="mini.right" 
+		x="-8" y="0" 
+		relatx="1" 
+		image="mini.right" 
+		resize="right"
+	/>
+</groupdef>
+
+<groupdef id="AVS.Title" name="AVSContent">
+	
+	<layer id="btn.shadow"
+		x="0" y="0"
+		ghost="1" 
+		image="btnshadow.3"
+	/>
+	
+	<button
+		id="Mode"
+		action="SWITCH" param="normal"
+		x="2" y="0"
+		image="maximize2.base"
+		downImage="maximize2.pressed"
+		hoverImage="maximize2.hover"
+		tooltip="Normal Mode"
+	/>
+	<button
+		id="Fullscreen"
+		action="VID_FS"
+		x="27" y="0"
+		image="fs.base"
+		downImage="fs.pressed"
+		hoverImage="fs.hover"
+		tooltip="Fullscreen"
+	/>
+	<button
+		id="Close"
+		action="CLOSE"
+		x="52" y="0"
+		image="close.base"
+		downImage="close.pressed"
+		hoverImage="close.hover"
+		tooltip="Close AVS"
+	/>
+	<layer id="Mode"
+		x="2" y="0"
+		ghost="1" 
+		image="maximize.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	<layer id="FullscreenMode"
+		x="27" y="0"
+		ghost="1" 
+		image="fs.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	<layer id="Close"
+		x="52" y="0"
+		ghost="1" 
+		image="Close.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+
+<!--<layout 
+	id="shade" 
+	desktopalpha="0" 
+	droptarget="pldr" 
+	tooltip="AVS Mini Window"
+	linkwidth="normal"
+>-->
+<layout 
+	id="shade" 
+	desktopalpha="0" 
+	default_visible="0" 
+	default_x="0" default_y="0" 
+	default_w="354"	default_h="25" 
+	minimum_w="155" minimum_h="25" 
+	linkwidth="normal"
+	droptarget="pldr" 
+	tooltip="AVS Mini Window"
+>
+	<Wasabi:StandardFrame:Status 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1"
+	/>
+		
+	<group 
+		id="miniavscontent" 
+		x="0" y="0" 
+		h="0" w="0" 
+		relath="1" relatw="1"
+	/>
+	
+	<layer id="dblc"
+		x="8" y="0" 
+		w="-16" h="25"
+		relatw="1"
+		ghost="0" 
+		dblClickAction="SWITCH;normal"
+	/>
+		
+	<group id="Sysmenu" x="3" y="-1" />
+
+	<group id="AVS.Title"
+		x="-102" y="0"
+		relatx="1"
+	/>
+	<Snappoint
+		id="main"
+		x="0" y="0"
+	/>
+	<Snappoint
+		id="main"
+		x="0" y="0"
+		relatx="1"
+	/>
+</layout>

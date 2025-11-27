@@ -1,0 +1,195 @@
+<!--elements>
+<bitmap id="component.BaseTexture" file="player/bg3.png" />
+<bitmap id="component.window.top.left" file="standardframe/window-elements.png" x="0" y="0" h="15" w="15" />
+<bitmap id="component.window.top" file="standardframe/window-elements.png" x="11" y="0" h="15" w="15" />
+<bitmap id="component.window.top.right" file="standardframe/window-elements.png" x="21" y="0" h="15" w="15" />
+<bitmap id="component.window.left" file="standardframe/window-elements.png" x="0" y="15" h="15" w="5" />
+<bitmap id="component.window.right" file="standardframe/window-elements.png" x="31" y="15" h="15" w="5" />
+<bitmap id="component.window.bottom.left.top" file="standardframe/window-elements.png" x="0" y="32" h="2" w="15" />
+<bitmap id="component.window.bottom.left" file="standardframe/window-elements.png" x="0" y="34" h="1" w="15" />
+<bitmap id="component.window.bottom.left.bottom" file="standardframe/window-elements.png" x="0" y="35" h="2" w="15" />
+<bitmap id="component.window.bottom.top" file="standardframe/window-elements.png" x="11" y="32" h="2" w="15" />
+<bitmap id="component.window.bottom" file="standardframe/window-elements.png" x="11" y="34" h="1" w="15" />
+<bitmap id="component.window.bottom.bottom" file="standardframe/window-elements.png" x="11" y="35" h="2" w="15" />
+<bitmap id="component.window.bottom.right.top" file="standardframe/window-elements.png" x="21" y="32" h="2" w="15" />
+<bitmap id="component.window.bottom.right" file="standardframe/window-elements.png" x="21" y="34" h="1" w="15" />
+<bitmap id="component.window.bottom.right.bottom" file="standardframe/window-elements.png" x="21" y="35" h="2" w="15" />
+<bitmap id="component.window.status.left" file="standardframe/window-elements.png" x="94" y="0" h="12" w="12"/>
+<bitmap id="component.window.status" file="standardframe/window-elements.png" x="107" y="0" h="12" w="12"/>
+<bitmap id="component.window.status.right" file="standardframe/window-elements.png" x="120" y="0" h="12" w="12"/>
+<bitmap id="component.window.resizer" file="player/Frame/resizer.png" x="0" y="0" h="8" w="8"/>
+</elements-->
+
+<groupdef id="wasabi.text.group" xuitag="Wasabi:Text" embed_xui="wasabi.text" h="12">
+	<text 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1" 
+		id="wasabi.text" font="tahoma"
+		color="158,0,7" fontsize="10" 
+		display="Arial" wrap="1" 
+		valign="top"
+	/>
+</groupdef>
+
+<groupdef id="wasabi.titlebox.center.group" h="13" autowidthsource="titlebox.text" >
+	<text
+		id="titlebox.text"  
+		default="ERROR" 
+		x="0" y="-1" 
+		w="0" h="0" 
+		relatw="1" relath="1" 	
+		font="Arial" fontsize="10"
+		color="158,0,7"
+	/>
+</groupdef>
+
+<groupdef id="wasabi.buttonbar.stack" default_h="18">
+	<grid
+		id=""
+		x="0" y="0"
+		w="0" h="0"
+		relatw="1" relath="1"
+		topleft="wasabi.label.top.left"
+		top="wasabi.label.top"
+		topright="wasabi.label.top.right"
+		left="wasabi.label.left"
+		middle="wasabi.label.middle"
+		right="wasabi.label.right"
+		bottomleft="wasabi.label.bottom.left"
+		bottom="wasabi.label.bottom"
+		bottomright="wasabi.label.bottom.right"
+	/>  
+	<text 
+		id="buttonbar.text" 
+		x="5" y="0" 
+		w="-10" h="0" 
+		relatw="1" relath="1"
+		default="Error" 
+		font="Arial" fontsize="15" 
+		color="223,223,226" 
+		shadowcolor="black" 
+		shadowx="0" shadowy="0"
+	/>
+	<layer
+		id="buttonbar.arrow"
+		x="-15" y="8" 
+		valign="center"
+		relatx="1"
+		image="wasabi.button.label.arrow.down"
+	/>
+	<button 
+		id="mousetrap" 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1" 
+		rectrgn="1"
+	/>
+</groupdef>
+
+<groupdef id="wasabi.statusbar" default_h="12">
+	<group id="wasabi.objectframe.group" x="0" y="0" w="0" h="0" relatw="1" relath="1" />
+	
+	<!-- nonmodal progress bar -->
+	<rect 
+		id="wasabi.statusbar.progress.outline" 
+		x="-104"  y="3" 
+		relatx="1"
+		w="100" h="8" 
+		filled="0" 
+		color="223,223,226" 
+		visible="0" 
+	/>
+	<rect 
+		id="wasabi.statusbar.progress.inside" 
+		x="-104"  y="3" 
+		relatx="1"
+		w="1" h="8" 
+		filled="1" 
+		color="223,223,226" 
+		visible="0" 
+	/>
+	<!-- text line -->
+	<text 
+		id="wasabi.statusbar.text" 
+		x="6" y="1" 
+		w="-12" h="-1"
+		relatw="1" relath="1" 
+		font="a_LCDNova" 
+	/><!--studio.component.statusbar-->
+</groupdef>
+
+<!--Dynamic containers aren't created at skin loading time but when the component(s) they own is being shown -->
+<container id="Component" name=":componenttitle" dynamic="1" hold="@all@" default_x="275" default_y="0">
+	<!-- This is the group we will insert inside the standard frame -->
+	<groupdef id="wasabi.dropdownlist.main.group" >
+		<group id="wasabi.objectframe.group" x="0" y="0" w="0" h="0" relatw="1" relath="1"/>
+		<text 
+			id="dropdownlist.text" 
+			x="3" y="3" 
+			w="-23" h="-6" 
+			relatw="1" relath="1" 
+			color="164,161,155"
+		/>
+		<button 
+			id="dropdownlist.button" 
+			x="-18" y="1" 
+			w="17" h="-2" 
+			relatx="1" relath="1" 
+			borders="1" 
+			image="wasabi.button.label.arrow.down" 
+			center_image="1"
+		/>
+	</groupdef>
+	
+	<groupdef id="component.content.group">
+		<component x="4" y="13" w="-10" relatw="1" h="-15" relath="1" param="guid:default"/>
+	</groupdef>
+	
+	<!-- Our actual layout, composed of a standard frame with some content (see above) -->
+	
+		<!-- the notify tells the standardframe to put this group inside its client area -->	
+	<layout id="resizable_status" background="component.basetexture" minimum_h="116" minimum_w="275">
+		<group id="wasabi.standardframe.statusbar" x="0" y="0" w="0" h="0" relatw="1" relath="1" notify="content,component.content.group"/>
+	</layout>
+	
+	<layout id="resizable_nostatus" background="component.basetexture" minimum_h="116" minimum_w="275">
+		<group id="wasabi.standardframe.nostatusbar" x="0" y="0" w="0" h="0" relatw="1" relath="1" notify="content,component.content.group"/>
+	</layout>
+	
+	<layout id="modal" background="component.basetexture" minimum_h="116" minimum_w="275">
+		<group id="wasabi.standardframe.modal" x="0" y="0" w="0" h="0" relatw="1" relath="1" notify="content,component.content.group"/>
+	</layout>
+	
+	<layout id="static" background="component.basetexture" minimum_h="116" minimum_w="275">
+		<group id="wasabi.standardframe.static" x="0" y="0" w="0" h="0" relatw="1" relath="1" notify="content,component.content.group"/>
+	</layout>
+</container>
+
+<!--groupdef id="wasabi.tooltip.group" h="17">
+	<grid
+		id="tooltip.grid"
+		x="0" y="0"
+		w="0" h="0"
+		sysregion="1"
+		relatw="1" relath="1"
+		topleft="tooltips-elements.png"
+		top="tooltips-elements.png"
+		topright="tooltips-elements.png"
+		left="tooltips-elements.png"
+		middle="tooltips-elements.png"
+		right="tooltips-elements.png"
+		bottomleft="tooltips-elements.png"
+		bottom="tooltips-elements.png"
+		bottomright="tooltips-elements.png"
+	/>
+	<text
+		id="tooltip.text"
+		x="5" y="1"
+		w="0" h="-2"
+		relatw="1" relath="1"
+		default="Tooltip Sample"
+		font="font1" fontsize="16" color="223,223,226"
+	/>
+	<script id="tip" file="tooltips/tooltips.maki"/> 
+</groupdef-->

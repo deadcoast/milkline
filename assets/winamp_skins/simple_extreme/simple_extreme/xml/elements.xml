@@ -1,0 +1,18 @@
+<elements>
+
+	<include file="fonts.xml"/>
+	<include file="buttons.xml"/>
+	<include file="background.xml"/>
+	<include file="frame.xml"/>
+	
+
+	<bitmap id="seeker.line" file="player/seeker/seeker.png" gammagroup="ProgressBar"/>
+	<bitmap id="volume.line" file="player/volume/seeker.png" gammagroup="ProgressBar"/>
+
+<!-- Generic Lists -->
+  <color id="wasabi.list.text" value="200,200,200" gammagroup="Display Fonts"/> <!-- Play List item text color -->
+  
+  <color id="wasabi.list.item.selected" value="255,174,0" gammagroup="Text Backgrounds"/> <!-- Selected item text background color -->
+  <color id="wasabi.list.item.focused" value="255,174,0" gammagroup="Text Backgrounds"/> <!-- Focused item text background color -->
+
+</elements>

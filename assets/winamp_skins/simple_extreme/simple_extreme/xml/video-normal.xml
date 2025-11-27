@@ -1,0 +1,725 @@
+<groupdef id="avscontent">
+	<layer 
+		id="regiontopright" 
+		x="-4" y="0" 
+		relatx="1" 
+		image="component.region.top.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regiontopleft" 
+		x="0" y="0" 
+		image="component.region.top.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomright" 
+		x="-4" y="-4" 
+		relaty="1" relatx="1" 
+		image="component.region.bottom.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomleft" 
+		x="0" y="-4" 
+		relaty="1" 
+		image="component.region.bottom.left" 
+		sysregion="-2"
+	/>
+	
+	<layer 
+		id="bg" 
+		x="5" y="5"
+		w="-10" h="-10"
+		relatw="1" relath="1" 
+		image="component.basetexture" 
+	/>
+   	<layer 
+		id="component.top.left" 
+		x="0" y="0" 
+		image="component.top.left" 
+		resize="topleft"
+	/>
+	<layer 
+		id="component.top.middle" 
+		x="12" y="0" 
+		w="-24" relatw="1" 
+		image="component.top.middle" 
+		resize="top"
+	/>
+	<layer 
+		id="component.top.right" 
+		x="-12" y="0" 
+		relatx="1" 
+		image="component.top.right" 
+		resize="topright"
+	/>
+
+	<layer 
+		id="component.left" 
+		x="0" y="29" 
+		h="-41" 
+		relath="1" 
+		image="component.left" 
+		resize="left"
+	/>
+	<layer 
+		id="component.right" 
+		x="-8" y="29" 
+		relatx="1"		
+		h="-41" 
+		relath="1" 
+		image="component.right" 
+		resize="right"
+	/>
+
+	<layer 
+		id="avs.bottom.left" 
+		x="0" y="-69" 
+		relaty="1" 
+		h="69" 
+		image="avs2.bottom.left" 
+		resize="bottomleft"
+	/>
+	<layer 
+		id="avs.bottom.middle" 
+		x="20" y="-69" 
+		relaty="1" 
+		w="-40" h="69"
+		relatw="1" 
+		image="avs2.bottom.middle"
+		resize="bottom" 
+	/>
+	<layer 
+		id="avs.bottom.right" 
+		x="-20" y="-69" 
+		relatx="1" relaty="1"
+		h="69" 
+		image="avs2.bottom.right" 
+		resize="bottomright"
+	/>
+	<layer 
+		id="noresize" 
+		x="8" y="8" 
+		h="-16" w="-16" 
+		relatw="1" relath="1"
+	/>
+</groupdef>
+
+<groupdef id="avsbottom">
+	<layer 
+		id="avs3.bottom.left" 
+		x="0" y="0"  
+		image="AVS3.bottom.left" 
+		resize="bottom" 
+	/>
+	
+	<layer 
+		id="avs3.bottom.middle" 
+		x="82" y="0" 
+		w="-164"
+		relatw="1" 
+		image="AVS3.bottom.middle"
+		resize="bottom" 
+	/>
+	
+	<layer 
+		id="avs3.bottom.right" 
+		x="-82" y="0" 
+		relatx="1"
+		image="AVS3.bottom.right" 
+		resize="bottom" 
+	/>
+
+	<layer 
+		id="noresize" 
+		x="0" y="0" 
+		h="63" w="-0" 
+		relatw="1"
+	/>
+</groupdef>
+
+<groupdef id="avsbig">
+	<layer 
+		id="avs2.bottom.left" 
+		x="0" y="0"  
+		image="avs.bottom.left" 
+		resize="bottomleft"
+	/>
+	<layer 
+		id="avs2.bottom.middle" 
+		x="20" y="0" 
+		w="-40"
+		relatw="1" 
+		image="avs.bottom.middle"
+		resize="bottom" 
+	/>
+	<layer 
+		id="avs2.bottom.right" 
+		x="-20" y="0" 
+		relatx="1"
+		image="avs.bottom.right" 
+		resize="bottomright"
+	/>
+	<layer 
+		id="noresize" 
+		x="6" y="0" 
+		h="63" w="-12" 
+		relatw="1"
+	/>
+</groupdef>
+
+<groupdef id="AVS.volume" name="Volume">
+  <layer
+    id="volumebg"
+    x="38" y="14"
+    image="avs.volume.bg"
+  />
+  
+  <layer
+    id="volumebar"
+    x="41" y="16"
+    w="1"
+    image="volume.line"
+  />
+  
+  <slider
+    id="Volume"
+    action="VOLUME"
+    x="36" y="11"
+    w="75" h="13"
+    thumb="volume.base"
+    downThumb="volume.pressed"
+    hoverThumb="volume.hover"
+    tooltip="Volume"
+  />
+  
+  <button
+	id="mute"
+	x="5" y="5"
+	image="avs.mute.base"
+	downImage="mute.pressed"
+    hoverImage="mute.hover"
+	tooltip="Toggle Mute"
+  />
+  
+  <button
+	id="mutec"
+	x="5" y="5"
+	image="avs.mute.base_c"
+	downImage="mute.pressed_c"
+    hoverImage="mute.hover_c"
+	tooltip="Toggle Mute"
+  />
+  <script id="mute.script" file="scripts/muteavs.maki" />
+
+</groupdef>
+
+<groupdef id="avs.1x.2x">
+	<button
+		id="2x"
+		action="VID_2X"
+		x="0" y="0"
+		image="2x.base"
+		downImage="2x.pressed"
+		hoverImage="2x.hover"
+		tooltip="Double Size"
+	/>
+	
+	<button
+		id="1x"
+		action="VID_1X"
+		x="0" y="24"
+		image="1x.base"
+		downImage="1x.pressed"
+		hoverImage="1x.hover"
+		tooltip="Normal Size"
+	/>	
+</groupdef>
+
+<groupdef id="avs.1x.2x.2">
+	<button
+		id="2x"
+		action="VID_2X"
+		x="0" y="0"
+		image="2x.base.2"
+		downImage="2x.pressed"
+		hoverImage="2x.hover"
+		tooltip="Double Size"
+	/>
+	
+	<button
+		id="1x"
+		action="VID_1X"
+		x="0" y="24"
+		image="1x.base.2"
+		downImage="1x.pressed"
+		hoverImage="1x.hover"
+		tooltip="Normal Size"
+	/>	
+</groupdef>
+<groupdef id="button.volume" name="Volume">
+  <button
+	id="mute"
+	x="0" y="0"
+	image="avs.mute.base"
+	downImage="mute.pressed"
+    hoverImage="mute.hover"
+	tooltip="Toggle Mute"
+  />
+  
+  <button
+	id="mutec"
+	x="0" y="0"
+	image="avs.mute.base_c"
+	downImage="mute.pressed_c"
+    hoverImage="mute.hover_c"
+	tooltip="Toggle Mute"
+  />
+  <script id="mute.script" file="scripts/mutebutton.maki" />
+</groupdef>
+
+<groupdef id="avs.main.buttons.left.short">
+	<button
+		id="Eject"
+		action="EJECT"
+		x="0" y="13"
+		image="player.button.openbase"
+		downImage="player.button.openpressed"
+		hoverImage="player.button.openhover"
+		tooltip="Open"
+	/>
+	<group 
+		id="button.volume" 
+		x="221" y="13"
+	/>
+	
+	<!--button
+		id="Misc"
+		action="VID_TV"
+		x="221" y="13"
+		image="player.button.miscbase"
+		downImage="player.button.miscpressed"
+		hoverImage="player.button.mischover"
+		tooltip="Internet TV"
+	/-->	
+	
+	<button
+		id="Misc"
+		action="VID_Misc"
+		x="255" y="13"
+		image="player.button.miscbase"
+		downImage="player.button.miscpressed"
+		hoverImage="player.button.mischover"
+		tooltip="Options"
+	/>	
+</groupdef>
+
+<groupdef id="avs.buttons.edge">
+	<layer 
+		id="avs.bg.left" 
+		x="125" 
+		image="avs.bg.left" 
+	/>
+	<layer 
+		id="avs.bg.right" 
+		x="-142" 
+		relatx="1"
+		image="avs.bg.right" 
+	/>
+	<group 
+		id="avs.main.buttons.left.short" 
+		x="139"
+	/>
+</groupdef>
+
+<groupdef id="avs.main.buttons.left.big">
+	<button
+		id="Misc"
+		action="VID_Misc"
+		x="0" y="13"
+		image="player.button.miscbase"
+		downImage="player.button.miscpressed"
+		hoverImage="player.button.mischover"
+		tooltip="Misc"
+	/>
+	<button
+		id="Eject"
+		action="EJECT"
+		x="34" y="13"
+		image="player.button.openbase"
+		downImage="player.button.openpressed"
+		hoverImage="player.button.openhover"
+		tooltip="Open"
+	/>
+</groupdef>
+
+<groupdef id="avs.buttons.edge2">
+	<layer 
+		id="avs.bg.left" 
+		x="76" 
+		image="avs.bg.left" 
+	/>
+	<layer 
+		id="avs.bg.fill" 
+		x="93"
+		w="49" 
+		image="avs.bg.fill" 
+	/>
+	<layer 
+		id="avs.bg.fill" 
+		x="-142"
+		relatx="1"
+		w="49" 
+		image="avs.bg.fill" 
+	/>
+	<layer 
+		id="avs.bg.right" 
+		x="-93" 
+		relatx="1"
+		image="avs.bg.right" 
+	/>
+	<layer 
+		id="avs.bg.right" 
+		x="162" 
+		image="avs.bg.separator" 
+	/>
+	<group 
+		id="avs.main.buttons.left.big" 
+		x="95"
+	/>
+	<group 
+		id="AVS.volume" 
+		x="-200" y="8"
+		relatx="1"
+	/>
+</groupdef>
+
+<groupdef id="avs.main.buttons">
+  <button
+	id="Stop"
+	action="STOP"
+	x="0" y="13"
+	image="player.button.stopbase"
+    downImage="player.button.stoppressed"
+    hoverImage="player.button.stophover"
+	tooltip="Stop"
+  />
+  <button 
+    id="Previous"
+	action="PREV" 
+	x="34" y="13" 
+	image="player.button.previousbese" 
+	downImage="player.button.previouspressed"
+    hoverImage="player.button.previoushover"
+	tooltip="Previous"
+  />
+	<button
+		id="Next"
+		action="NEXT"
+		x="126" y="13"
+		image="player.button.nextbese"
+		downImage="player.button.nextpressed"
+		hoverImage="player.button.nexthover"
+		tooltip="Next"
+	/>
+	<layer id="Glow"
+		x="80" y="0" 
+		alpha="0"
+		ghost="1"
+		image="player.button.glow"	 
+	/>	
+	<button
+		id="Play"
+		action="PLAY"
+		x="80" y="0"
+		image="player.button.playbase" 
+		downImage="player.button.playpressed"
+		hoverImage="player.button.playhover"
+		tooltip="Play"
+	/>
+	<button
+		id="Pause"
+		action="PAUSE"
+		x="80" y="0"
+		image="player.button.pausebase"
+		downImage="player.button.pausepressed"
+		hoverImage="player.button.pausehover"
+		tooltip="Pause"
+	/>
+	<script id="play2pause" file="scripts/glow.maki"/>
+	<script id="play2pause" file="scripts/play2pause.maki"/>
+</groupdef>
+
+<groupdef id="avs.buttons.middle">
+	<layer 
+		id="avs.bg.fill" 
+		x="142" y="0"  
+		w="-284" 
+		relatw="1"
+		image="avs.bg.fill" 
+	/>
+	<layer 
+		id="avs.bg.middle" 
+		x="259" y="0"  
+		image="avs.bg.middle" 
+	/>
+	<group 
+		id="avs.main.buttons" 
+		x="173"
+	/>
+</groupdef>
+
+<groupdef id="avsbar">
+	<group 
+		id="avsbig" 
+		x="0"
+		w="0" 
+		relatw="1"
+	/>
+	<group 
+		id="avsbottom" 
+		x="40"
+		w="558" 
+	/>
+	<group 
+		id="avs.buttons.middle" 
+		x="40" y="10"
+		w="558"  
+	/>
+	<group 
+		id="avs.buttons.edge" 
+		x="40" y="10"
+		w="558"  
+	/>
+	<group 
+		id="avs.buttons.edge2" 
+		x="40" y="10"
+		w="558"  
+	/>
+	
+	<group
+		id="avs.1x.2x"
+		x="-22" y="15"
+		relatx="1"
+	/>
+	<group
+		id="avs.1x.2x.2"
+		x="-22" y="15"
+		relatx="1"
+	/>
+	<script id="avsbuttons" file="scripts\avs.maki"/>	
+</groupdef>
+
+<groupdef id="AVS.Title" name="PlaylistTitleContent">
+	
+	<layer id="btn.shadow"
+		x="0" y="0"
+		ghost="1" 
+		image="btnshadow.3"
+	/>
+	
+	<button
+		id="Mode"
+		action="SWITCH" param="shade"
+		x="2" y="0"
+		image="mode2.base"
+		downImage="mode2.pressed"
+		hoverImage="mode2.hover"
+		tooltip="Mini Mode"
+	/>
+	<button
+		id="Fullscreen"
+		action="VID_FS"
+		x="27" y="0"
+		image="fs.base"
+		downImage="fs.pressed"
+		hoverImage="fs.hover"
+		tooltip="Fullscreen"
+	/>
+	<button
+		id="Close"
+		action="CLOSE"
+		x="52" y="0"
+		image="close.base"
+		downImage="close.pressed"
+		hoverImage="close.hover"
+		tooltip="Close AVS"
+	/>
+	<layer id="ShadeMode"
+		x="2" y="0"
+		ghost="1" 
+		image="mode2.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	<layer id="FullscreenMode"
+		x="27" y="0"
+		ghost="1" 
+		image="fs.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	<layer id="CloseMode"
+		x="52" y="0"
+		ghost="1" 
+		image="Close.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+
+<groupdef id="Caption" name="Caption">
+	<layer 
+		id="logo"
+		x="0" y="7"
+		ghost="1" 
+		image="player/AVS_text.png"
+		alpha="255"
+		inactiveAlpha="150"
+	/>
+	<script id="Caption" file="scripts/caption.maki"/>
+</groupdef>
+
+<layout 
+	id="normal" 
+	desktopalpha="0" 
+	default_visible="0" 
+	default_x="0" default_y="0" 
+	default_w="354"	default_h="294" 
+	minimum_h="147" minimum_w="354"
+	linkwidth="shade"
+><!--155-->
+	<Wasabi:StandardFrame:noStatus 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1"
+	/>
+	
+	<group 
+		id="avscontent" 
+		x="0" y="0" 
+		h="0" w="0" 
+		relath="1" relatw="1"
+	/>
+	<group
+		id="avsbar"
+		y="-69"
+		relaty="1"
+		w="0"
+		relatw="1"
+	/>
+	<group 
+		id="SeekerBar" 
+		x="15" y="-67"
+		relaty="1"
+		w="-28"
+		relatw="1"
+	/>
+	<layer id="dblc"
+		x="4" y="4" 
+		w="-8" h="21"
+		relatw="1"
+		ghost="0" 
+		dblClickAction="VID_FS"
+	/>
+	<group id="Sysmenu" x="3" y="-1" />
+	
+	<group 
+		id="Caption" 
+		x="-23" y="0" 
+		h="25" w="0" 
+		relatw="1"
+		ghost="1" 
+	/>
+	
+	<!--layer id="logo"
+		x="27" y="7"
+		ghost="1" 
+		image="player/avs_text.png"
+		alpha="255"
+		inactiveAlpha="150"
+	/-->
+	<group id="AVS.Title"
+		x="-102" y="0"
+		relatx="1"
+	/>
+		
+		<component 
+			x="9" y="26" 
+			w="-18" h="-96" 
+			relatw="1" relath="1" 
+			noshowcmdbar="1" 
+			autoopen="1" 
+			autoclose="1" 
+			param="guid:{F0816D7B-FFFC-4343-80F2-E8199AA15CC3}" 
+		/>
+		<sendparams target="standardframe.layoutstatus" visible="0" />
+		<!--
+		<grid 
+			x="4" y="13" 
+			w="-10" h="-35" 
+			relaty="1"
+			topleft="window.normal.inset.top.left" 
+			top="window.normal.inset.top.middle"
+			topright="window.normal.inset.top.right"
+			left="window.normal.inset.middle.left"
+			middle="window.normal.inset.middle"
+			right="window.normal.inset.middle.right"
+			bottomleft="window.normal.inset.bottom.left"
+			bottom="window.normal.inset.bottom.middle"
+			bottomright="window.normal.inset.bottom.right"
+		/>
+		
+		<button 
+			id="button.vid.tv" 
+			action="VID_TV" 
+			x="189" y="-37" 
+			relaty="1" 
+			image="panel.pressed" 
+			hoverImage="panel.hover"
+			downImage="panel.base" 
+			tooltip="Internet TV" 
+		/>
+		
+		<text 
+			id="wasabi.statusbar.text" 
+			x="120" y="-28" 
+			w="-155" h="12" 
+			relatw="1" 
+			font="arial" color="Black" 
+			fontsize="14" 
+			display="VID_Info" 
+			align="right" 
+			wrap="0" ghost="1" 
+		/>-->
+		<layer 
+			id="resizer"
+			x="-12" y="-12"
+			relaty="1"
+			relatx="1"
+			ghost="1" 
+			image="player/Frame/resizer.png"
+			alpha="100"
+			inactivealpha="0"
+		/>
+		<Snappoint
+			id="main"
+			x="0" y="0"
+		/>
+		<Snappoint
+			id="main"
+			x="0" y="0"
+			relatx="1"
+		/>
+		<Snappoint
+			id="main"
+			x="0" y="0"
+			relaty="1"
+		/>
+		<Snappoint
+			id="main"
+			x="0" y="0"
+			relatx="1" relaty="1"
+		/>
+	</layout>

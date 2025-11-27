@@ -1,0 +1,153 @@
+<groupdef id="player.shade.captionbuttons" name="Caption buttons">	
+	<layer id="btn.shadow"
+		x="0" y="0"
+		ghost="1" 
+		image="btnshadow.3"
+	/>
+	<button
+		id="Minimize"
+		action="MINIMIZE"
+		x="2" y="0"
+		image="minimize.base"
+		downImage="minimize.pressed"
+		hoverImage="minimize.hover"
+		tooltip="Minimize"
+	/>
+	<button
+		id="Maximize"
+		action="SWITCH" param="normal"
+		x="27" y="0"
+		image="maximize.base"
+		downImage="maximize.pressed"
+		hoverImage="maximize.hover"
+		tooltip="Normal Mode"
+	/>
+	<button
+		id="Close"
+		action="CLOSE"
+		x="52" y="0"
+		image="close.base"
+		downImage="close.pressed"
+		hoverImage="close.hover"
+		tooltip="Close Winamp"
+	/>
+	
+	<layer id="Minimize_i"
+		x="2" y="0"
+		ghost="1" 
+		image="minimize.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	<layer id="Maximize_i"
+		x="27" y="0"
+		ghost="1" 
+		image="maximize.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	<layer id="Close_i"
+		x="52" y="0"
+		ghost="1" 
+		image="close.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>	
+<groupdef id="player.shade.playbuttons" name="Player buttons">
+	<layer id="Glow"
+		x="0" y="0" 
+		alpha="0"
+		ghost="1"
+		image="player.button.glow"	 
+	/>	
+	<button
+		id="Play"
+		action="PLAY"
+		x="0" y="0"
+		image="player.button.playbase" 
+		downImage="player.button.playpressed"
+		hoverImage="player.button.playhover"
+		tooltip="Play"
+	/>
+	<button
+		id="Pause"
+		action="PAUSE"
+		x="0" y="0"
+		image="player.button.pausebase"
+		downImage="player.button.pausepressed"
+		hoverImage="player.button.pausehover"
+		tooltip="Pause"
+	/>
+	<script id="play2pause" file="scripts/glow.maki"/>
+	<script id="play2pause" file="scripts/play2pause.maki"/>
+</groupdef>
+<groupdef id="shade.previous.next" name="Player buttons">	
+	<button
+		id="PreviousBtn"
+		action="PREV"
+		x="0" y="0"
+		image="shade.previous.bese" 
+		hoverImage="shade.previous.hover"		
+		downImage="shade.previous.pressed"
+		tooltip="Previous"
+	/>
+	<button
+		id="NextBtn"
+		action="NEXT"
+		x="52" y="0"
+		image="shade.next.bese" 
+		hoverImage="shade.next.hover"		
+		downImage="shade.next.pressed"
+		tooltip="Next"
+	/>
+	<button
+		id="Stop"
+		action="STOP"
+		x="108" y="0"
+		image="shade.stop.base"
+		downImage="player.button.stoppressed"
+		hoverImage="player.button.stophover"
+		tooltip="Stop"
+	/>
+	<button
+		id="Eject"
+		action="EJECT"
+		x="142" y="0"
+		image="shade.open.base"
+		downImage="player.button.openpressed"
+		hoverImage="player.button.openhover"
+		tooltip="Open"
+	/>  
+	<vis
+		id="vis"
+		x="172" y="2"
+		w="70" h="21"
+		alpha="50"
+		
+		colorband1="255,255,255"
+		colorband2="255,255,255"
+		colorband3="255,255,255"
+		colorband4="255,255,255"
+		colorband5="235,235,235"
+		colorband6="235,235,235"
+		colorband7="235,235,235"
+		colorband8="235,235,235"
+		colorband9="215,215,215"
+		colorband10="215,215,215"
+		colorband11="215,215,215"
+		colorband12="215,215,215"
+		colorband13="195,195,195"
+		colorband14="195,195,195"
+		colorband15="195,195,195"
+		colorband16="195,195,195"
+		colorbandpeak="132,197,255"
+		colorosc1="175,175,175"
+		colorosc2="215,215,215"
+		colorosc3="255,255,255"
+		colorosc4="215,215,215"
+		colorosc5="175,175,175"  
+		tooltip="Visualization"
+		ghost="1" 
+	/>
+</groupdef>

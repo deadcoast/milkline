@@ -1,0 +1,325 @@
+<!--<layout 
+	id="normal" 
+	desktopalpha="0"
+>-->
+
+<groupdef id="PL.Title" name="PlaylistTitleContent">
+	<layer id="btn.shadow"
+		x="0" y="0"
+		ghost="1" 
+		image="btnshadow.2"
+	/>
+	
+
+	<button
+		id="Close"
+		action="CLOSE"
+		x="40" y="4"
+		image="close.base"
+		downImage="close.pressed"
+		hoverImage="close.hover"
+		tooltip="Close Playlist"
+	/>
+	
+	<layer id="Close"
+		x="40" y="4"
+		ghost="1" 
+		image="Close.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+
+<groupdef id="content">
+	<layer 
+		id="regiontopright" 
+		x="-4" y="0" 
+		relatx="1" 
+		image="component.region.top.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regiontopleft" 
+		x="0" y="0" 
+		image="component.region.top.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomright" 
+		x="-4" y="-4" 
+		relaty="1" relatx="1" 
+		image="component.region.bottom.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomleft" 
+		x="0" y="-4" 
+		relaty="1" 
+		image="component.region.bottom.left" 
+		sysregion="-2"
+	/>
+	
+	<layer 
+		id="bg" 
+		x="5" y="5"
+		w="-10" h="-10"
+		relatw="1" relath="1" 
+		image="component.basetexture" 
+	/>
+   	<layer 
+		id="component.top.left" 
+		x="0" y="0" 
+		image="component.top.left" 
+		resize="topleft"
+	/>
+	<layer 
+		id="component.top.middle" 
+		x="12" y="0" 
+		w="-24" relatw="1" 
+		image="component.top.middle" 
+		resize="top"
+	/>
+	<layer 
+		id="component.top.right" 
+		x="-12" y="0" 
+		relatx="1" 
+		image="component.top.right" 
+		resize="topright"
+	/>
+
+	<layer 
+		id="component.left" 
+		x="0" y="29" 
+		h="-41" 
+		relath="1" 
+		image="component.left" 
+		resize="left"
+	/>
+	<layer 
+		id="component.right" 
+		x="-8" y="29" 
+		relatx="1"		
+		h="-41" 
+		relath="1" 
+		image="component.right" 
+		resize="right"
+	/>
+
+	<layer 
+		id="component.bottom.left" 
+		x="0" y="-53" 
+		relaty="1" 
+		h="53" 
+		image="component.bottom.left" 
+		resize="bottomleft"
+	/>
+	<layer 
+		id="component.bottom.middle" 
+		x="12" y="-37" 
+		relaty="1" 
+		w="-24" h="37"
+		relatw="1" 
+		image="component.bottom.middle"
+		resize="bottom" 
+	/>
+	<layer 
+		id="component.bottom.right" 
+		x="-12" y="-53" 
+		relatx="1" relaty="1"
+		h="53" 
+		image="component.bottom.right" 
+		resize="bottomright"
+	/>
+	<layer 
+		id="noresize" 
+		x="8" y="-37" 
+		relatx="12" relaty="1"
+		h="30" w="-16" 
+		relatw="1"
+	/>
+</groupdef>
+
+<groupdef id="Caption" name="Caption">
+	<layer 
+		id="logo"
+		x="0" y="7"
+		ghost="1" 
+		image="player/PlayList_text.png"
+		alpha="255"
+		inactiveAlpha="100"
+	/>
+	<script id="Caption" file="scripts/caption.maki"/>
+</groupdef>
+	
+<!--	default_w="354" default_h="147"
+	default_x="0" default_y="0" -->
+<layout 
+	id="normal" 
+	minimum_w="309" 
+	minimum_h="147" 
+	w="354"
+	appbar="left|top|right|bottom"
+	linkwidth="shade"
+>
+
+	<Wasabi:StandardFrame:Status 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1"
+		padtitleright="12"
+		content=""
+		shade="shade"
+	/>
+	<!--content="pledit.content.group"-->
+
+	<group 
+		id="content" 
+		x="0" y="0" 
+		h="0" w="0" 
+		relath="1" relatw="1"
+	/>	
+	<component 
+		x="9" y="26" 
+		w="-18" h="-64" 
+		relatw="1" relath="1" 
+		noshowcmdbar="1" 
+		autoopen="1" 
+		autoclose="1" 
+		param="guid:{45F3F7C1-A6F3-4ee6-A15E-125E92FC3F8D}" 
+	/>
+
+	<!--sendparams target="wasabi.titlebar" visible="0" /-->
+	<sendparams target="standardframe.layoutstatus" visible="0" />
+		
+	<layer id="dblc"
+		x="4" y="4" 
+		w="-8" h="21"
+		relatw="1"
+		ghost="0" 
+		dblClickAction="SWITCH;shade"
+	/>
+	
+	<group id="Sysmenu" x="3" y="-1" />
+
+	<group 
+		id="Caption" 
+		x="-34" y="0" 
+		h="25" w="0" 
+		relatw="1"
+		ghost="1" 
+	/>		
+	<!--layer id="logo"
+		x="27" y="7"
+		ghost="1" 
+		image="player/PlayList_text.png"
+		alpha="255"
+		inactiveAlpha="150"
+	/-->
+	
+	<group id="PL.Title"
+		x="-77" y="0"
+		relatx="1"
+	/>
+	
+	<button
+		id="pl.add"
+		action="PE_Add"
+		x="12" y="-37"
+		relaty="1"
+		image="panel.base"
+		downImage="panel.pressed"
+		hoverImage="panel.hover"
+		tooltip="Add Files to Playlist"
+	/>
+	<layer id="add.text"
+		x="12" y="-26"
+		relaty="1"
+		ghost="1" 
+		image="pl_add"
+	/>
+	<button
+		id="pl.rem"
+		action="PE_Rem"
+		x="71" y="-37"
+		relaty="1"
+		image="panel.base"
+		downImage="panel.pressed"
+		hoverImage="panel.hover"
+		tooltip="Remove Files from Playlist"
+	/>
+	<layer id="rem.text"
+		x="71" y="-26"
+		relaty="1"
+		ghost="1" 
+		image="pl_rem"
+	/>
+	<button
+		id="pl.sel"
+		action="PE_Sel"
+		x="130" y="-37"
+		relaty="1"
+		image="panel.base"
+		downImage="panel.pressed"
+		hoverImage="panel.hover"
+		tooltip="Select"
+	/>
+	<layer id="sel.text"
+		x="130" y="-26"
+		relaty="1"
+		ghost="1" 
+		image="pl_sel"
+	/>
+	<button
+		id="pl.misc"
+		action="PE_Misc"
+		x="189" y="-37"
+		relaty="1"
+		image="panel.base"
+		downImage="panel.pressed"
+		hoverImage="panel.hover"
+		tooltip="Misc"
+	/>
+	<layer id="misc.text"
+		x="189" y="-26"
+		relaty="1"
+		ghost="1" 
+		image="pl_misc"
+	/>
+	<button
+		id="pl.list"
+		action="PE_List"
+		x="-61" y="-37"
+		relatx="1"
+		relaty="1"
+		image="panel.base"
+		downImage="panel.pressed"
+		hoverImage="panel.hover"
+		tooltip="Manage Playlist"
+	/>
+	<layer id="list.text"
+		x="-61" y="-26"
+		relaty="1"
+		relatx="1"
+		ghost="1" 
+		image="pl_list"
+	/>
+	<layer id="resizer"
+		x="-12" y="-12"
+		relaty="1"
+		relatx="1"
+		ghost="1" 
+		image="player/Frame/resizer.png"
+		alpha="100"
+		inactivealpha="0"
+	/>
+	<Snappoint
+		id="main"
+		x="0" y="0"
+	/>
+	<Snappoint
+		id="main"
+		x="0" y="0"
+		relatx="1"
+	/>
+</layout>
+

@@ -92,3 +92,19 @@ If the design is `**aboove and beyond**` as per spec everything else falls into 
 ENTERTAINING BALANCE IS IMPERATIVE:
 The quality of life, visual aesthetics, and user experience will only manifest through complete development scope and harmony.
 Both aspects are very important, and neither can be ignored. The design simplicity requires us to over develop the experience so they have the smallest margin for error possible. This will allow us(require us) to modulate the experience for future dev plugins.so that what they listen to music on youtube(or spotify), the data, song titles, metadata, audio visualizer will synchronize on the `milk` UI.
+
+[3](milk_media_buddy) - `farmer`
+
+The `milk` - `farmer`. This is why i chose it, the name makes almost no sense. Farmers dont farm for milk. Its a good choice for the aesthetic.
+
+`farmers` visual design is a vector retro style cartoon face. The vector file can be found at [farmer_face_asset](assets\farmer\vectors)
+
+> `milk` is designed to be a simple, yet powerful, audio visual media buddy designed to complete similar tasks as a simple interactive cli would.
+> Just scripts and code, with aded flair in [farmer_face_asset]
+
+---
+
+## CONCLUSION
+
+-  `milk` is a project that is designed to be a simple, yet powerful, audio visual media buddy.
+- I have provided additional data and assets in the `\milkline\assets` directory. They may provide valuable depending on your design spec. 

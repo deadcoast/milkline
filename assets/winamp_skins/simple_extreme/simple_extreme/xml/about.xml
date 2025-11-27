@@ -1,0 +1,167 @@
+<!-- by SL-->
+<!-- Norma-4 Kherson-->
+<!-- Ukraine rulezzz!-->
+
+<!--  background="player/About.png" -->
+
+
+	
+<container id="about" name="About" default_visible="0">
+
+<groupdef id="aboutcontent">
+	<layer 
+		id="regiontopright" 
+		x="-4" y="0" 
+		relatx="1" 
+		image="component.region.top.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regiontopleft" 
+		x="0" y="0" 
+		image="component.region.top.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomright" 
+		x="-4" y="-4" 
+		relaty="1" relatx="1" 
+		image="component.region.bottom.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomleft" 
+		x="0" y="-4" 
+		relaty="1" 
+		image="component.region.bottom.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="bg" 
+		x="5" y="5"
+		w="-10" h="-10"
+		relatw="1" relath="1" 
+		image="component.basetexture" 
+	/>
+	
+   	<layer 
+		id="component.top.left" 
+		x="0" y="0" 
+		image="component.top.left"
+	/>
+	<layer 
+		id="component.top.middle" 
+		x="12" y="0" 
+		w="-24" relatw="1" 
+		image="component.top.middle" 
+	/>
+	<layer 
+		id="component.top.right" 
+		x="-12" y="0" 
+		relatx="1" 
+		image="component.top.right" 
+	/>
+
+	<layer 
+		id="component.left" 
+		x="0" y="29" 
+		h="-41" 
+		relath="1" 
+		image="component.left" 
+	/>
+	<layer 
+		id="component.right" 
+		x="-8" y="29" 
+		relatx="1"		
+		h="-41" 
+		relath="1" 
+		image="component.right" 
+	/>
+
+	<layer 
+		id="component.bottom.left.nostatus" 
+		x="0" y="-12" 
+		relaty="1" 
+		h="12" 
+		image="component.bottom.left.nostatus" 
+	/>
+	<layer 
+		id="component.bottom.middle.nostatus" 
+		x="12" y="-8" 
+		relaty="1" 
+		w="-24" h="8"
+		relatw="1" 
+		image="component.bottom.middle.nostatus" 
+	/>
+	<layer 
+		id="component.bottom.right.nostatus" 
+		x="-12" y="-12" 
+		relatx="1" relaty="1"
+		h="12" 
+		image="component.bottom.right.nostatus" 
+	/>
+</groupdef><!--resize="bottomright"-->
+<groupdef id="btn.Close">
+   <!--layer id="aboutwindow" image="player\winamp.png"/-->
+   	<layer id="btn.shadow"
+		x="0" y="0"
+		ghost="1" 
+		image="btnshadow.1"
+	/>
+	
+   	<button
+		id="Close"
+		action="CLOSE"
+		x="2" y="0"
+		image="close2.base"
+		downImage="close2.pressed"
+		hoverImage="close2.hover"
+		tooltip="Close About"
+	/>
+	<layer id="Close_i"
+		x="2" y="0"
+		ghost="1" 
+		image="close2.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+<layout 
+	id="normal" 
+	minimum_w="260" 
+	minimum_h="235" 
+	maximum_w="260" 
+	maximum_h="235" 
+	h="235" w="260" 
+	appbar="left|top|right|bottom"
+>
+
+	<Wasabi:StandardFrame:noStatus 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1"
+		padtitleleft="10"
+		padtitleright="12"
+		content=""
+	/>
+	<group 
+		id="aboutcontent" 
+		x="0" y="0" 
+		h="0" w="0" 
+		relath="1" relatw="1"
+	/>	
+	<layer id="about_png"
+		x="9" y="26"
+		ghost="0" 
+		image="player/about.png"
+		dblClickAction="CLOSE"
+	/>
+	<group 
+		id="btn.Close" 
+		x="-52" y="0" 
+		relatx="1"
+	/>
+
+</layout>
+
+</container>

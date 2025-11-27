@@ -1,0 +1,190 @@
+<include file="player-normal-group.xml" />
+
+<groupdef id="maincontent">
+	<layer 
+		id="regiontopright" 
+		x="-4" y="0" 
+		relatx="1" 
+		image="component.region.top.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regiontopleft" 
+		x="0" y="0" 
+		image="component.region.top.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomright" 
+		x="-4" y="-4" 
+		relaty="1" relatx="1" 
+		image="component.region.bottom.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomleft" 
+		x="0" y="-4" 
+		relaty="1" 
+		image="component.region.bottom.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="bg" 
+		x="0" y="0"
+		w="0" h="0"
+		relatw="1" relath="1" 
+		image="main.bg" 
+	/>
+<!--	
+	<layer 
+		id="bg" 
+		x="5" y="5"
+		w="-10" h="-10"
+		relatw="1" relath="1" 
+		image="component.basetexture" 
+	/>
+   	<layer 
+		id="component.top.left" 
+		x="0" y="0" 
+		image="component.top.left" 
+		resize="topleft"
+	/>
+	<layer 
+		id="component.top.middle" 
+		x="12" y="0" 
+		w="-24" relatw="1" 
+		image="component.top.middle" 
+		resize="top"
+	/>
+	<layer 
+		id="component.top.right" 
+		x="-12" y="0" 
+		relatx="1" 
+		image="component.top.right" 
+		resize="topright"
+	/>
+
+	<layer 
+		id="component.left" 
+		x="0" y="29" 
+		h="-41" 
+		relath="1" 
+		image="component.left" 
+		resize="left"
+	/>
+	<layer 
+		id="component.right" 
+		x="-8" y="29" 
+		relatx="1"		
+		h="-41" 
+		relath="1" 
+		image="component.right" 
+		resize="right"
+	/>
+
+	<layer 
+		id="avs.bottom.left" 
+		x="0" y="-69" 
+		relaty="1" 
+		h="69" 
+		image="avs2.bottom.left" 
+		resize="bottomleft"
+	/>
+	<layer 
+		id="avs.bottom.middle" 
+		x="20" y="-69" 
+		relaty="1" 
+		w="-40" h="69"
+		relatw="1" 
+		image="avs2.bottom.middle"
+		resize="bottom" 
+	/>
+	<layer 
+		id="avs.bottom.right" 
+		x="-20" y="-69" 
+		relatx="1" relaty="1"
+		h="69" 
+		image="avs2.bottom.right" 
+		resize="bottomright"
+	/>
+	<layer 
+		id="noresize" 
+		x="8" y="8" 
+		h="-16" w="-16" 
+		relatw="1" relath="1"
+	/>
+	-->
+</groupdef>
+
+<!--
+<layout 
+	id="normal" 
+	background="main.bg" 
+	droptarget="pldr" 
+	desktopalpha="1" 
+	tooltip="WinAmp Main Window" 
+	linkwidth="shade"
+>-->
+<layout 
+	id="normal" 
+	desktopalpha="0" 
+	default_visible="1" 
+	default_x="0" default_y="0" 
+	default_w="354"	default_h="147" 
+	minimum_w="354" minimum_h="147" 
+	maximum_w="354" maximum_h="147" 
+	linkwidth="shade"
+	tooltip="WinAmp Main Window" 
+>
+	<Wasabi:StandardFrame:noStatus 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1"
+	/>
+	<group 
+		id="maincontent" 
+		x="0" y="0" 
+		h="0" w="0" 
+		relath="1" relatw="1"
+	/>
+	<layer id="dblc"
+		x="0" y="0" 
+		w="0" h="25"
+		relatw="1"
+		ghost="0" 
+		dblClickAction="SWITCH;shade"
+	/>
+	
+	<group id="Sysmenu" x="3" y="-1" />
+	
+	<!--group id="Caption" x="30" y="5" /-->
+	<layer id="btn.shadow"
+		x="-102" y="0"
+		relatx="1"
+		ghost="1" 
+		image="btnshadow.3"
+	/>
+	<group id="player.normal.captionbuttons" x="254" />
+	<group id="SeekerBar" x="18" y="80"/>
+	<group id="player.volume" x="204" y="25"/>	
+	
+	<layer id="glassright"
+		x="204" y="61" w="142" h="17"
+		ghost="1" 
+		image="glass.right"
+	/>
+  
+  	<layer id="logo"
+		x="147" y="6"
+		ghost="1" 
+		image="player/winamp_text.png"
+		alpha="255"
+		inactiveAlpha="150"
+	/>
+	
+	<!-- Using Playback Buttons Group -->
+	<group id="player.normal" x="8" y="25" />
+	<group id="player.normal.playbuttons" x="37" y="88" />
+	<group id="eq.pl" x="-22" y="93" relatx="1" />
+	
+</layout>

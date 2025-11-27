@@ -1,0 +1,49 @@
+<bitmap id="main.bg" file="player/winamp.png" gammagroup="Backgrounds"/>
+<bitmap id="main.mini.bg" file="player/winamp_mini.png" gammagroup="Backgrounds"/>
+<bitmap id="main.shade.bg" file="player/winamp_shade.png" gammagroup="Backgrounds"/>
+
+<bitmap id="num.bg" file="player/NumBG.png" gammagroup="Backgrounds"/>
+	
+<bitmap id="net" file="player/net.png" gammagroup="Backgrounds"/>
+<bitmap id="net.mask" file="player/net_mask.png" gammagroup="Backgrounds"/>
+
+<bitmap id="glass.left" file="player/glass_left.png" gammagroup="Backgrounds"/>
+<bitmap id="glass.right" file="player/glass_right.png" gammagroup="Backgrounds"/>
+
+<bitmap id="btnshadow.1" file="player/Frame/btnshadow.png" x="0" y="40" h="20" w="47" gammagroup="Backgrounds"/>
+<bitmap id="btnshadow.2" file="player/Frame/btnshadow.png" x="0" y="20" h="20" w="72" gammagroup="Backgrounds"/>
+<bitmap id="btnshadow.3" file="player/Frame/btnshadow.png" x="0" y="0" h="20" w="97" gammagroup="Backgrounds"/>
+
+<bitmap id="Winamp.mini.left" file="player/winamp_mini.png" x="0" y="0" h="25" w="7" gammagroup="Backgrounds"/>
+<bitmap id="Winamp.mini.middle" file="player/winamp_mini.png" x="7" y="0" h="25" w="340" gammagroup="Backgrounds"/>
+<bitmap id="Winamp.mini.right" file="player/winamp_mini.png" x="347" y="0" h="25" w="7" gammagroup="Backgrounds"/>
+
+<bitmap id="pl_add" file="player/PL_text.png" x="0" y="44" h="11" w="49" gammagroup="Backgrounds"/>
+<bitmap id="pl_rem" file="player/PL_text.png" x="0" y="33" h="11" w="49" gammagroup="Backgrounds"/>
+<bitmap id="pl_sel" file="player/PL_text.png" x="0" y="22" h="11" w="49" gammagroup="Backgrounds"/>
+<bitmap id="pl_misc" file="player/PL_text.png" x="0" y="11" h="11" w="49" gammagroup="Backgrounds"/>
+<bitmap id="pl_list" file="player/PL_text.png" x="0" y="0" h="11" w="49" gammagroup="Backgrounds"/>
+
+<bitmap id="mini.left" file="player/winamp_mini.png" x="0" y="0" h="25" w="8" gammagroup="Backgrounds"/>
+<bitmap id="mini.middle" file="player/winamp_mini.png" x="8" y="0" h="25" w="338" gammagroup="Backgrounds"/>
+<bitmap id="mini.right" file="player/winamp_mini.png" x="346" y="0" h="25" w="8" gammagroup="Backgrounds"/>
+
+<bitmap id="seeker.bg.left" file="player/seeker/seeker_bg.png" x="0" y="0" h="5" w="3" gammagroup="Backgrounds"/>
+<bitmap id="seeker.bg.middle" file="player/seeker/seeker_bg.png" x="3" y="0" h="5" w="24" gammagroup="Backgrounds"/>
+<bitmap id="seeker.bg.right" file="player/seeker/seeker_bg.png" x="27" y="0" h="5" w="3" gammagroup="Backgrounds"/>
+
+<bitmap id="seeker.bg.vertical.left" file="player/seeker/seeker_bg_vertical.png" x="0" y="0" h="3" w="5" gammagroup="Backgrounds"/>
+<bitmap id="seeker.bg.vertical.middle" file="player/seeker/seeker_bg_vertical.png" x="0" y="3" h="24" w="5" gammagroup="Backgrounds"/>
+<bitmap id="seeker.bg.vertical.right" file="player/seeker/seeker_bg_vertical.png" x="0" y="37" h="3" w="5" gammagroup="Backgrounds"/>
+
+<bitmap id="seeker.left" file="player/seeker/seeker.png" x="0" y="0" h="3" w="3" gammagroup="Backgrounds"/>
+<bitmap id="seeker.middle" file="player/seeker/seeker.png" x="3" y="0" h="3" w="318" gammagroup="Backgrounds"/>
+<bitmap id="seeker.right" file="player/seeker/seeker.png" x="321" y="0" h="3" w="3" gammagroup="Backgrounds"/>
+
+<bitmap id="avs.bg.left" file="player/avs_bg.png" x="0" y="0" h="51" w="17" gammagroup="Backgrounds"/>
+<bitmap id="avs.bg.fill" file="player/avs_bg.png" x="19" y="0" h="51" w="2" gammagroup="Backgrounds"/>
+<bitmap id="avs.bg.middle" file="player/avs_bg.png" x="23" y="0" h="51" w="40" gammagroup="Backgrounds"/>
+<bitmap id="avs.bg.separator" file="player/avs_bg.png" x="65" y="0" h="51" w="3" gammagroup="Backgrounds"/>
+<bitmap id="avs.bg.right" file="player/avs_bg.png" x="69" y="0" h="51" w="17" gammagroup="Backgrounds"/>
+
+<bitmap id="avs.volume.bg" file="player/volume/avs_volume_bg.png" gammagroup="Backgrounds"/>

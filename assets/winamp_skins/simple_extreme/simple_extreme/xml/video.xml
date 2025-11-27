@@ -1,0 +1,12 @@
+
+
+<container 
+	id="Video" 
+	name="Video" 
+	component="guid:{F0816D7B-FFFC-4343-80F2-E8199AA15CC3}" 
+	default_visible="0"
+>
+	<include file="Video-normal.xml"/>
+	<include file="Video-shade.xml"/>
+	
+</container>

@@ -1,0 +1,11 @@
+<!--TTF Fonts-->
+<truetypefont id="a_lcdnova" file="font/a_lcdnova.ttf"/>
+<truetypefont id="Perfo" file="font/Perfo.ttf"/>
+<truetypefont id="DS Cristal" file="font/DS Cristal.ttf"/>
+
+<!--Bitmap Fonts-->
+<bitmapfont id="player.BIGNUM2" file="font/numfont2.png" charwidth="20" charheight="33" hspacing="0" vspacing="0" gammagroup="Display Fonts"/>
+<bitmapfont id="player.BIGNUM3" file="font/numfont3.png" charwidth="16" charheight="29" hspacing="0" vspacing="0" gammagroup="Display Fonts"/>
+<bitmapfont id="player.BIGNUM" file="font/numfont.png" charwidth="13" charheight="20" hspacing="-1" vspacing="0" gammagroup="Display Fonts"/>
+<bitmapfont id="player.songticker.font" file="font/Songtickerfont.png" charwidth="10" charheight="21" hspacing="-1" vspacing="0" gammagroup="Display Fonts"/>
+<bitmapfont id="wasabi.font.default" file="font/default-font.png" charwidth="5" charheight="6" hspacing="0" vspacing="0" gammagroup="Display Fonts"/>

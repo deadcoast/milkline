@@ -1,0 +1,144 @@
+<bitmap id="logo.base" file="player/Buttons/logo.png" x="0" y="50" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="logo.hover" file="player/Buttons/logo.png" x="0" y="25" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="logo.pressed" file="player/Buttons/logo.png" x="0" y="0" h="25" w="25" gammagroup="Buttons"/> 
+
+<bitmap id="player.button.glow" file="player/Buttons/glow.png" x="0" y="0" h="52" w="52" gammagroup="Buttons"/>
+
+<bitmap id="player.button.playbase" file="player/Buttons/PlayPause.png" x="0" y="0" h="52" w="52" gammagroup="Buttons"/>
+<bitmap id="player.button.playhover" file="player/Buttons/PlayPause.png" x="0" y="52" h="52" w="52" gammagroup="Buttons"/>
+<bitmap id="player.button.playpressed" file="player/Buttons/PlayPause.png" x="0" y="104" h="52" w="52" gammagroup="Buttons"/>
+
+<bitmap id="player.button.pausebase" file="player/Buttons/PlayPause.png" x="52" y="0" h="52" w="52" gammagroup="Buttons"/>
+<bitmap id="player.button.pausehover" file="player/Buttons/PlayPause.png" x="52" y="52" h="52" w="52" gammagroup="Buttons"/>
+<bitmap id="player.button.pausepressed" file="player/Buttons/PlayPause.png" x="52" y="104" h="52" w="52" gammagroup="Buttons"/>  
+
+<bitmap id="player.button.openinactive" file="player/Buttons/MainButtons.png" x="0" y="0" h="25" w="25" gammagroup="Buttons"/>  
+<bitmap id="player.button.openbase" file="player/Buttons/MainButtons.png" x="0" y="25" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="shade.open.base" file="player/Buttons/shade_btn.png" x="0" y="25" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="player.button.openhover" file="player/Buttons/MainButtons.png" x="0" y="50" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="player.button.openpressed" file="player/Buttons/MainButtons.png" x="0" y="75" h="25" w="25" gammagroup="Buttons"/>
+  
+<bitmap id="player.button.stopinactive" file="player/Buttons/MainButtons.png" x="25" y="0" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="player.button.stopbase" file="player/Buttons/MainButtons.png" x="25" y="25" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="shade.stop.base" file="player/Buttons/shade_btn.png" x="25" y="25" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="player.button.stophover" file="player/Buttons/MainButtons.png" x="25" y="50" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="player.button.stoppressed" file="player/Buttons/MainButtons.png" x="25" y="75" h="25" w="25" gammagroup="Buttons"/> 
+  
+<bitmap id="player.button.previousinactive" file="player/Buttons/MainButtons.png" x="50" y="0" h="25" w="52" gammagroup="Buttons"/> 
+<bitmap id="player.button.previousbese" file="player/Buttons/MainButtons.png" x="50" y="25" h="25" w="52" gammagroup="Buttons"/> 
+<bitmap id="player.button.previoushover" file="player/Buttons/MainButtons.png" x="50" y="50" h="25" w="52" gammagroup="Buttons"/>
+<bitmap id="player.button.previouspressed" file="player/Buttons/MainButtons.png" x="50" y="75" h="25" w="52" gammagroup="Buttons"/>  
+  
+<bitmap id="player.button.nextinactive" file="player/Buttons/MainButtons.png" x="102" y="0" h="25" w="52" gammagroup="Buttons"/>
+<bitmap id="player.button.nextbese" file="player/Buttons/MainButtons.png" x="102" y="25" h="25" w="52" gammagroup="Buttons"/> 
+<bitmap id="player.button.nexthover" file="player/Buttons/MainButtons.png" x="102" y="50" h="25" w="52" gammagroup="Buttons"/> 
+<bitmap id="player.button.nextpressed" file="player/Buttons/MainButtons.png" x="102" y="75" h="25" w="52" gammagroup="Buttons"/>   
+
+<bitmap id="shade.previous.bese" file="player/Buttons/Next_Previous.png" x="0" y="0" h="25" w="50" gammagroup="Buttons"/> 
+<bitmap id="shade.previous.hover" file="player/Buttons/Next_Previous.png" x="0" y="25" h="25" w="50" gammagroup="Buttons"/>
+<bitmap id="shade.previous.pressed" file="player/Buttons/Next_Previous.png" x="0" y="50" h="25" w="50" gammagroup="Buttons"/>  
+ 
+<bitmap id="shade.next.bese" file="player/Buttons/Next_Previous.png" x="50" y="0" h="25" w="50" gammagroup="Buttons"/> 
+<bitmap id="shade.next.hover" file="player/Buttons/Next_Previous.png" x="50" y="25" h="25" w="50" gammagroup="Buttons"/>
+<bitmap id="shade.next.pressed" file="player/Buttons/Next_Previous.png" x="50" y="50" h="25" w="50" gammagroup="Buttons"/>  
+
+<bitmap id="player.button.miscinactive" file="player/Buttons/MainButtons.png" x="154" y="0" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="player.button.miscbase" file="player/Buttons/MainButtons.png" x="154" y="25" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="player.button.mischover" file="player/Buttons/MainButtons.png" x="154" y="50" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="player.button.miscpressed" file="player/Buttons/MainButtons.png" x="154" y="75" h="25" w="25" gammagroup="Buttons"/> 
+  
+<bitmap id="repeat.base" file="player/Buttons/buttons2.png" x="25" y="0" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="repeat.hover" file="player/Buttons/buttons2.png" x="25" y="25" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="repeat.pressed" file="player/Buttons/buttons2.png" x="25" y="50" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="repeat.base_c" file="player/Buttons/buttons2.png" x="25" y="75" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="repeat.hover_c" file="player/Buttons/buttons2.png" x="25" y="100" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="repeat.pressed_c" file="player/Buttons/buttons2.png" x="25" y="125" h="25" w="25" gammagroup="Buttons"/>
+
+<bitmap id="shuffle.base" file="player/Buttons/buttons2.png" x="0" y="0" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="shuffle.hover" file="player/Buttons/buttons2.png" x="0" y="25" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="shuffle.pressed" file="player/Buttons/buttons2.png" x="0" y="50" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="shuffle.base_c" file="player/Buttons/buttons2.png" x="0" y="75" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="shuffle.hover_c" file="player/Buttons/buttons2.png" x="0" y="100" h="25" w="25" gammagroup="Buttons"/> 
+<bitmap id="shuffle.pressed_c" file="player/Buttons/buttons2.png" x="0" y="125" h="25" w="25" gammagroup="Buttons"/> 
+
+<bitmap id="mute.base" file="player/Buttons/buttons2.png" x="50" y="0" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="avs.mute.base" file="player/Buttons/avs_mute.png" x="0" y="0" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="shade.mute.base" file="player/Buttons/shade_btn.png" x="25" y="0" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="mute.hover" file="player/Buttons/buttons2.png" x="50" y="25" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="mute.pressed" file="player/Buttons/buttons2.png" x="50" y="50" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="mute.base_c" file="player/Buttons/buttons2.png" x="50" y="75" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="avs.mute.base_c" file="player/Buttons/avs_mute.png" x="0" y="25" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="shade.mute.base_c" file="player/Buttons/shade_btn.png" x="0" y="0" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="mute.hover_c" file="player/Buttons/buttons2.png" x="50" y="100" h="25" w="25" gammagroup="Buttons"/>
+<bitmap id="mute.pressed_c" file="player/Buttons/buttons2.png" x="50" y="125" h="25" w="25" gammagroup="Buttons"/>
+
+<bitmap id="EQ.base" file="player/Buttons/EQPL.png" x="0" y="0" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="EQ.hover" file="player/Buttons/EQPL.png" x="0" y="17" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="EQ.pressed" file="player/Buttons/EQPL.png" x="0" y="34" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="EQ.base_c" file="player/Buttons/EQPL.png" x="0" y="51" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="EQ.hover_c" file="player/Buttons/EQPL.png" x="0" y="68" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="EQ.pressed_c" file="player/Buttons/EQPL.png" x="0" y="85" h="17" w="17" gammagroup="Buttons"/>
+
+<bitmap id="PL.base" file="player/Buttons/EQPL.png" x="17" y="0" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="PL.hover" file="player/Buttons/EQPL.png" x="17" y="17" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="PL.pressed" file="player/Buttons/EQPL.png" x="17" y="34" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="PL.base_c" file="player/Buttons/EQPL.png" x="17" y="51" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="PL.hover_c" file="player/Buttons/EQPL.png" x="17" y="86" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="PL.pressed_c" file="player/Buttons/EQPL.png" x="17" y="85" h="17" w="17" gammagroup="Buttons"/>
+
+<bitmap id="2x.base.2" file="player/Buttons/1x_2x.png" x="0" y="0" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="2x.base" file="player/Buttons/1x_2x.png" x="0" y="17" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="2x.hover" file="player/Buttons/1x_2x.png" x="0" y="34" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="2x.pressed" file="player/Buttons/1x_2x.png" x="0" y="51" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="1x.base.2" file="player/Buttons/1x_2x.png" x="17" y="0" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="1x.base" file="player/Buttons/1x_2x.png" x="17" y="17" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="1x.hover" file="player/Buttons/1x_2x.png" x="17" y="34" h="17" w="17" gammagroup="Buttons"/>
+<bitmap id="1x.pressed" file="player/Buttons/1x_2x.png" x="17" y="51" h="17" w="17" gammagroup="Buttons"/>
+
+<bitmap id="volume.base" file="player/volume/volume.png" gammagroup="Buttons"/> 
+<bitmap id="volume.hover" file="player/volume/volume_hover.png" gammagroup="Buttons"/> 
+<bitmap id="volume.pressed" file="player/volume/volume_pressed.png" gammagroup="Buttons"/> 
+
+<bitmap id="minimize.base" file="player/Buttons/captionbuttons.png" x="0" y="0" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="minimize.hover" file="player/Buttons/captionbuttons.png" x="0" y="18" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="minimize.pressed" file="player/Buttons/captionbuttons.png" x="0" y="36" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="minimize.base_i" file="player/Buttons/captionbuttons.png" x="0" y="54" h="18" w="25" gammagroup="Buttons"/>
+
+<bitmap id="mode.base" file="player/Buttons/captionbuttons.png" x="25" y="0" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="mode.hover" file="player/Buttons/captionbuttons.png" x="25" y="18" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="mode.pressed" file="player/Buttons/captionbuttons.png" x="25" y="36" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="mode.base_i" file="player/Buttons/captionbuttons.png" x="25" y="54" h="18" w="25" gammagroup="Buttons"/> 
+
+<bitmap id="maximize.base" file="player/Buttons/captionbuttons.png" x="50" y="0" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="maximize.hover" file="player/Buttons/captionbuttons.png" x="50" y="18" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="maximize.pressed" file="player/Buttons/captionbuttons.png" x="50" y="36" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="maximize.base_i" file="player/Buttons/captionbuttons.png" x="50" y="54" h="18" w="25" gammagroup="Buttons"/> 
+
+<bitmap id="close.base" file="player/Buttons/captionbuttons.png" x="75" y="0" h="18" w="43" gammagroup="Buttons"/> 
+<bitmap id="close.hover" file="player/Buttons/captionbuttons.png" x="75" y="18" h="18" w="43" gammagroup="Buttons"/> 
+<bitmap id="close.pressed" file="player/Buttons/captionbuttons.png" x="75" y="36" h="18" w="43" gammagroup="Buttons"/>
+<bitmap id="close.base_i" file="player/Buttons/captionbuttons.png" x="75" y="54" h="18" w="43" gammagroup="Buttons"/> 
+
+<bitmap id="maximize2.base" file="player/Buttons/captionbuttons.png" x="118" y="0" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="maximize2.hover" file="player/Buttons/captionbuttons.png" x="118" y="18" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="maximize2.pressed" file="player/Buttons/captionbuttons.png" x="118" y="36" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="maximize2.base_i" file="player/Buttons/captionbuttons.png" x="118" y="54" h="18" w="25" gammagroup="Buttons"/> 
+
+<bitmap id="mode2.base" file="player/Buttons/captionbuttons.png" x="143" y="0" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="mode2.hover" file="player/Buttons/captionbuttons.png" x="143" y="18" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="mode2.pressed" file="player/Buttons/captionbuttons.png" x="143" y="36" h="18" w="25" gammagroup="Buttons"/> 
+<bitmap id="mode2.base_i" file="player/Buttons/captionbuttons.png" x="143" y="54" h="18" w="25" gammagroup="Buttons"/> 
+
+<bitmap id="close2.base" file="player/Buttons/captionbuttons.png" x="168" y="0" h="18" w="43" gammagroup="Buttons"/> 
+<bitmap id="close2.hover" file="player/Buttons/captionbuttons.png" x="168" y="18" h="18" w="43" gammagroup="Buttons"/> 
+<bitmap id="close2.pressed" file="player/Buttons/captionbuttons.png" x="168" y="36" h="18" w="43" gammagroup="Buttons"/>
+<bitmap id="close2.base_i" file="player/Buttons/captionbuttons.png" x="168" y="54" h="18" w="43" gammagroup="Buttons"/> 
+
+<bitmap id="fs.base" file="player/Buttons/captionbuttons.png" x="211" y="0" h="18" w="43" gammagroup="Buttons"/> 
+<bitmap id="fs.hover" file="player/Buttons/captionbuttons.png" x="211" y="18" h="18" w="43" gammagroup="Buttons"/> 
+<bitmap id="fs.pressed" file="player/Buttons/captionbuttons.png" x="211" y="36" h="18" w="43" gammagroup="Buttons"/>
+<bitmap id="fs.base_i" file="player/Buttons/captionbuttons.png" x="211" y="54" h="18" w="43" gammagroup="Buttons"/> 
+
+<bitmap id="panel.base" file="player/Buttons/panel.png" x="0" y="0" h="33" w="49" gammagroup="Buttons"/> 
+<bitmap id="panel.hover" file="player/Buttons/panel.png" x="0" y="33" h="33" w="49" gammagroup="Buttons"/> 
+<bitmap id="panel.pressed" file="player/Buttons/panel.png" x="0" y="66" h="33" w="49" gammagroup="Buttons"/>

@@ -1,0 +1,445 @@
+<groupdef id="eqcontent">
+	<layer 
+		id="regiontopright" 
+		x="-4" y="0" 
+		relatx="1" 
+		image="component.region.top.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regiontopleft" 
+		x="0" y="0" 
+		image="component.region.top.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomright" 
+		x="-4" y="-4" 
+		relaty="1" relatx="1" 
+		image="component.region.bottom.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomleft" 
+		x="0" y="-4" 
+		relaty="1" 
+		image="component.region.bottom.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="bg" 
+		x="5" y="5"
+		w="-10" h="-10"
+		relatw="1" relath="1" 
+		image="component.basetexture" 
+	/>
+	
+   	<layer 
+		id="component.top.left" 
+		x="0" y="0" 
+		image="component.top.left"
+	/>
+	<layer 
+		id="component.top.middle" 
+		x="12" y="0" 
+		w="-24" relatw="1" 
+		image="component.top.middle" 
+	/>
+	<layer 
+		id="component.top.right" 
+		x="-12" y="0" 
+		relatx="1" 
+		image="component.top.right" 
+	/>
+
+	<layer 
+		id="component.left" 
+		x="0" y="29" 
+		h="-41" 
+		relath="1" 
+		image="component.left" 
+	/>
+	<layer 
+		id="component.right" 
+		x="-8" y="29" 
+		relatx="1"		
+		h="-41" 
+		relath="1" 
+		image="component.right" 
+	/>
+
+	<layer 
+		id="component.bottom.left.nostatus" 
+		x="0" y="-12" 
+		relaty="1" 
+		h="12" 
+		image="component.bottom.left.nostatus" 
+	/>
+	<layer 
+		id="component.bottom.middle.nostatus" 
+		x="12" y="-8" 
+		relaty="1" 
+		w="-24" h="8"
+		relatw="1" 
+		image="component.bottom.middle.nostatus" 
+	/>
+	<layer 
+		id="component.bottom.right.nostatus" 
+		x="-12" y="-12" 
+		relatx="1" relaty="1"
+		h="12" 
+		image="component.bottom.right.nostatus" 
+	/>
+</groupdef><!--resize="bottomright"-->
+<groupdef id="eq.btn.Close">
+	<layer id="btn.shadow"
+		x="0" y="0"
+		ghost="1" 
+		image="btnshadow.2"
+	/>
+
+	<button
+		id="Close"
+		action="CLOSE"
+		x="39" y="5"
+		image="close.base"
+		downImage="close.pressed"
+		hoverImage="close.hover"
+		tooltip="Close Playlist"
+	/>
+
+	<layer id="Close"
+		x="39" y="5"
+		ghost="1" 
+		image="Close.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+
+<groupdef id="seeker.bg.horizontal">
+	<layer 
+		id="seeker.bg.left" 
+		x="0" y="0" 
+		image="seeker.bg.left" 
+		resize="left"
+	/>
+	<layer 
+		id="seeker.bg.middle" 
+		x="3" y="0" 
+		w="-6" relatw="1" 
+		image="seeker.bg.middle" 
+	/>
+	<layer 
+		id="seeker.bg.right" 
+		x="-3" y="0" 
+		relatx="1" 
+		image="seeker.bg.right" 
+	/>
+</groupdef>
+
+<groupdef id="seeker.bg.vertical">
+	<layer 
+		id="seeker.bg.vertical.left" 
+		x="0" y="0" 
+		image="seeker.bg.vertical.left" 
+		resize="left"
+	/>
+	<layer 
+		id="seeker.bg.vertical.middle" 
+		x="0" y="3" 
+		h="-6" relath="1" 
+		image="seeker.bg.vertical.middle" 
+	/>
+	<layer 
+		id="seeker.bg.vertical.right" 
+		x="0" y="-3" 
+		relaty="1" 
+		image="seeker.bg.vertical.right" 
+	/>
+</groupdef>
+
+<groupdef id="sliders">
+	<group
+		id="seeker.bg.vertical"
+		x="132" y="44"
+		h="80"
+	/>
+	<slider
+		id="eq1"
+		action="EQ_BAND" param="1"
+		x="128" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="152" y="44"
+		h="80"
+	/>	
+	<slider
+		id="eq2"
+		action="EQ_BAND" param="2"
+		x="148" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="172" y="44"
+		h="80"
+	/>
+	<slider
+		id="eq3"
+		action="EQ_BAND" param="3"
+		x="168" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="192" y="44"
+		h="80"
+	/>
+	<slider
+		id="eq4"
+		action="EQ_BAND" param="4"
+		x="188" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="212" y="44"
+		h="80"
+	/>	
+	<slider
+		id="eq5"
+		action="EQ_BAND" param="5"
+		x="208" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="232" y="44"
+		h="80"
+	/>	
+	<slider
+		id="eq6"
+		action="EQ_BAND" param="6"
+		x="228" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="252" y="44"
+		h="80"
+	/>	
+	<slider
+		id="eq7"
+		action="EQ_BAND" param="7"
+		x="248" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="272" y="44"
+		h="80"
+	/>	
+	<slider
+		id="eq8"
+		action="EQ_BAND" param="8"
+		x="268" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="292" y="44"
+		h="80"
+	/>	
+	<slider
+		id="eq9"
+		action="EQ_BAND" param="9"
+		x="288" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="312" y="44"
+		h="80"
+	/>	
+	<slider
+		id="eq10"
+		action="EQ_BAND" param="10"
+		x="308" y="44"
+		w="13" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	<group
+		id="seeker.bg.vertical"
+		x="90" y="44"
+		h="80"
+	/>	
+	<slider
+		id="preamp"
+		action="EQ_PREAMP"
+		x="82" y="44"
+		w="20" h="80"
+		orientation="vertical"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+	
+	
+	<!--layer id="displayBGWHITE" image="displayBGWHITE" x="25" y="16" ghost="1"/-->
+	
+	<togglebutton
+		id="On"
+		action="EQ_TOGGLE"
+		x="38" y="46"
+		image="player.button.miscinactive"
+		hoverImage="player.button.mischover"
+		downImage="player.button.miscpressed"
+		activeImage="player.button.miscbase"
+		rectrgn="1"
+		tooltip="Toggle EQ processing"
+	/>
+	
+	<togglebutton
+		id="Auto"
+		action="EQ_AUTO"
+		x="38" y="68"
+		image="player.button.miscinactive"
+		hoverImage="player.button.mischover"
+		downImage="player.button.miscpressed"
+		activeImage="player.button.miscbase"
+		rectrgn="1"
+		tooltip="Toggle EQ automatic processing"
+	/>
+	
+	<button
+		id="presets"
+		action="MENU" param="presets"
+		x="38" y="90"
+		image="player.button.miscinactive"
+		hoverImage="player.button.mischover"
+		downImage="player.button.miscpressed"
+		rectrgn="1"
+		tooltip="Display Presets menu"
+	/>
+	<group
+		id="seeker.bg.horizontal"
+		x="23" y="126"
+		w="56"
+	/>	
+	<slider
+		id="balance"
+		action="PAN"
+		x="22" y="122"
+		w="58" h="13"
+		orientation="horizontal"
+		thumb="volume.base"
+		downThumb="volume.pressed"
+		hoverThumb="volume.hover"
+	/>
+</groupdef>
+<!---->
+<layout 
+	id="normal" 
+	minimum_w="354" 
+	minimum_h="147" 
+	maximum_w="354" 
+	maximum_h="147" 
+	h="147" w="354" 
+	appbar="left|top|right|bottom"
+>
+
+	<Wasabi:StandardFrame:noStatus 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1"
+		padtitleleft="10"
+		padtitleright="12"
+		content=""
+	/>   
+
+	<group 
+		id="eqcontent" 
+		x="0" y="0" 
+		h="0" w="0" 
+		relath="1" relatw="1"
+	/>	
+	<layer id="dblc"
+		x="4" y="4" 
+		w="-8" h="21"
+		relatw="1"
+		ghost="0" 
+		dblClickAction="SWITCH;shade"
+	/>
+	
+	<group id="Sysmenu" x="3" y="-1" />
+	
+	<layer id="logo"
+		x="137" y="7"
+		ghost="1" 
+		image="player/Equalizer_text.png"
+		alpha="255"
+		inactiveAlpha="150"
+	/>
+	
+	<group 
+		id="eq.btn.Close" 
+		x="-77" y="0" 
+		relatx="1"
+	/> 
+	<group 
+		id="sliders" 
+		x="0" y="0" 
+		relatx="0"
+	/>  
+	<Snappoint
+		id="main"
+		x="0" y="0"
+	/>
+	<Snappoint
+		id="main"
+		x="0" y="0"
+		relatx="1"
+	/>
+</layout>

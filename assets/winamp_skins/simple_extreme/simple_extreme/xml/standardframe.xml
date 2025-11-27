@@ -1,0 +1,315 @@
+<groupdef id="wasabi.titlebar">
+	<layer 
+		id="mousetrap" 
+		x="0" y="0" 
+		w="0" h="25" 
+		relatw="1"
+		move="1"
+	/><!--w="-2" h="0" 
+		relatw="1" relath="1" -->
+	<text 
+		id="window.titlebar.title"
+		x="5" y="-2" 
+		w="-50" h="15"
+		relatw="1" 
+		default=":componentname" 
+		font="a_LCDNova"
+		align="left" 
+		fontsize="15" color="223,223,226" 
+		inactiveAlpha="150" move="1"
+		antialias="1" bold ="0"
+	/><!--a_LCDNova/player.songticker.font/Trebuchet MS-->
+</groupdef>
+
+<groupdef id="wasabi.frame.layout" background="player/bg.png"><!--component.basetexture-->
+	<layer 
+		id="regiontopright" 
+		x="-4" y="0" 
+		relatx="1" 
+		image="component.region.top.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regiontopleft" 
+		x="0" y="0" 
+		image="component.region.top.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="component.left" 
+		x="0" y="15" 
+		h="0" 
+		relath="1" 
+		image="component.left" 
+		resize="left"
+	/>
+	<layer 
+		id="component.right" 
+		x="-8" y="15" 
+		relatx="1"		
+		h="0" 
+		relath="1" 
+		image="component.right" 
+		resize="right"
+	/>
+	<layer 
+		id="component.top.left" 
+		x="0" y="0" 
+		image="component.top.left" 
+		resize="topleft"
+	/>
+	<layer 
+		id="component.top.middle" 
+		x="12" y="0" 
+		w="-12" relatw="1" 
+		image="component.top.middle" 
+		resize="top"
+	/>
+	<layer 
+		id="component.top.right" 
+		x="-12" y="0" 
+		relatx="1" 
+		image="component.top.right" 
+		resize="topright"
+	/>
+	<layer 
+		id="disable.resize.top" 
+		x="3" y="3" 
+		h="25" w="-8" 
+		relatw="1"
+	/>
+	
+	<group 
+		id="wasabi.titlebar" 
+		x="22" y="6" 
+		w="-42" h="25" 
+		relatw="1"
+	/>
+	
+	<button
+		id="shadeSysmenu"
+		action="SYSMENU"
+		x="3" y="-1"
+		image="logo.base"
+		downImage="logo.pressed"
+		hoverImage="logo.hover"
+		tooltip="Main Menu"
+		inactiveAlpha="150"
+	/>
+</groupdef>
+
+<groupdef id="wasabi.standardframe.statusbar" inherit_content="scripts">
+	<layer 
+		id="regionbottomright" 
+		x="-4" y="-4" 
+		relaty="1" relatx="1" 
+		image="component.region.bottom.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomleft" 
+		x="0" y="-4" 
+		relaty="1" 
+		image="component.region.bottom.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="component.bottom.left" 
+		x="0" y="-53" 
+		relaty="1" 
+		h="53" 
+		image="component.bottom.left" 
+		resize="bottomleft"
+	/>
+	<layer 
+		id="component.bottom.middle" 
+		x="12" y="-37" 
+		relaty="1" 
+		w="-12" h="37"
+		relatw="1" 
+		image="component.bottom.middle" 
+		resize="bottom"
+	/>
+	<layer 
+		id="component.bottom.right" 
+		x="-12" y="-53" 
+		relatx="1" relaty="1"
+		h="53" 
+		image="component.bottom.right" 
+		resize="bottomright"
+	/>
+	<group 
+		id="wasabi.frame.layout" 
+		x="0" y="0" 
+		w="0" h="-37"
+		relatw="1" relath="1"
+	/>
+	<LayoutStatus 
+		id="standardframe.layoutstatus" 
+		x="10" y="-20" 
+		relaty="1" 
+		w="-23" h="15" 
+		relatw="1" 
+		exclude="{system}" 
+	/>
+	<SysCmds id="syscmds"/>
+	
+	<layer id="btn.shadow"
+		x="-77" y="0"
+		relatx="1"
+		ghost="1" 
+		image="btnshadow.2"
+	/>
+	
+	<button
+		id="Mode"
+		action=""
+		x="-75" y="0"
+		relatx="1"
+		image="mode2.base"
+		downImage="mode2.pressed"
+		hoverImage="mode2.hover"
+		tooltip="Mode"
+	/>
+	<button
+		id="Close"
+		action="CLOSE"
+		x="-50" y="0"
+		relatx="1"
+		image="close.base"
+		downImage="close.pressed"
+		hoverImage="close.hover"
+		tooltip="Close Playlist"
+	/>
+	<layer id="Mode"
+		x="-75" y="0"
+		relatx="1"
+		ghost="1" 
+		image="Mode.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+	<layer id="Close"
+		x="-50" y="0"
+		relatx="1"
+		ghost="1" 
+		image="Close.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+
+<groupdef id="wasabi.standardframe.nostatusbar" inherit_content="scripts">
+	<group 
+		id="wasabi.frame.layout" 
+		x="0" y="0" 
+		w="0" h="0" 
+		relatw="1" relath="1"
+	/>
+	<layer 
+		id="regionbottomright" 
+		x="-4" y="-4" 
+		relaty="1" relatx="1" 
+		image="component.region.bottom.right" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="regionbottomleft" 
+		x="0" y="-4" 
+		relaty="1" 
+		image="component.region.bottom.left" 
+		sysregion="-2"
+	/>
+	<layer 
+		id="component.bottom.left.nostatus" 
+		x="0" y="-12" 
+		relaty="1" 
+		h="12" 
+		image="component.bottom.left.nostatus" 
+		resize="bottomleft"
+	/>
+	<layer 
+		id="component.bottom.middle.nostatus" 
+		x="12" y="-8" 
+		relaty="1" 
+		w="-12" h="8" 
+		relatw="1" 
+		image="component.bottom.middle.nostatus" 
+		resize="bottom"
+	/>
+	<layer 
+		id="component.bottom.right.nostatus" 
+		x="-12" y="-12" 
+		relatx="1" 
+		relaty="1" 
+		h="12" 
+		image="component.bottom.right.nostatus" 
+		resize="bottomright"
+	/>
+	<layer id="btn.shadow"
+		x="-52" y="0"
+		relatx="1"
+		ghost="1" 
+		image="btnshadow.1"
+	/>
+	<button
+		id="Close"
+		action="CLOSE"
+		x="-50" y="0"
+		relatx="1"
+		image="close2.base"
+		downImage="close2.pressed"
+		hoverImage="close2.hover"
+		tooltip="Close Playlist"
+	/>
+	<layer id="Close"
+		x="-50" y="0"
+		relatx="1"
+		ghost="1" 
+		image="Close2.base_i"
+		alpha="0"
+		inactiveAlpha="255"
+	/>
+</groupdef>
+
+<groupdef id="wasabi.standardframe.modal" inherit_group="wasabi.standardframe.nostatusbar">
+	<group 
+		id="wasabi.panel" 
+		x="5" y="25" 
+		w="-10" h="-20" 
+		relatw="1" relath="1"
+	/>
+	<!--<group 
+		id="wasabi.panel" 
+		x="5" y="15" 
+		w="-10" h="-20" 
+		relatw="1" relath="1"
+	/>-->
+	<hideobject 
+		target="sysmenu"
+	/>
+	<sendparams 
+		target="titlebar" 
+		x="3" 
+		w="-20" 
+		relatw="1" 
+		color="55,55,55"
+	/>
+	<sendparams 
+		target="window.top.left;window.top;window.top.right;window.left;window.right;window.bottom.left.top;window.bottom.left;window.bottom.left.bottom;window.bottom.top;window.bottom;window.bottom.bottom;window.bottom.right.top;window.bottom.right;window.bottom.right.bottom" 
+		resize="0"
+	/>
+</groupdef>
+
+<groupdef id="wasabi.standardframe.static" inherit_group="wasabi.standardframe.nostatusbar">
+	<group 
+		id="wasabi.panel" 
+		x="5" y="25" 
+		w="-10" h="-20" 
+		relatw="1" relath="1"
+	/>
+	<sendparams 
+		target="window.top.left;window.top;window.top.right;window.left;window.right;window.bottom.left.top;window.bottom.left;window.bottom.left.bottom;window.bottom.top;window.bottom;window.bottom.bottom;window.bottom.right.top;window.bottom.right;window.bottom.right.bottom" 
+		resize="0" 
+	/>
+</groupdef>
