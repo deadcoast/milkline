@@ -73,7 +73,7 @@ impl PlatformSecureStorage {
 
     /// Get or create the encryption key for additional encryption layer
     fn get_or_create_encryption_key(&self) -> Result<Vec<u8>, StorageError> {
-        let entry = Entry::new(SERVICE_NAME, ENCRYPTION_KEY_NAME)?;
+        let entry = Entry::new(SERVICE_NAME, ENCRYPTION_KEY_NAME).map_err(StorageError::KeyringError)?;
         
         match entry.get_password() {
             Ok(key_b64) => {
@@ -85,19 +85,19 @@ impl PlatformSecureStorage {
                         let mut key = vec![0u8; 32];
                         OsRng.fill_bytes(&mut key);
                         let key_b64 = general_purpose::STANDARD.encode(&key);
-                        entry.set_password(&key_b64)?;
+                        entry.set_password(&key_b64).map_err(StorageError::KeyringError)?;
                         Ok(key)
                     }
                 }
             }
-            Err(keyring::Error::NoEntry) => {
+            Err(keyring::Error::NoEntry) | Err(keyring::Error::Ambiguous(_)) => {
                 // Generate new key
                 let mut key = vec![0u8; 32]; // 256-bit key
                 OsRng.fill_bytes(&mut key);
                 
                 // Store it
                 let key_b64 = general_purpose::STANDARD.encode(&key);
-                entry.set_password(&key_b64)?;
+                entry.set_password(&key_b64).map_err(StorageError::KeyringError)?;
                 
                 Ok(key)
             }
@@ -165,14 +165,14 @@ impl SecureStorage for PlatformSecureStorage {
         let encrypted = self.encrypt(value)?;
         
         // Store in platform keyring
-        let entry = Entry::new(SERVICE_NAME, key)?;
-        entry.set_password(&encrypted)?;
+        let entry = Entry::new(SERVICE_NAME, key).map_err(StorageError::KeyringError)?;
+        entry.set_password(&encrypted).map_err(StorageError::KeyringError)?;
         
         Ok(())
     }
     
     fn retrieve(&self, key: &str) -> Result<Option<String>, StorageError> {
-        let entry = Entry::new(SERVICE_NAME, key)?;
+        let entry = Entry::new(SERVICE_NAME, key).map_err(StorageError::KeyringError)?;
         
         match entry.get_password() {
             Ok(encrypted) => {
@@ -181,13 +181,14 @@ impl SecureStorage for PlatformSecureStorage {
                 Ok(Some(decrypted))
             }
             Err(keyring::Error::NoEntry) => Ok(None),
+            Err(keyring::Error::Ambiguous(_)) => Ok(None), // Handle ambiguous entries
             Err(e) => Err(StorageError::KeyringError(e)),
         }
     }
     
     fn delete(&self, key: &str) -> Result<(), StorageError> {
-        let entry = Entry::new(SERVICE_NAME, key)?;
-        entry.delete_credential()?;
+        let entry = Entry::new(SERVICE_NAME, key).map_err(StorageError::KeyringError)?;
+        entry.delete_credential().map_err(StorageError::KeyringError)?;
         Ok(())
     }
 }

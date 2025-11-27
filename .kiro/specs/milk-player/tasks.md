@@ -196,7 +196,10 @@
   - **Property 21: Track removal non-destructive**
   - **Validates: Requirements 9.5**
 
-- [-] 9. Checkpoint - Ensure all tests pass
+- [x] 9. Checkpoint - Ensure all tests pass
+
+
+
 
 
   - Ensure all tests pass, ask the user if questions arise.
