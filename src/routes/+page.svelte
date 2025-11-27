@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { playerStore, playlistStore, configStore } from '$lib/stores';
   import { loadConfig } from '$lib/tauri';
+  import Player from '$lib/components/Player.svelte';
   import '$lib/styles/global.css';
 
   let initialized = $state(false);
@@ -40,8 +41,7 @@
   
   <main class="main-layout">
     <div class="player-section">
-      <!-- Player component will go here -->
-      <div class="placeholder">Player</div>
+      <Player />
     </div>
     
     <div class="playlist-section">
