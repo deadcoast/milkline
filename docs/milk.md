@@ -85,9 +85,9 @@ Create a winamp inspired application that acts as a front end for either youtube
 The system, and the user should be in harmony. If any part falls out of place(the design and aesthetics, quality of life, user experience, back end) then the ecosystem will fail.
 If the design is `**aboove and beyond**` as per spec everything else falls into place:
 
-    > [!NOTE]
-    > Desiging and completing the functions catered to the [three aspects]((a),(b),(c)) are essentiial to success.
-    > The applications simplicity, requires the simplicity to be rigerruously, comprehensivley, and creatively developed to its maximum extent, ot else `milk` will fail as an application and a project as a whole.
+> [!NOTE]
+> Desiging and completing the functions catered to the [three aspects]((a),(b),(c)) are essentiial to success.
+> The applications simplicity, requires the simplicity to be rigerruously, comprehensivley, and creatively developed to its maximum extent, ot else `milk` will fail as an application and a project as a whole.
 
 ENTERTAINING BALANCE IS IMPERATIVE:
 The quality of life, visual aesthetics, and user experience will only manifest through complete development scope and harmony.
