@@ -64,24 +64,31 @@ Create a winamp inspired application that acts as a front end for either youtube
 [1.c](user_experience) - `user_experience`
 - The user experience is the most important part of the design, and the design is the most important part of the user experience. We are trying to recreate not only the look of winamp, but the feel it had, the feelings the world had back then.
 
-[2] `milk` should not introduce additional complexity for the user, in almost all cases that is just bad development.
+[2](user_experience_and_quality_of_life) `milk` should not introduce additional complexity for the user, in almost all cases that is just bad development.
 - The system is designed to provide additional complexity, in its own package, streamlined for user quality of life, and audio aesthetics.
 
 [2.a](finding_design_balance) - `user_experice != quality_of_life`
 
 - It takes more development to create a higher quality of life. Usualy if it makes it easier for the user, its more comprehensive work for us. That is whyt we must be comprehensive from the start.
 
-(2.b)
-    `if user_experience == quality_of_life`
-- The system, and the user should be in harmony. If any part falls out of place(the design and aesthetics, quality of life, user experience, back end) then the ecosystem will fail.
-- If the design is `**aboove and beyond**` as per spec everything else falls into place:
+[2.b](the_delicate_balance)
 
-> [!NOTE]
-> Desiging and completing the functions catered to the [three aspects]((a),(b),(c)) are essentiial to success.
-> The applications simplicity, requires the simplicity to be rigerruously, comprehensivley, and creatively developed to its maximum extent, ot else `milk` will fail as an application and a project as a whole.
+```
+    if user_experience == quality_of_life
+        then user_experience = quality_of_life
+    else
+        user_experience != quality_of_life
+        user_experience = quality_of_life - 1
+        quality_of_life = user_experience + 1
+```
+
+The system, and the user should be in harmony. If any part falls out of place(the design and aesthetics, quality of life, user experience, back end) then the ecosystem will fail.
+If the design is `**aboove and beyond**` as per spec everything else falls into place:
+
+    > [!NOTE]
+    > Desiging and completing the functions catered to the [three aspects]((a),(b),(c)) are essentiial to success.
+    > The applications simplicity, requires the simplicity to be rigerruously, comprehensivley, and creatively developed to its maximum extent, ot else `milk` will fail as an application and a project as a whole.
 
 ENTERTAINING BALANCE IS IMPERATIVE:
-- The quality of life, visual aesthetics, and user experience will only manifest through complete development scope and harmony.
-Both aspects are very important, and neither can be ignored.
-    - The design simplicity requires us to over develop the experience so they have the smallest margin for error possible.
-    - This will allow us(require us) to modulate the experience for future dev plugins.so that what they listen to music on youtube(or spotify), the data, song titles, metadata, audio visualizer will synchronize on the `milk` UI.
+The quality of life, visual aesthetics, and user experience will only manifest through complete development scope and harmony.
+Both aspects are very important, and neither can be ignored. The design simplicity requires us to over develop the experience so they have the smallest margin for error possible. This will allow us(require us) to modulate the experience for future dev plugins.so that what they listen to music on youtube(or spotify), the data, song titles, metadata, audio visualizer will synchronize on the `milk` UI.
