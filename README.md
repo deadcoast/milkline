@@ -1,114 +1,50 @@
-# `milk` the desktop audio visual media buddy
+# milk
 
-## DEVELOPER AND PROJECT FOUNDATIONS FOR `milk`
+A desktop audio visual media buddy inspired by Winamp.
 
-`milk` is designed for an age past, when home computing tech was jamming a floppy disk into the drive, and  hoping theres only one disk to the set.
+## Description
 
-It was a warm age, a simple age, the computing defined in the 2000's was one of simplicity and comfort. I can even go as far as to say the majority of home computer users lived in a state of blissful ignorance. Did I know that downloading 50cent-in-da-club(2) with no extension defined was risky? Yes, did I care? No;
+`milk` is a lightweight (~10MB) desktop application that recreates the nostalgic experience of 2000s-era media players. Built with Tauri 2.x (Rust backend, Svelte frontend), it combines local audio playback, streaming service metadata integration, Winamp skin compatibility, and an animated companion ("farmer") that assists with configuration.
 
-*I wanted the damn song*
+## Tech Stack
 
-The laws of the land inside the world-wide-web were still being written, and we as users just didnt know what the consequences were, and to be fair back then the consequences were nothing like today:
+- **Frontend**: Svelte 5 + TypeScript + Vite
+- **Backend**: Rust + Tauri 2.x
+- **Package Manager**: pnpm
+- **Build Target**: Windows (x86_64-pc-windows-msvc)
 
-```
-1. Oh no, grandma clicked another million doller lottery pop up ->
-2. Now Grandma has a virus that opens more adds ->
-3. Grandma is now hacked, oh well ->
-```
+## Development
 
-> That was the majority of the cases before personal life got so tangled up in the internet. Not the best, but no one was stealing identities, or ransomware and holding you hostage.
+### Prerequisites
 
-Modern day is the information age, and ironically enough, we have all the information in the world, but we choose to use none of it:
+- Node.js (with npm)
+- pnpm (`npm install -g pnpm`)
+- Rust toolchain with `x86_64-pc-windows-msvc` target
 
-  *ignorance is bliss*
+### Setup
 
-## Why `milk`
+```bash
+# Install dependencies
+pnpm install
 
-We all remember the days of getting home, hoping no one uses the phone so your dial up stays on after it chugs to life. Those warm cozy days on icq talking with friends, getting your homework done talking to a paperclip that woulnd go away in counter strike 1.3, ventrilo, and when browsing the internet was unpredictable, anyone have lemons for the party?
+# Run development server
+pnpm tauri dev
 
-## Inspiration and Growth - The meaning behind it all
-
-> `pardodyCode` representation of what inspired me to create `milk`
-
-```parody
-#milk.yaml
-milk:"required":[
-    winamp:"inspired",
-        cow:"aquired",
-        farmer:"hired"
-    ]
+# Build for production
+pnpm tauri build
 ```
 
-Thats the era, so heres the tech: `milk` is designed to be a 2000's style front end, with a simple `Clippit` style buddy. The design for this buddy will be simply a box with a 50's style animated eyes and mouth. very simple. no ai, just code. The buddy is designed to run simple tasks like:
-
-- prompting for an input path for the media library file
-- prompting for youtube / spotify credentials and(ONLY IF REQUIRED)api key
-
-im a really big fan of the era of winamp style computing applications. my two favourite designs were winamp(my main inspiration as a developer) and icq(beautiful ui design, sound design`for the eras limitations`).
-
-I want to create something similar, but a wrapper application. it will be purely for stylistic purposes but its own application with a front and back end none the less.
-
-[1](design_request) - Application Design
-
-Create a winamp inspired application that acts as a front end for either youtube or spotify or both. I am not sure the limitations of what the spotify or youtube api allow you, such as:
-- How much access with the API's provide us? Enough for what we need?
-- Will the API allow us to utilize the data for our front end if the user logs in with credentials?
-- The entire purpose of `milk` breaks down into two major purposes:
-
-[1.a](quality_of_life) - `quality_of_life`
-- Comprehensive development and planning into User quality of life, not for bloat, or redundant features, but for features that directly reflect and effect the core ones we have laid out.
-
-[1.b](visual_aesthetics) - `visual_aesthetics`
-- Visual Customization and Aesthetics, for the sake of the user, and the user experience. We are trying to recreate winamp as per, or re use their skin assets.
-
-[1.c](user_experience) - `user_experience`
-- The user experience is the most important part of the design, and the design is the most important part of the user experience. We are trying to recreate not only the look of winamp, but the feel it had, the feelings the world had back then.
-
-[2](user_experience_and_quality_of_life) `milk` should not introduce additional complexity for the user, in almost all cases that is just bad development.
-- The system is designed to provide additional complexity, in its own package, streamlined for user quality of life, and audio aesthetics.
-
-[2.a](finding_design_balance) - `user_experice != quality_of_life`
-
-- It takes more development to create a higher quality of life. Usualy if it makes it easier for the user, its more comprehensive work for us. That is whyt we must be comprehensive from the start.
-
-[2.b](the_delicate_balance)
+## Project Structure
 
 ```
-    if user_experience == quality_of_life
-        then user_experience = quality_of_life
-    else
-        user_experience != quality_of_life
-        user_experience = quality_of_life - 1
-        quality_of_life = user_experience + 1
+milk/
+├── src/              # Svelte frontend source
+├── src-tauri/        # Rust backend source
+├── static/           # Static assets
+├── assets/           # Application assets (skins, farmer graphics)
+└── docs/             # Documentation
 ```
 
-The system, and the user should be in harmony. If any part falls out of place(the design and aesthetics, quality of life, user experience, back end) then the ecosystem will fail.
-If the design is `**aboove and beyond**` as per spec everything else falls into place:
+## Recommended IDE Setup
 
-> [!NOTE]
-> Desiging and completing the functions catered to the [three aspects]((a),(b),(c)) are essentiial to success.
-> The applications simplicity, requires the simplicity to be rigerruously, comprehensivley, and creatively developed to its maximum extent, ot else `milk` will fail as an application and a project as a whole.
-
-ENTERTAINING BALANCE IS IMPERATIVE:
-The quality of life, visual aesthetics, and user experience will only manifest through complete development scope and harmony.
-Both aspects are very important, and neither can be ignored. The design simplicity requires us to over develop the experience so they have the smallest margin for error possible. This will allow us(require us) to modulate the experience for future dev plugins.so that what they listen to music on youtube(or spotify), the data, song titles, metadata, audio visualizer will synchronize on the `milk` UI.
-
-[3](milk_media_buddy) - `farmer`
-
-The `milk` - `farmer`. This is why i chose it, the name makes almost no sense. Farmers dont farm for milk. Its a good choice for the aesthetic.
-
-`farmers` visual design is a vector retro style cartoon face. The vector file can be found at [farmer_face_asset](assets\farmer\vectors)
-
-> `milk` is designed to be a simple, yet powerful, audio visual media buddy designed to complete similar tasks as a simple interactive cli would.
-> Just scripts and code, with aded flair in [farmer_face_asset]
-
----
-
-## CONCLUSION
-
--  `milk` is a project that is designed to be a simple, yet powerful, audio visual media buddy.
-- I have provided additional data and assets in the `\milkline\assets` directory. They may provide valuable depending on your design spec.
-
----
-
-> milk line audio
+[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
