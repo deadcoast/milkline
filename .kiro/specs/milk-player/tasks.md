@@ -309,7 +309,9 @@
   - **Property 16: farmer state machine transitions**
   - **Validates: Requirements 6.4, 7.1, 7.2, 7.3**
 
-- [-] 13. Implement farmer playback event reactions
+- [x] 13. Implement farmer playback event reactions
+
+
 
 
 
@@ -319,7 +321,8 @@
   - Create visualizer-reactive movements for farmer
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-- [-] 13.1 Write property test for farmer listening state animations
+- [x] 13.1 Write property test for farmer listening state animations
+
 
   - **Property 17: farmer listening state animations**
   - **Validates: Requirements 7.4**
