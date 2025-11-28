@@ -327,7 +327,12 @@
   - **Property 17: farmer listening state animations**
   - **Validates: Requirements 7.4**
 
-- [ ] 14. Build Spotify API integration
+- [x] 14. Build Spotify API integration
+
+
+
+
+
   - Create SpotifyBridge struct implementing StreamingService trait
   - Implement OAuth 2.0 authentication flow
   - Add token storage and refresh logic
@@ -337,11 +342,15 @@
   - Handle authentication failures with farmer error prompts
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 14.1 Write property test for streaming metadata completeness
+- [x] 14.1 Write property test for streaming metadata completeness
+
+
   - **Property 6: Streaming metadata completeness**
   - **Validates: Requirements 2.2, 3.2**
 
-- [ ] 14.2 Write property test for streaming metadata sync timing
+- [x] 14.2 Write property test for streaming metadata sync timing
+
+
   - **Property 7: Streaming metadata sync timing**
   - **Validates: Requirements 2.3, 3.3**
 

@@ -4,6 +4,7 @@ mod library;
 mod metadata;
 mod playlist;
 mod skin;
+mod spotify;
 
 use config::{Config, ConfigManager, FileConfigManager};
 use secure_storage::{PlatformSecureStorage, SecureStorage};
@@ -11,6 +12,7 @@ use library::{LibraryScanner, Track};
 use metadata::{MetadataExtractor, TrackMetadata};
 use playlist::{PlaylistManager, Playlist, Track as PlaylistTrack};
 use skin::{SkinParser, ParsedSkin};
+use spotify::{SpotifyBridge, StreamingService, Credentials, Token, TrackMetadata as SpotifyTrackMetadata};
 use std::sync::{OnceLock, Mutex};
 
 // Global metadata extractor instance
@@ -27,6 +29,13 @@ fn get_playlist_manager() -> &'static Mutex<PlaylistManager> {
     PLAYLIST_MANAGER.get_or_init(|| {
         Mutex::new(PlaylistManager::new().expect("Failed to initialize playlist manager"))
     })
+}
+
+// Global Spotify bridge instance
+static SPOTIFY_BRIDGE: OnceLock<SpotifyBridge> = OnceLock::new();
+
+fn get_spotify_bridge() -> &'static SpotifyBridge {
+    SPOTIFY_BRIDGE.get_or_init(|| SpotifyBridge::new())
 }
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -201,6 +210,24 @@ fn apply_skin(skin_path: String) -> Result<ParsedSkin, String> {
     }
 }
 
+#[tauri::command]
+async fn spotify_authenticate(credentials: Credentials, auth_code: String) -> Result<Token, String> {
+    let bridge = get_spotify_bridge();
+    bridge.authenticate(credentials, auth_code).await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn spotify_get_now_playing() -> Result<Option<SpotifyTrackMetadata>, String> {
+    let bridge = get_spotify_bridge();
+    bridge.get_now_playing().await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn spotify_refresh_token(credentials: Credentials) -> Result<Token, String> {
+    let bridge = get_spotify_bridge();
+    bridge.refresh_token(credentials).await.map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -224,7 +251,10 @@ pub fn run() {
             reorder_playlist_tracks,
             update_playlist,
             load_skin,
-            apply_skin
+            apply_skin,
+            spotify_authenticate,
+            spotify_get_now_playing,
+            spotify_refresh_token
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

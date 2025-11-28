@@ -67,15 +67,43 @@ export async function applySkin(skinPath: string): Promise<import('../types').Pa
     return await invoke('apply_skin', { skinPath });
 }
 
-// Streaming service commands
-export async function authenticateSpotify(credentials: any): Promise<void> {
-    await invoke('authenticate_spotify', { credentials });
+// Spotify streaming service commands
+export interface SpotifyCredentials {
+    client_id: string;
+    client_secret: string;
+    redirect_uri: string;
 }
 
-export async function getSpotifyNowPlaying(): Promise<Track | null> {
-    return await invoke<Track | null>('get_spotify_now_playing');
+export interface SpotifyToken {
+    access_token: string;
+    token_type: string;
+    expires_in: number;
+    refresh_token?: string;
+    scope?: string;
 }
 
+export interface SpotifyTrackMetadata {
+    title: string;
+    artist: string;
+    album: string;
+    duration_ms: number;
+    is_playing: boolean;
+    progress_ms?: number;
+}
+
+export async function spotifyAuthenticate(credentials: SpotifyCredentials, authCode: string): Promise<SpotifyToken> {
+    return await invoke<SpotifyToken>('spotify_authenticate', { credentials, authCode });
+}
+
+export async function spotifyGetNowPlaying(): Promise<SpotifyTrackMetadata | null> {
+    return await invoke<SpotifyTrackMetadata | null>('spotify_get_now_playing');
+}
+
+export async function spotifyRefreshToken(credentials: SpotifyCredentials): Promise<SpotifyToken> {
+    return await invoke<SpotifyToken>('spotify_refresh_token', { credentials });
+}
+
+// YouTube streaming service commands (placeholder for future implementation)
 export async function authenticateYoutube(credentials: any): Promise<void> {
     await invoke('authenticate_youtube', { credentials });
 }
