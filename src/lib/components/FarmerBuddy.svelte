@@ -1,16 +1,104 @@
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte';
-    import { farmerStore } from '../stores';
-    import type { FarmerStateData } from '../types';
+    import { farmerStore, playerStore } from '../stores';
+    import { initializeFarmerPlayerSync } from '../stores/farmerPlayerSync';
+    import type { FarmerStateData, PlayerState } from '../types';
+
+    // Props
+    let {
+        analyzerNode = $bindable(null)
+    }: {
+        analyzerNode?: AnalyserNode | null;
+    } = $props();
 
     let farmerState: FarmerStateData;
+    let playerState: PlayerState;
     let blinkInterval: number | undefined;
     let lookInterval: number | undefined;
+    let listeningAnimationFrame: number | undefined;
+    let audioReactiveOffset = 0;
+    let bobPhase = 0;
 
-    // Subscribe to farmer store
-    const unsubscribe = farmerStore.subscribe(state => {
+    // Subscribe to stores
+    const unsubscribeFarmer = farmerStore.subscribe(state => {
         farmerState = state;
     });
+
+    const unsubscribePlayer = playerStore.subscribe(state => {
+        const wasPlaying = playerState?.isPlaying;
+        playerState = state;
+
+        // Start/stop listening animations based on playback state
+        if (state.isPlaying && !wasPlaying) {
+            startListeningAnimations();
+        } else if (!state.isPlaying && wasPlaying) {
+            stopListeningAnimations();
+        }
+    });
+
+    // Start listening state animations synchronized with audio
+    function startListeningAnimations() {
+        stopListeningAnimations(); // Clear any existing animation
+
+        function animate() {
+            if (farmerState.currentState !== 'listening') {
+                stopListeningAnimations();
+                return;
+            }
+
+            // Get audio data if analyzer is available
+            let audioEnergy = 0;
+            if (analyzerNode) {
+                const dataArray = new Uint8Array(analyzerNode.frequencyBinCount);
+                analyzerNode.getByteFrequencyData(dataArray);
+                
+                // Calculate average energy in lower frequencies (bass/rhythm)
+                const bassRange = Math.floor(dataArray.length * 0.1);
+                let sum = 0;
+                for (let i = 0; i < bassRange; i++) {
+                    sum += dataArray[i];
+                }
+                audioEnergy = sum / bassRange / 255; // Normalize to 0-1
+            }
+
+            // Update bob phase for continuous movement
+            bobPhase += 0.05 + audioEnergy * 0.1;
+            
+            // Calculate audio-reactive offset
+            audioReactiveOffset = Math.sin(bobPhase) * (2 + audioEnergy * 3);
+
+            // Randomly change mouth expression to simulate "singing along"
+            if (Math.random() < 0.05) {
+                const mouthExpressions: Array<'smile' | 'talk-1' | 'talk-2'> = ['smile', 'talk-1', 'talk-2'];
+                const randomMouth = mouthExpressions[Math.floor(Math.random() * mouthExpressions.length)];
+                farmerStore.setExpression({ mouth: randomMouth });
+            }
+
+            // Occasionally look around while listening
+            if (Math.random() < 0.01) {
+                const directions: Array<'look-left' | 'look-right' | 'neutral'> = ['look-left', 'look-right', 'neutral'];
+                const direction = directions[Math.floor(Math.random() * directions.length)];
+                farmerStore.setExpression({ eyes: direction });
+                setTimeout(() => {
+                    farmerStore.setExpression({ eyes: 'neutral' });
+                }, 500);
+            }
+
+            listeningAnimationFrame = requestAnimationFrame(animate);
+        }
+
+        listeningAnimationFrame = requestAnimationFrame(animate);
+    }
+
+    // Stop listening animations
+    function stopListeningAnimations() {
+        if (listeningAnimationFrame !== undefined) {
+            cancelAnimationFrame(listeningAnimationFrame);
+            listeningAnimationFrame = undefined;
+        }
+        audioReactiveOffset = 0;
+        bobPhase = 0;
+    }
 
     // Idle animations
     function startIdleAnimations() {
@@ -48,13 +136,24 @@
         }
     }
 
+    // Initialize farmer-player synchronization
+    const unsubscribeSync = initializeFarmerPlayerSync();
+
     onMount(() => {
         startIdleAnimations();
+        
+        // If already playing when mounted, start listening animations
+        if (playerState?.isPlaying) {
+            startListeningAnimations();
+        }
     });
 
     onDestroy(() => {
         stopIdleAnimations();
-        unsubscribe();
+        stopListeningAnimations();
+        unsubscribeFarmer();
+        unsubscribePlayer();
+        unsubscribeSync();
     });
 
     // Get eye position based on expression
@@ -104,7 +203,7 @@
     }
 </script>
 
-<div class="farmer-container">
+<div class="farmer-container" style="transform: translateY({audioReactiveOffset}px);">
     <svg class="farmer-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
         <!-- Face -->
         <circle cx="40" cy="40" r="30" fill="#FFE0BD" stroke={getStateColor()} stroke-width="2" />

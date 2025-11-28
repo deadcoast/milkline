@@ -2,6 +2,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
 import { farmerStore } from '../stores/farmerStore';
+import { playerStore } from '../stores/playerStore';
+import { syncFarmerWithPlayer, resetSyncState } from '../stores/farmerPlayerSync';
 import { get } from 'svelte/store';
 import type { FarmerState } from '../types';
 
@@ -197,6 +199,300 @@ describe('FarmerBuddy Property Tests', () => {
                     expect(state.currentState).toBe('prompting');
                     expect(state.message).toBe(question);
                     expect(state.expression.mouth).toBe('talk-1');
+                }
+            ),
+            { numRuns: 100 }
+        );
+    });
+});
+
+describe('FarmerBuddy Playback Reaction Tests', () => {
+    beforeEach(() => {
+        farmerStore.reset();
+        playerStore.reset();
+        resetSyncState();
+    });
+
+    /**
+     * **Feature: milk-player, Property 17: farmer listening state animations**
+     * **Validates: Requirements 7.4**
+     * 
+     * For any audio playback, when farmer is in listening state, 
+     * farmer should display animations that are synchronized with audio characteristics.
+     */
+    it('Property 17: farmer listening state animations - animations synchronized with playback', () => {
+        fc.assert(
+            fc.property(
+                fc.record({
+                    trackId: fc.string({ minLength: 1, maxLength: 50 }),
+                    title: fc.string({ minLength: 1, maxLength: 100 }),
+                    artist: fc.string({ minLength: 1, maxLength: 100 }),
+                    album: fc.string({ minLength: 1, maxLength: 100 }),
+                    duration: fc.integer({ min: 1, max: 600 }),
+                }),
+                fc.boolean(), // isPlaying state
+                (trackData, isPlaying) => {
+                    // Reset stores and sync state for each iteration
+                    farmerStore.reset();
+                    playerStore.reset();
+                    resetSyncState();
+
+                    // Create a track
+                    const track = {
+                        id: trackData.trackId,
+                        title: trackData.title,
+                        artist: trackData.artist,
+                        album: trackData.album,
+                        duration: trackData.duration,
+                        filePath: '/path/to/audio.mp3',
+                        source: 'local' as const,
+                        metadata: {}
+                    };
+
+                    // Set track and playing state
+                    playerStore.setCurrentTrack(track);
+                    playerStore.setPlaying(isPlaying);
+
+                    // Sync farmer with player state
+                    const playerState = get(playerStore);
+                    syncFarmerWithPlayer(playerState);
+
+                    const farmerState = get(farmerStore);
+
+                    // Property: When audio is playing, farmer should be in listening state
+                    if (isPlaying) {
+                        expect(farmerState.currentState).toBe('listening');
+
+                        // Property: Listening state should have appropriate expression
+                        expect(farmerState.expression.mouth).toBe('smile');
+
+                        // Property: Expression should be defined and valid
+                        expect(farmerState.expression.eyes).toBeDefined();
+                        expect(['neutral', 'blink', 'look-left', 'look-right']).toContain(farmerState.expression.eyes);
+                    } else {
+                        // Property: When not playing, farmer should be in idle state
+                        expect(farmerState.currentState).toBe('idle');
+                        expect(farmerState.expression.eyes).toBe('neutral');
+                        expect(farmerState.expression.mouth).toBe('neutral');
+                    }
+                }
+            ),
+            { numRuns: 100 }
+        );
+    });
+
+    /**
+     * Property test: Track start transitions to listening
+     */
+    it('Property 17 (track start): starting playback transitions farmer to listening state', () => {
+        fc.assert(
+            fc.property(
+                fc.record({
+                    trackId: fc.string({ minLength: 1, maxLength: 50 }),
+                    title: fc.string({ minLength: 1, maxLength: 100 }),
+                    artist: fc.string({ minLength: 1, maxLength: 100 }),
+                }),
+                (trackData) => {
+                    // Start in idle state
+                    farmerStore.reset();
+                    playerStore.reset();
+                    resetSyncState();
+
+                    const initialState = get(farmerStore);
+                    expect(initialState.currentState).toBe('idle');
+
+                    // Create and play a track
+                    const track = {
+                        id: trackData.trackId,
+                        title: trackData.title,
+                        artist: trackData.artist,
+                        album: 'Test Album',
+                        duration: 180,
+                        filePath: '/path/to/audio.mp3',
+                        source: 'local' as const,
+                        metadata: {}
+                    };
+
+                    playerStore.setCurrentTrack(track);
+                    playerStore.setPlaying(true);
+
+                    // Sync farmer with player state
+                    syncFarmerWithPlayer(get(playerStore));
+
+                    const listeningState = get(farmerStore);
+
+                    // Property: Farmer should transition to listening state
+                    expect(listeningState.currentState).toBe('listening');
+                    expect(listeningState.expression.mouth).toBe('smile');
+                }
+            ),
+            { numRuns: 100 }
+        );
+    });
+
+    /**
+     * Property test: Track stop returns to idle
+     */
+    it('Property 17 (track stop): stopping playback returns farmer to idle state', () => {
+        fc.assert(
+            fc.property(
+                fc.record({
+                    trackId: fc.string({ minLength: 1, maxLength: 50 }),
+                    title: fc.string({ minLength: 1, maxLength: 100 }),
+                }),
+                (trackData) => {
+                    // Start with playing state
+                    farmerStore.reset();
+                    playerStore.reset();
+                    resetSyncState();
+
+                    const track = {
+                        id: trackData.trackId,
+                        title: trackData.title,
+                        artist: 'Test Artist',
+                        album: 'Test Album',
+                        duration: 180,
+                        filePath: '/path/to/audio.mp3',
+                        source: 'local' as const,
+                        metadata: {}
+                    };
+
+                    playerStore.setCurrentTrack(track);
+                    playerStore.setPlaying(true);
+
+                    // Sync farmer with player state
+                    syncFarmerWithPlayer(get(playerStore));
+
+                    const listeningState = get(farmerStore);
+                    expect(listeningState.currentState).toBe('listening');
+
+                    // Stop playback
+                    playerStore.setPlaying(false);
+
+                    // Sync farmer with updated player state
+                    syncFarmerWithPlayer(get(playerStore));
+
+                    const idleState = get(farmerStore);
+
+                    // Property: Farmer should return to idle state
+                    expect(idleState.currentState).toBe('idle');
+                    expect(idleState.expression.eyes).toBe('neutral');
+                    expect(idleState.expression.mouth).toBe('neutral');
+                }
+            ),
+            { numRuns: 100 }
+        );
+    });
+
+    /**
+     * Property test: Track change reaction
+     */
+    it('Property 17 (track change): changing tracks triggers reaction while maintaining listening state', async () => {
+        fc.assert(
+            fc.property(
+                fc.array(
+                    fc.record({
+                        trackId: fc.string({ minLength: 1, maxLength: 50 }),
+                        title: fc.string({ minLength: 1, maxLength: 100 }),
+                    }),
+                    { minLength: 2, maxLength: 5 }
+                ).filter(tracks => {
+                    // Ensure all tracks have unique IDs
+                    const ids = tracks.map(t => t.trackId);
+                    return new Set(ids).size === ids.length;
+                }),
+                async (tracks) => {
+                    farmerStore.reset();
+                    playerStore.reset();
+                    resetSyncState();
+
+                    // Play first track
+                    const firstTrack = {
+                        id: tracks[0].trackId,
+                        title: tracks[0].title,
+                        artist: 'Test Artist',
+                        album: 'Test Album',
+                        duration: 180,
+                        filePath: '/path/to/audio1.mp3',
+                        source: 'local' as const,
+                        metadata: {}
+                    };
+
+                    playerStore.setCurrentTrack(firstTrack);
+                    playerStore.setPlaying(true);
+
+                    // Sync farmer with player state
+                    syncFarmerWithPlayer(get(playerStore));
+
+                    const initialState = get(farmerStore);
+                    expect(initialState.currentState).toBe('listening');
+
+                    // Change to second track
+                    const secondTrack = {
+                        id: tracks[1].trackId,
+                        title: tracks[1].title,
+                        artist: 'Test Artist',
+                        album: 'Test Album',
+                        duration: 180,
+                        filePath: '/path/to/audio2.mp3',
+                        source: 'local' as const,
+                        metadata: {}
+                    };
+
+                    playerStore.setCurrentTrack(secondTrack);
+                    // Keep playing state true
+
+                    // Sync farmer with updated player state (track changed)
+                    syncFarmerWithPlayer(get(playerStore));
+
+                    // Wait a moment for reaction animation
+                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                    const afterChangeState = get(farmerStore);
+
+                    // Property: Farmer should still be in listening state or briefly reacting
+                    // (The reaction is brief, so we might catch it in either state)
+                    expect(['listening', 'idle']).toContain(afterChangeState.currentState);
+
+                    // Wait for reaction to complete
+                    await new Promise(resolve => setTimeout(resolve, 600));
+
+                    const finalState = get(farmerStore);
+
+                    // Property: After reaction, farmer should be back in listening state
+                    expect(finalState.currentState).toBe('listening');
+                }
+            ),
+            { numRuns: 50 } // Fewer runs due to async nature
+        );
+    });
+
+    /**
+     * Property test: Expression changes during listening
+     */
+    it('Property 17 (expressions): listening state allows dynamic expression changes', () => {
+        fc.assert(
+            fc.property(
+                fc.constantFrom<'smile' | 'talk-1' | 'talk-2'>('smile', 'talk-1', 'talk-2'),
+                fc.constantFrom<'neutral' | 'look-left' | 'look-right'>('neutral', 'look-left', 'look-right'),
+                (mouthExpression, eyeExpression) => {
+                    farmerStore.reset();
+                    playerStore.reset();
+
+                    // Set to listening state
+                    farmerStore.transition('listening');
+
+                    // Change expression
+                    farmerStore.setExpression({ mouth: mouthExpression, eyes: eyeExpression });
+
+                    const state = get(farmerStore);
+
+                    // Property: State should remain listening
+                    expect(state.currentState).toBe('listening');
+
+                    // Property: Expression should be updated
+                    expect(state.expression.mouth).toBe(mouthExpression);
+                    expect(state.expression.eyes).toBe(eyeExpression);
                 }
             ),
             { numRuns: 100 }

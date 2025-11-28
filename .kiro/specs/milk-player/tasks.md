@@ -300,18 +300,27 @@
 
 
 
-- [ ] 12.2 Write property test for farmer state machine transitions
+- [x] 12.2 Write property test for farmer state machine transitions
+
+
+
+
+
   - **Property 16: farmer state machine transitions**
   - **Validates: Requirements 6.4, 7.1, 7.2, 7.3**
 
-- [ ] 13. Implement farmer playback event reactions
+- [-] 13. Implement farmer playback event reactions
+
+
+
   - Connect farmer to player state changes (track start, stop, pause)
   - Implement listening state animations synchronized with audio
   - Add track change reaction animations
   - Create visualizer-reactive movements for farmer
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-- [ ] 13.1 Write property test for farmer listening state animations
+- [-] 13.1 Write property test for farmer listening state animations
+
   - **Property 17: farmer listening state animations**
   - **Validates: Requirements 7.4**
 
