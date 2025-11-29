@@ -5,6 +5,7 @@ mod metadata;
 mod playlist;
 mod skin;
 mod spotify;
+mod youtube;
 
 use config::{Config, ConfigManager, FileConfigManager};
 use secure_storage::{PlatformSecureStorage, SecureStorage};
@@ -13,6 +14,7 @@ use metadata::{MetadataExtractor, TrackMetadata};
 use playlist::{PlaylistManager, Playlist, Track as PlaylistTrack};
 use skin::{SkinParser, ParsedSkin};
 use spotify::{SpotifyBridge, StreamingService, Credentials, Token, TrackMetadata as SpotifyTrackMetadata};
+use youtube::YouTubeBridge;
 use std::sync::{OnceLock, Mutex};
 
 // Global metadata extractor instance
@@ -36,6 +38,13 @@ static SPOTIFY_BRIDGE: OnceLock<SpotifyBridge> = OnceLock::new();
 
 fn get_spotify_bridge() -> &'static SpotifyBridge {
     SPOTIFY_BRIDGE.get_or_init(|| SpotifyBridge::new())
+}
+
+// Global YouTube bridge instance
+static YOUTUBE_BRIDGE: OnceLock<YouTubeBridge> = OnceLock::new();
+
+fn get_youtube_bridge() -> &'static YouTubeBridge {
+    YOUTUBE_BRIDGE.get_or_init(|| YouTubeBridge::new())
 }
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -228,6 +237,48 @@ async fn spotify_refresh_token(credentials: Credentials) -> Result<Token, String
     bridge.refresh_token(credentials).await.map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+async fn youtube_authenticate(credentials: Credentials, auth_code: String) -> Result<Token, String> {
+    let bridge = get_youtube_bridge();
+    bridge.authenticate(credentials, auth_code).await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn youtube_get_now_playing() -> Result<Option<SpotifyTrackMetadata>, String> {
+    let bridge = get_youtube_bridge();
+    bridge.get_now_playing().await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn youtube_refresh_token(credentials: Credentials) -> Result<Token, String> {
+    let bridge = get_youtube_bridge();
+    bridge.refresh_token(credentials).await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn youtube_store_api_key(api_key: String) -> Result<(), String> {
+    let bridge = get_youtube_bridge();
+    bridge.store_api_key(&api_key).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn youtube_get_api_key() -> Result<Option<String>, String> {
+    let bridge = get_youtube_bridge();
+    bridge.get_api_key().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn youtube_validate_api_key(api_key: String) -> Result<bool, String> {
+    let bridge = get_youtube_bridge();
+    bridge.validate_api_key(&api_key).await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn youtube_get_video_metadata(video_id: String) -> Result<SpotifyTrackMetadata, String> {
+    let bridge = get_youtube_bridge();
+    bridge.get_video_metadata(&video_id).await.map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -254,7 +305,14 @@ pub fn run() {
             apply_skin,
             spotify_authenticate,
             spotify_get_now_playing,
-            spotify_refresh_token
+            spotify_refresh_token,
+            youtube_authenticate,
+            youtube_get_now_playing,
+            youtube_refresh_token,
+            youtube_store_api_key,
+            youtube_get_api_key,
+            youtube_validate_api_key,
+            youtube_get_video_metadata
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
