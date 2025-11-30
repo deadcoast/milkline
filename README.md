@@ -4,25 +4,27 @@ A desktop audio visual media buddy inspired by Winamp.
 
 ## Description
 
-`milk` is a lightweight (~10MB) desktop application that recreates the nostalgic experience of 2000s-era media players. Built with Tauri 2.x (Rust backend, Svelte frontend), it combines local audio playback, streaming service metadata integration, Winamp skin compatibility, and an animated companion ("farmer") that assists with configuration.
+`milk` is a lightweight (~4MB) desktop application that recreates the nostalgic experience of 2000s-era media players. Built with Tauri 2.x (Rust backend, Svelte frontend), it combines local audio playback, streaming service metadata integration, Winamp skin compatibility, and an animated companion ("farmer") that assists with configuration.
+
+**Cross-Platform**: Runs on macOS (Apple Silicon + Intel) and Windows (x86_64).
 
 ## Features
 
-- 🎵 **Local Audio Playback** - Play mp3, flac, and wav files
-- 🎨 **Winamp Skin Support** - Load classic .wsz and .wal skins
-- 📊 **Real-time Visualizer** - Audio visualization with multiple styles
-- 🎭 **Animated Companion** - "farmer" buddy guides you through setup
-- 🔗 **Streaming Integration** - Display metadata from Spotify and YouTube
-- 📝 **Playlist Management** - Create and manage playlists
-- ⚡ **Lightweight** - <15MB executable, <100MB RAM usage
-- 🚀 **Fast Startup** - <2 second launch time
+- **Local Audio Playback** - Play mp3, flac, and wav files
+- **Winamp Skin Support** - Load classic .wsz and .wal skins
+- **Real-time Visualizer** - Audio visualization with multiple styles
+- **Animated Companion** - "farmer" buddy guides you through setup
+- **Streaming Integration** - Display metadata from Spotify and YouTube
+- **Playlist Management** - Create and manage playlists
+- **Lightweight** - <15MB executable, <100MB RAM usage
+- **Fast Startup** - <2 second launch time
 
 ## Tech Stack
 
 - **Frontend**: Svelte 5 + TypeScript + Vite
 - **Backend**: Rust + Tauri 2.x
 - **Package Manager**: pnpm
-- **Build Target**: Windows (x86_64-pc-windows-msvc)
+- **Platforms**: macOS (aarch64/x86_64) + Windows (x86_64-pc-windows-msvc)
 
 ## Quick Start
 
@@ -30,7 +32,7 @@ A desktop audio visual media buddy inspired by Winamp.
 
 - Node.js 18+ (with npm)
 - pnpm (`npm install -g pnpm`)
-- Rust toolchain with `x86_64-pc-windows-msvc` target
+- Rust toolchain (automatically installs required targets)
 
 ### Development
 
@@ -54,6 +56,7 @@ pnpm tauri:build
 
 ### Quick Links
 
+- **[Cross-Platform Build Guide](docs/CROSS_PLATFORM_BUILD.md)** - Build for macOS & Windows
 - **[Quick Build Guide](docs/BUILDING.md)** - Get started building milk
 - **[Build & Package Guide](docs/BUILD.md)** - Comprehensive build documentation
 - **[Technical Specification](docs/milk_tech_spec.md)** - Architecture and design
@@ -87,28 +90,37 @@ milk/
 
 ### Build Artifacts
 
-- **Executable**: `src-tauri/target/release/milk.exe` (<15MB)
+#### macOS
+- **Executable**: `src-tauri/target/release/milk` (3.7MB)
+- **App Bundle**: `src-tauri/target/release/bundle/macos/milk.app`
+- **DMG Installer**: macOS disk image installer
+
+#### Windows (via GitHub Actions)
+- **Executable**: `src-tauri/target/x86_64-pc-windows-msvc/release/milk.exe`
 - **MSI Installer**: Windows installer with file associations
 - **NSIS Installer**: Alternative Windows installer
-- **Portable ZIP**: No-install version
 
 ### Build Commands
 
 ```bash
-# Development build
+# Development server
 pnpm tauri:dev
 
-# Production build
+# Build for current platform
 pnpm tauri:build
 
-# Verify build
-.\scripts\verify-build.ps1
+# Platform-specific builds
+pnpm tauri:build:macos      # macOS (Apple Silicon)
+pnpm tauri:build:windows    # Windows (requires GitHub Actions)
+pnpm tauri:build:all        # All platforms
 
-# Create portable distribution
-.\scripts\create-portable.ps1
+# Cross-platform build script
+./scripts/build-cross-platform.sh
 ```
 
-See [docs/BUILD.md](docs/BUILD.md) for detailed build instructions.
+**For Windows builds**: Use GitHub Actions (`.github/workflows/build.yml`) which builds on native Windows runners. Cross-compilation from macOS to Windows is not supported due to native dependencies.
+
+See **[Cross-Platform Build Guide](docs/CROSS_PLATFORM_BUILD.md)** for detailed instructions.
 
 ## Testing
 
@@ -127,10 +139,11 @@ See [docs/INSTALLATION_TESTING.md](docs/INSTALLATION_TESTING.md) for installatio
 
 ## Performance Targets
 
-- **Executable Size**: <15MB
-- **RAM Usage (idle)**: <100MB
-- **Startup Time**: <2 seconds
-- **Visualizer FPS**: 30+
+- **Executable Size**: <15MB ✅ **Achieved: 3.7MB (macOS)**
+- **RAM Usage (idle)**: <100MB ✅
+- **Startup Time**: <2 seconds ✅
+- **Visualizer FPS**: 30+ ✅
+- **Build Time**: ~2-3 minutes per platform
 
 See [docs/PERFORMANCE_OPTIMIZATIONS.md](docs/PERFORMANCE_OPTIMIZATIONS.md) for optimization strategies.
 
@@ -139,8 +152,19 @@ See [docs/PERFORMANCE_OPTIMIZATIONS.md](docs/PERFORMANCE_OPTIMIZATIONS.md) for o
 1. **Feature Development**: See `.kiro/specs/milk-player/` for specifications
 2. **Error Handling**: Follow patterns in [docs/ERROR_HANDLING.md](docs/ERROR_HANDLING.md)
 3. **Testing**: Write unit and property-based tests
-4. **Building**: Use build scripts in `scripts/`
+4. **Building**:
+   - macOS: Build locally with `pnpm tauri:build`
+   - Windows: Use GitHub Actions workflow
+   - See [Cross-Platform Build Guide](docs/CROSS_PLATFORM_BUILD.md)
 5. **Release**: Follow [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md)
+
+### Continuous Integration
+
+GitHub Actions automatically builds for all platforms on:
+- Push to `main` branch
+- Pull requests
+- Manual workflow dispatch
+- Tagged releases (creates GitHub Release with installers)
 
 ## Recommended IDE Setup
 

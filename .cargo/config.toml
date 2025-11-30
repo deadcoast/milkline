@@ -1,0 +1,9 @@
+[target.x86_64-pc-windows-msvc]
+linker = "cargo-xwin"
+runner = "wine64"
+
+[target.x86_64-apple-darwin]
+rustflags = ["-C", "link-arg=-Wl,-rpath,@loader_path"]
+
+[target.aarch64-apple-darwin]
+rustflags = ["-C", "link-arg=-Wl,-rpath,@loader_path"]

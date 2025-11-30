@@ -1,7 +1,7 @@
 # Quick Build Guide
 
-> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
-> 📖 **Detailed Guide**: See [BUILD.md](BUILD.md) for comprehensive build documentation
+> **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> **Detailed Guide**: See [BUILD.md](BUILD.md) for comprehensive build documentation
 
 ## Prerequisites
 

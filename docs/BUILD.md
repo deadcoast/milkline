@@ -2,8 +2,8 @@
 
 This document describes how to build and package the milk application for distribution.
 
-> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
-> ⚡ **Quick Start**: See [BUILDING.md](BUILDING.md) for a quick reference guide
+> **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> **Quick Start**: See [BUILDING.md](BUILDING.md) for a quick reference guide
 
 ## Prerequisites
 

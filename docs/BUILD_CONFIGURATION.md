@@ -2,8 +2,8 @@
 
 This document summarizes the build and packaging configuration for milk.
 
-> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
-> 📖 **Build Guide**: See [BUILD.md](BUILD.md) for build instructions
+> **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> **Build Guide**: See [BUILD.md](BUILD.md) for build instructions
 
 ## Configuration Files
 

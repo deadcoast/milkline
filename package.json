@@ -15,7 +15,10 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    "tauri:build:debug": "tauri build --debug"
+    "tauri:build:debug": "tauri build --debug",
+    "tauri:build:macos": "tauri build --target aarch64-apple-darwin",
+    "tauri:build:windows": "tauri build --target x86_64-pc-windows-msvc",
+    "tauri:build:all": "pnpm tauri:build:macos && pnpm tauri:build:windows"
   },
   "license": "MIT",
   "dependencies": {

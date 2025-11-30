@@ -270,13 +270,13 @@
   <!-- Hidden audio element -->
   <audio
     bind:this={audioElement}
-    on:loadedmetadata={handleLoadedMetadata}
-    on:play={handlePlay}
-    on:pause={handlePause}
-    on:ended={handleEnded}
-    on:timeupdate={handleTimeUpdate}
-    on:error={handleError}
-  />
+    onloadedmetadata={handleLoadedMetadata}
+    onplay={handlePlay}
+    onpause={handlePause}
+    onended={handleEnded}
+    ontimeupdate={handleTimeUpdate}
+    onerror={handleError}
+  ></audio>
 
   <!-- Track info display -->
   <div class="track-info">
@@ -305,25 +305,25 @@
 
   <!-- Playback controls -->
   <div class="controls">
-    <button class="control-btn" on:click={previous} title="Previous">
+    <button class="control-btn" onclick={previous} title="Previous">
       <span class="icon">⏮</span>
     </button>
-    
+
     {#if isPlaying}
-      <button class="control-btn play-pause" on:click={pause} title="Pause">
+      <button class="control-btn play-pause" onclick={pause} title="Pause">
         <span class="icon">⏸</span>
       </button>
     {:else}
-      <button class="control-btn play-pause" on:click={() => play()} title="Play">
+      <button class="control-btn play-pause" onclick={() => play()} title="Play">
         <span class="icon">▶</span>
       </button>
     {/if}
-    
-    <button class="control-btn" on:click={stop} title="Stop">
+
+    <button class="control-btn" onclick={stop} title="Stop">
       <span class="icon">⏹</span>
     </button>
-    
-    <button class="control-btn" on:click={next} title="Next">
+
+    <button class="control-btn" onclick={next} title="Next">
       <span class="icon">⏭</span>
     </button>
   </div>
@@ -331,10 +331,10 @@
   <!-- Position bar -->
   <div class="position-section">
     <span class="time-display">{formatTime(position)}</span>
-    <div 
-      class="seek-bar" 
+    <div
+      class="seek-bar"
       bind:this={seekBarElement}
-      on:click={handleSeekBarClick}
+      onclick={handleSeekBarClick}
       role="slider"
       tabindex="0"
       aria-label="Seek position"
@@ -356,7 +356,7 @@
       max="1"
       step="0.01"
       value={volume}
-      on:input={(e) => setVolume(parseFloat(e.currentTarget.value))}
+      oninput={(e) => setVolume(parseFloat(e.currentTarget.value))}
       class="volume-slider"
       aria-label="Volume"
     />

@@ -303,7 +303,7 @@
     {width}
     {height}
     class="visualizer-canvas"
-  />
+  ></canvas>
 </div>
 
 <style>
