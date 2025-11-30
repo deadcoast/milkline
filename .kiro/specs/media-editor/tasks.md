@@ -112,8 +112,8 @@
     - **Property 8: Coordinate scaling is invertible**
     - **Validates: Requirements 1.4, 2.4, 6.3**
 
-- [ ] 7. Create media editor Svelte store
-  - [ ] 7.1 Create mediaEditor store
+- [x] 7. Create media editor Svelte store
+  - [x] 7.1 Create mediaEditor store
     - Define MediaEditorState interface
     - Create writable store with initial state
     - Implement `loadMedia` action to set file path and type
@@ -123,13 +123,13 @@
     - Implement `reset` action
     - _Requirements: 1.3, 2.3, 3.2, 3.3_
   
-  - [ ] 7.2 Write unit tests for store
+  - [x] 7.2 Write unit tests for store
     - Test state updates for each action
     - Test reset clears all state
     - _Requirements: 1.3, 2.3_
 
-- [ ] 8. Implement CropOverlay Svelte component
-  - [ ] 8.1 Create CropOverlay component
+- [x] 8. Implement CropOverlay Svelte component
+  - [x] 8.1 Create CropOverlay component
     - Accept sourceWidth, sourceHeight, previewWidth, previewHeight props
     - Implement mouse down, move, up event handlers
     - Draw crop rectangle using SVG overlay
@@ -137,13 +137,13 @@
     - Implement clear method
     - _Requirements: 1.2, 1.3, 2.2, 2.3, 6.2, 6.3_
   
-  - [ ] 8.2 Write component tests for CropOverlay
+  - [x] 8.2 Write component tests for CropOverlay
     - Test mouse drag creates rectangle
     - Test rectangle persists after mouse release
     - Test clear removes rectangle
     - _Requirements: 1.2, 1.3, 6.5_
   
-  - [ ] 8.3 Write property test for crop normalization
+  - [x] 8.3 Write property test for crop normalization
     - **Property 5: Crop rectangle normalization is consistent**
     - **Validates: Requirements 1.2, 2.2, 6.2**
 

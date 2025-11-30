@@ -4,3 +4,4 @@ export { playlistStore } from './playlistStore';
 export { configStore } from './configStore';
 export { farmerStore } from './farmerStore';
 export { metadataCache } from './metadataCache';
+export { mediaEditorStore } from './mediaEditorStore';

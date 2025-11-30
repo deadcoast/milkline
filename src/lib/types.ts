@@ -82,3 +82,26 @@ export interface FarmerStateData {
     message: string | null;
     expression: FarmerExpression;
 }
+
+// Media Editor types
+export interface CropRect {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+export interface TrimState {
+    startSec: number;
+    endSec: number;
+    durationSec: number;
+}
+
+export interface MediaEditorState {
+    filePath: string | null;
+    mediaType: 'image' | 'video' | null;
+    crop: CropRect | null;
+    trim: TrimState | null;
+    isLoading: boolean;
+    error: string | null;
+}
