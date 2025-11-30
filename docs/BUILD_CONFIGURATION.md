@@ -2,6 +2,9 @@
 
 This document summarizes the build and packaging configuration for milk.
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> 📖 **Build Guide**: See [BUILD.md](BUILD.md) for build instructions
+
 ## Configuration Files
 
 ### Tauri Configuration (`src-tauri/tauri.conf.json`)
@@ -211,3 +214,15 @@ See `.github/workflows/build.yml.template` for automated build workflow.
 - User data is preserved during uninstallation
 - File associations are registered during installation
 - Portable version requires no installation or admin rights
+
+## Related Documentation
+
+- **[BUILD.md](BUILD.md)** - Comprehensive build guide
+- **[BUILDING.md](BUILDING.md)** - Quick build reference
+- **[INSTALLATION_TESTING.md](INSTALLATION_TESTING.md)** - Testing procedures
+- **[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)** - Release process
+- **[Technical Specification](milk_tech_spec.md)** - Architecture and design
+
+---
+
+📚 [Back to Documentation Map](README.md)

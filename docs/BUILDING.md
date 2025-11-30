@@ -1,5 +1,8 @@
 # Quick Build Guide
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> 📖 **Detailed Guide**: See [BUILD.md](BUILD.md) for comprehensive build documentation
+
 ## Prerequisites
 
 1. **Install Rust**: https://rustup.rs/
@@ -67,4 +70,11 @@ Check `Cargo.toml` release profile settings
 
 ## More Information
 
-See [BUILD.md](BUILD.md) for detailed build and packaging documentation.
+- **[BUILD.md](BUILD.md)** - Detailed build and packaging documentation
+- **[BUILD_CONFIGURATION.md](BUILD_CONFIGURATION.md)** - Configuration reference
+- **[INSTALLATION_TESTING.md](INSTALLATION_TESTING.md)** - Testing guide
+- **[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)** - Release process
+
+---
+
+📚 [Back to Documentation Map](README.md)

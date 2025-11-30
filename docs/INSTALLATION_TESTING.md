@@ -2,6 +2,10 @@
 
 This guide describes how to test the milk installation packages.
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> 📖 **Build Guide**: See [BUILD.md](BUILD.md) for build instructions  
+> ✅ **Release Checklist**: See [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) for release process
+
 ## Prerequisites
 
 - Clean Windows 10/11 system (or VM)
@@ -389,3 +393,14 @@ ___________
 ## Automated Testing
 
 For CI/CD integration, see `.github/workflows/build.yml.template`
+
+## Related Documentation
+
+- **[BUILD.md](BUILD.md)** - Build and packaging guide
+- **[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)** - Release process checklist
+- **[BUILD_CONFIGURATION.md](BUILD_CONFIGURATION.md)** - Configuration reference
+- **[PERFORMANCE_OPTIMIZATIONS.md](PERFORMANCE_OPTIMIZATIONS.md)** - Performance testing
+
+---
+
+📚 [Back to Documentation Map](README.md)

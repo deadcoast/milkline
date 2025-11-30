@@ -1,5 +1,9 @@
 # Performance Optimizations - Task 18
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> 📖 **Technical Spec**: See [milk_tech_spec.md](milk_tech_spec.md) for architecture details  
+> 🧪 **Testing**: See [INSTALLATION_TESTING.md](INSTALLATION_TESTING.md) for performance testing
+
 This document summarizes the performance optimizations implemented for the milk player application.
 
 ## Optimizations Implemented
@@ -152,3 +156,14 @@ All performance optimization tasks have been successfully implemented. The appli
 - Startup time tracking and optimization
 
 The optimizations align with the design document's performance targets and should result in a responsive, lightweight application that meets the <2s startup time and <100MB memory usage requirements.
+
+## Related Documentation
+
+- **[Technical Specification](milk_tech_spec.md)** - Architecture and performance targets
+- **[BUILD.md](BUILD.md)** - Build optimizations for size
+- **[INSTALLATION_TESTING.md](INSTALLATION_TESTING.md)** - Performance testing procedures
+- **[ERROR_HANDLING.md](ERROR_HANDLING.md)** - Error handling patterns
+
+---
+
+📚 [Back to Documentation Map](README.md)

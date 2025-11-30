@@ -2,6 +2,9 @@
 
 > Companion document to `README.md` — this describes the build, not the soul.
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> 🔧 **Implementation**: See [ERROR_HANDLING.md](ERROR_HANDLING.md) and [PERFORMANCE_OPTIMIZATIONS.md](PERFORMANCE_OPTIMIZATIONS.md)
+
 ---
 
 ## Stack
@@ -203,7 +206,15 @@ Phase 2: `.wsz` parser (Winamp skin archive = renamed .zip with BMPs)
 
 > milk line audio
 
+## Related Documentation
 
-```
+- **[BUILD.md](BUILD.md)** - Build and packaging guide
+- **[ERROR_HANDLING.md](ERROR_HANDLING.md)** - Error handling implementation
+- **[PERFORMANCE_OPTIMIZATIONS.md](PERFORMANCE_OPTIMIZATIONS.md)** - Performance optimizations
+- **[INSTALLATION_TESTING.md](INSTALLATION_TESTING.md)** - Testing procedures
+
+---
+
+📚 [Back to Documentation Map](README.md)
 
 ```

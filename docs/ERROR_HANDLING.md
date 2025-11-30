@@ -1,5 +1,8 @@
 # Error Handling and Logging System
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> 📖 **Technical Spec**: See [milk_tech_spec.md](milk_tech_spec.md) for architecture details
+
 ## Overview
 
 The milk application implements comprehensive error handling and logging to ensure:
@@ -324,3 +327,14 @@ This implementation satisfies:
 - **Requirement 10.3**: Configuration corruption recovery with user notification
 
 The error handling system ensures the application remains stable and user-friendly even when things go wrong.
+
+## Related Documentation
+
+- **[Technical Specification](milk_tech_spec.md)** - Architecture and design
+- **[BUILD.md](BUILD.md)** - Build and packaging guide
+- **[INSTALLATION_TESTING.md](INSTALLATION_TESTING.md)** - Testing procedures
+- **[PERFORMANCE_OPTIMIZATIONS.md](PERFORMANCE_OPTIMIZATIONS.md)** - Performance guide
+
+---
+
+📚 [Back to Documentation Map](README.md)

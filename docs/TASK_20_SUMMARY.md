@@ -1,5 +1,9 @@
 # Task 20: Build and Package Application - Summary
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> 📖 **Build Guide**: See [BUILD.md](BUILD.md) for build instructions  
+> ✅ **Release Checklist**: See [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) for release process
+
 ## Completed Sub-Tasks
 
 ### ✅ 1. Configure Tauri build settings for Windows
@@ -276,3 +280,15 @@ To complete the build and packaging:
 - CI/CD template provided
 
 The build and packaging infrastructure is complete and ready for use.
+
+## Related Documentation
+
+- **[BUILD.md](BUILD.md)** - Comprehensive build guide
+- **[BUILDING.md](BUILDING.md)** - Quick build reference
+- **[BUILD_CONFIGURATION.md](BUILD_CONFIGURATION.md)** - Configuration details
+- **[INSTALLATION_TESTING.md](INSTALLATION_TESTING.md)** - Testing guide
+- **[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)** - Release process
+
+---
+
+📚 [Back to Documentation Map](README.md)

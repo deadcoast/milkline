@@ -2,6 +2,9 @@
 
 This document describes how to build and package the milk application for distribution.
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> ⚡ **Quick Start**: See [BUILDING.md](BUILDING.md) for a quick reference guide
+
 ## Prerequisites
 
 - Node.js 18+ and pnpm
@@ -196,3 +199,16 @@ Before releasing:
 - Configuration is stored in `%APPDATA%\com.milk.player\`
 - Logs are stored in `%APPDATA%\com.milk.player\logs\`
 - User data persists across updates and reinstalls
+
+## Related Documentation
+
+- **[Quick Build Guide](BUILDING.md)** - Fast-track build instructions
+- **[Build Configuration](BUILD_CONFIGURATION.md)** - Detailed configuration reference
+- **[Installation Testing](INSTALLATION_TESTING.md)** - Testing procedures
+- **[Release Checklist](RELEASE_CHECKLIST.md)** - Release process
+- **[Error Handling](ERROR_HANDLING.md)** - Error handling guidelines
+- **[Performance Optimizations](PERFORMANCE_OPTIMIZATIONS.md)** - Performance tuning
+
+---
+
+📚 [Back to Documentation Map](README.md)

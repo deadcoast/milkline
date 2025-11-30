@@ -2,6 +2,10 @@
 
 Use this checklist before creating a new release of milk.
 
+> 📚 **Documentation Map**: See [docs/README.md](README.md) for all documentation  
+> 📖 **Build Guide**: See [BUILD.md](BUILD.md) for build instructions  
+> 🧪 **Testing Guide**: See [INSTALLATION_TESTING.md](INSTALLATION_TESTING.md) for testing procedures
+
 ## Pre-Release
 
 ### Version Updates
@@ -139,3 +143,14 @@ If critical issues are discovered:
 2. Add warning to release notes
 3. Prepare hotfix
 4. Follow this checklist for hotfix release
+
+## Related Documentation
+
+- **[BUILD.md](BUILD.md)** - Build and packaging guide
+- **[INSTALLATION_TESTING.md](INSTALLATION_TESTING.md)** - Testing procedures
+- **[BUILD_CONFIGURATION.md](BUILD_CONFIGURATION.md)** - Configuration reference
+- **[TASK_20_SUMMARY.md](TASK_20_SUMMARY.md)** - Build implementation summary
+
+---
+
+📚 [Back to Documentation Map](README.md)
