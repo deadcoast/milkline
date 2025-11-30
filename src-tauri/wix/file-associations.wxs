@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <!-- File associations for Winamp skins -->
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Component Id="FileAssociations" Guid="*">
+        <!-- .wsz file association -->
+        <ProgId Id="milk.wsz" Description="Winamp Skin (ZIP)" Icon="ProductIcon">
+          <Extension Id="wsz" ContentType="application/x-winamp-skin">
+            <Verb Id="open" Command="Open with milk" TargetFile="milk.exe" Argument='"%1"' />
+          </Extension>
+        </ProgId>
+        
+        <!-- .wal file association -->
+        <ProgId Id="milk.wal" Description="Winamp Skin (WAL)" Icon="ProductIcon">
+          <Extension Id="wal" ContentType="application/x-winamp-skin">
+            <Verb Id="open" Command="Open with milk" TargetFile="milk.exe" Argument='"%1"' />
+          </Extension>
+        </ProgId>
+      </Component>
+    </DirectoryRef>
+    
+    <ComponentGroup Id="FileAssociationComponents">
+      <ComponentRef Id="FileAssociations" />
+    </ComponentGroup>
+  </Fragment>
+</Wix>

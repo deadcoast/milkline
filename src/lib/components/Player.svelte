@@ -2,11 +2,13 @@
   import { onMount, onDestroy } from 'svelte';
   import { playerStore } from '$lib/stores';
   import type { Track } from '$lib/types';
+  import { spotifyGetNowPlaying, youtubeGetNowPlaying } from '$lib/tauri/ipc';
   import Visualizer from './Visualizer.svelte';
 
   let audioElement: HTMLAudioElement | null = null;
   let positionUpdateInterval: number | null = null;
   let visualizerComponent: any = null;
+  let streamingMetadataInterval: number | null = null;
 
   // Subscribe to player state
   let currentTrack = $derived($playerStore.currentTrack);
@@ -165,6 +167,80 @@
     }
   }
 
+  // Streaming metadata polling
+  async function pollStreamingMetadata() {
+    if (!currentTrack) return;
+
+    try {
+      if (currentTrack.source === 'spotify') {
+        const metadata = await spotifyGetNowPlaying();
+        if (metadata) {
+          updateTrackFromStreamingMetadata(metadata, 'spotify');
+        }
+      } else if (currentTrack.source === 'youtube') {
+        const metadata = await youtubeGetNowPlaying();
+        if (metadata) {
+          updateTrackFromStreamingMetadata(metadata, 'youtube');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch streaming metadata:', error);
+    }
+  }
+
+  function updateTrackFromStreamingMetadata(
+    metadata: any,
+    source: 'spotify' | 'youtube'
+  ) {
+    // Update current track with streaming metadata
+    const updatedTrack: Track = {
+      id: currentTrack?.id || `${source}-${Date.now()}`,
+      title: metadata.title,
+      artist: metadata.artist,
+      album: metadata.album,
+      duration: metadata.duration_ms / 1000, // Convert ms to seconds
+      source: source,
+      metadata: {
+        ...currentTrack?.metadata
+      }
+    };
+
+    playerStore.setCurrentTrack(updatedTrack);
+    playerStore.setDuration(updatedTrack.duration);
+    playerStore.setPlaying(metadata.is_playing);
+
+    // Update position if available
+    if (metadata.progress_ms !== undefined && metadata.progress_ms !== null) {
+      playerStore.setPosition(metadata.progress_ms / 1000);
+    }
+  }
+
+  function startStreamingMetadataPolling() {
+    if (streamingMetadataInterval === null && currentTrack && 
+        (currentTrack.source === 'spotify' || currentTrack.source === 'youtube')) {
+      // Poll every 2 seconds as per requirements
+      streamingMetadataInterval = window.setInterval(pollStreamingMetadata, 2000);
+      // Also poll immediately
+      pollStreamingMetadata();
+    }
+  }
+
+  function stopStreamingMetadataPolling() {
+    if (streamingMetadataInterval !== null) {
+      clearInterval(streamingMetadataInterval);
+      streamingMetadataInterval = null;
+    }
+  }
+
+  // Watch for track changes to start/stop streaming metadata polling
+  $effect(() => {
+    if (currentTrack && (currentTrack.source === 'spotify' || currentTrack.source === 'youtube')) {
+      startStreamingMetadataPolling();
+    } else {
+      stopStreamingMetadataPolling();
+    }
+  });
+
   // Seek bar interaction
   let seekBarElement: HTMLDivElement | null = null;
   function handleSeekBarClick(event: MouseEvent) {
@@ -186,6 +262,7 @@
 
   onDestroy(() => {
     stopPositionTracking();
+    stopStreamingMetadataPolling();
   });
 </script>
 
@@ -204,7 +281,21 @@
   <!-- Track info display -->
   <div class="track-info">
     {#if currentTrack}
-      <div class="track-title">{currentTrack.title}</div>
+      <div class="track-header">
+        <div class="track-title">{currentTrack.title}</div>
+        <div class="source-indicator source-{currentTrack.source}">
+          {#if currentTrack.source === 'spotify'}
+            <span class="source-icon">♫</span>
+            <span class="source-label">Spotify</span>
+          {:else if currentTrack.source === 'youtube'}
+            <span class="source-icon">▶</span>
+            <span class="source-label">YouTube</span>
+          {:else}
+            <span class="source-icon">🎵</span>
+            <span class="source-label">Local</span>
+          {/if}
+        </div>
+      </div>
       <div class="track-artist">{currentTrack.artist}</div>
       <div class="track-album">{currentTrack.album}</div>
     {:else}
@@ -284,6 +375,7 @@
     style="bars"
     width={600}
     height={150}
+    useSystemAudio={currentTrack?.source === 'spotify' || currentTrack?.source === 'youtube'}
   />
 </div>
 
@@ -305,12 +397,59 @@
     min-height: 60px;
   }
 
+  .track-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
   .track-title {
     font-size: 16px;
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    flex: 1;
+  }
+
+  .source-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .source-indicator.source-local {
+    background-color: rgba(100, 100, 255, 0.2);
+    color: #8888ff;
+    border: 1px solid rgba(100, 100, 255, 0.4);
+  }
+
+  .source-indicator.source-spotify {
+    background-color: rgba(30, 215, 96, 0.2);
+    color: #1ed760;
+    border: 1px solid rgba(30, 215, 96, 0.4);
+  }
+
+  .source-indicator.source-youtube {
+    background-color: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+    border: 1px solid rgba(255, 0, 0, 0.4);
+  }
+
+  .source-icon {
+    font-size: 12px;
+  }
+
+  .source-label {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .track-artist,

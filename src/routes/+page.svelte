@@ -1,15 +1,26 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { playerStore, playlistStore, configStore } from '$lib/stores';
-  import { loadConfig } from '$lib/tauri';
+  import { loadConfig, isFirstRun } from '$lib/tauri';
   import Player from '$lib/components/Player.svelte';
+  import SetupWizard from '$lib/components/SetupWizard.svelte';
   import '$lib/styles/global.css';
 
   let initialized = $state(false);
   let error = $state<string | null>(null);
+  let showSetup = $state(false);
 
   onMount(async () => {
     try {
+      // Check if this is the first run
+      const firstRun = await isFirstRun();
+      
+      if (firstRun) {
+        showSetup = true;
+        initialized = true;
+        return;
+      }
+
       // Load configuration on app startup
       const config = await loadConfig();
       configStore.setConfig(config);
@@ -25,10 +36,23 @@
       initialized = true;
     }
   });
+
+  function handleSetupComplete() {
+    showSetup = false;
+    // Reload config after setup
+    loadConfig().then(config => {
+      configStore.setConfig(config);
+      playerStore.setVolume(config.volume);
+    }).catch(err => {
+      console.error('Failed to load config after setup:', err);
+    });
+  }
 </script>
 
 <div class="app-container">
-  {#if !initialized}
+  {#if showSetup}
+    <SetupWizard onComplete={handleSetupComplete} />
+  {:else if !initialized}
     <div class="loading">
       <p>Loading milk player...</p>
     </div>
@@ -37,28 +61,28 @@
       <p>Failed to load configuration: {error}</p>
       <p>Using default settings...</p>
     </div>
+  {:else}
+    <main class="main-layout">
+      <div class="player-section">
+        <Player />
+      </div>
+      
+      <div class="playlist-section">
+        <!-- Playlist component will go here -->
+        <div class="placeholder">Playlist</div>
+      </div>
+      
+      <div class="visualizer-section">
+        <!-- Visualizer component will go here -->
+        <div class="placeholder">Visualizer</div>
+      </div>
+      
+      <div class="farmer-section">
+        <!-- Farmer buddy component will go here -->
+        <div class="placeholder">Farmer</div>
+      </div>
+    </main>
   {/if}
-  
-  <main class="main-layout">
-    <div class="player-section">
-      <Player />
-    </div>
-    
-    <div class="playlist-section">
-      <!-- Playlist component will go here -->
-      <div class="placeholder">Playlist</div>
-    </div>
-    
-    <div class="visualizer-section">
-      <!-- Visualizer component will go here -->
-      <div class="placeholder">Visualizer</div>
-    </div>
-    
-    <div class="farmer-section">
-      <!-- Farmer buddy component will go here -->
-      <div class="placeholder">Farmer</div>
-    </div>
-  </main>
 </div>
 
 <style>

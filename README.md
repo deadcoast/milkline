@@ -28,11 +28,13 @@ A desktop audio visual media buddy inspired by Winamp.
 pnpm install
 
 # Run development server
-pnpm tauri dev
+pnpm tauri:dev
 
 # Build for production
-pnpm tauri build
+pnpm tauri:build
 ```
+
+For detailed build and packaging instructions, see [BUILDING.md](BUILDING.md) and [BUILD.md](BUILD.md).
 
 ## Project Structure
 

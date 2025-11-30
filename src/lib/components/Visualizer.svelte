@@ -6,12 +6,14 @@
     audioElement = $bindable(null),
     style = $bindable('bars' as 'bars' | 'waveform' | 'spectrum'),
     width = 800,
-    height = 200
+    height = 200,
+    useSystemAudio = false
   }: {
     audioElement?: HTMLAudioElement | null;
     style?: 'bars' | 'waveform' | 'spectrum';
     width?: number;
     height?: number;
+    useSystemAudio?: boolean;
   } = $props();
 
   // Canvas and Web Audio API
@@ -22,14 +24,18 @@
   let sourceNode: MediaElementAudioSourceNode | null = null;
   let animationFrameId: number | null = null;
   let isActive = false;
+  let isWindowFocused = true;
+  let lastFrameTime = 0;
+  const TARGET_FPS = 30;
+  const FRAME_INTERVAL = 1000 / TARGET_FPS;
 
   // FFT configuration
   const FFT_SIZE = 2048;
   const SMOOTHING = 0.8;
 
   // Initialize Web Audio API
-  function initializeAudioContext() {
-    if (!audioElement || audioContext) return;
+  async function initializeAudioContext() {
+    if (audioContext) return;
 
     try {
       audioContext = new AudioContext();
@@ -37,10 +43,30 @@
       analyzerNode.fftSize = FFT_SIZE;
       analyzerNode.smoothingTimeConstant = SMOOTHING;
 
-      // Create source node from audio element
-      sourceNode = audioContext.createMediaElementSource(audioElement);
-      sourceNode.connect(analyzerNode);
-      analyzerNode.connect(audioContext.destination);
+      if (useSystemAudio) {
+        // For streaming services, try to capture system audio
+        // Note: This requires user permission and may not work in all browsers
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            audio: {
+              echoCancellation: false,
+              noiseSuppression: false,
+              autoGainControl: false
+            } 
+          });
+          const micSource = audioContext.createMediaStreamSource(stream);
+          micSource.connect(analyzerNode);
+          // Don't connect to destination to avoid feedback
+        } catch (err) {
+          console.warn('System audio capture not available, using silent visualization:', err);
+          // Fall back to silent mode - visualizer will show but won't have data
+        }
+      } else if (audioElement) {
+        // For local playback, use audio element
+        sourceNode = audioContext.createMediaElementSource(audioElement);
+        sourceNode.connect(analyzerNode);
+        analyzerNode.connect(audioContext.destination);
+      }
 
       isActive = true;
     } catch (error) {
@@ -49,22 +75,23 @@
   }
 
   // Start visualization
-  export function start() {
-    if (!audioElement || !canvasElement) return;
+  export async function start() {
+    if (!canvasElement) return;
+    if (!useSystemAudio && !audioElement) return;
 
     // Initialize audio context if not already done
     if (!audioContext) {
-      initializeAudioContext();
+      await initializeAudioContext();
     }
 
     // Resume audio context if suspended
     if (audioContext && audioContext.state === 'suspended') {
-      audioContext.resume();
+      await audioContext.resume();
     }
 
     // Start rendering loop
     if (!animationFrameId) {
-      render();
+      render(0);
     }
   }
 
@@ -89,11 +116,30 @@
     style = newStyle;
   }
 
-  // Rendering loop
-  function render() {
+  // Rendering loop with throttling
+  function render(timestamp: number = 0) {
     if (!analyzerNode || !canvasContext) return;
 
     animationFrameId = requestAnimationFrame(render);
+
+    // Throttle rendering based on window focus
+    if (lastFrameTime > 0) {
+      const elapsed = timestamp - lastFrameTime;
+      
+      if (!isWindowFocused) {
+        // Reduce frame rate to 10 FPS when not focused
+        if (elapsed < 100) { // 100ms = 10 FPS
+          return;
+        }
+      } else {
+        // Throttle to target FPS when focused
+        if (elapsed < FRAME_INTERVAL) {
+          return;
+        }
+      }
+    }
+
+    lastFrameTime = timestamp;
 
     // Get frequency or time domain data based on style
     if (style === 'waveform') {
@@ -207,6 +253,22 @@
     if (canvasElement) {
       canvasContext = canvasElement.getContext('2d');
     }
+
+    // Listen for window focus/blur events to optimize rendering
+    const handleFocus = () => {
+      isWindowFocused = true;
+    };
+    const handleBlur = () => {
+      isWindowFocused = false;
+    };
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);
+    };
   });
 
   onDestroy(() => {

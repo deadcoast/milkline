@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
-use std::fs;
 use std::path::PathBuf;
 use thiserror::Error;
+use tokio::fs;
 
 #[derive(Debug, Error)]
 pub enum PlaylistError {
@@ -49,12 +49,12 @@ pub struct PlaylistManager {
 }
 
 impl PlaylistManager {
-    pub fn new() -> Result<Self, PlaylistError> {
+    pub async fn new() -> Result<Self, PlaylistError> {
         let playlists_dir = Self::get_playlists_directory()?;
         
-        // Create directory if it doesn't exist
+        // Create directory if it doesn't exist (async)
         if !playlists_dir.exists() {
-            fs::create_dir_all(&playlists_dir)?;
+            fs::create_dir_all(&playlists_dir).await?;
         }
         
         Ok(Self { playlists_dir })
@@ -74,7 +74,10 @@ impl PlaylistManager {
         self.playlists_dir.join(format!("{}.json", playlist_id))
     }
 
-    pub fn create_playlist(&self, name: String) -> Result<Playlist, PlaylistError> {
+    pub async fn create_playlist(&self, name: String) -> Result<Playlist, PlaylistError> {
+        #[cfg(not(test))]
+        crate::performance::record_playlist_operation();
+        
         let now = chrono::Utc::now();
         let playlist = Playlist {
             id: uuid::Uuid::new_v4().to_string(),
@@ -84,42 +87,43 @@ impl PlaylistManager {
             modified_at: now,
         };
         
-        self.save_playlist(&playlist)?;
+        self.save_playlist(&playlist).await?;
         Ok(playlist)
     }
 
-    pub fn save_playlist(&self, playlist: &Playlist) -> Result<(), PlaylistError> {
+    pub async fn save_playlist(&self, playlist: &Playlist) -> Result<(), PlaylistError> {
         let path = self.get_playlist_path(&playlist.id);
         let json = serde_json::to_string_pretty(playlist)?;
-        fs::write(path, json)?;
+        fs::write(path, json).await?;
         Ok(())
     }
 
-    pub fn load_playlist(&self, playlist_id: &str) -> Result<Playlist, PlaylistError> {
+    pub async fn load_playlist(&self, playlist_id: &str) -> Result<Playlist, PlaylistError> {
         let path = self.get_playlist_path(playlist_id);
         
         if !path.exists() {
             return Err(PlaylistError::NotFound(playlist_id.to_string()));
         }
         
-        let json = fs::read_to_string(path)?;
+        let json = fs::read_to_string(path).await?;
         let playlist = serde_json::from_str(&json)?;
         Ok(playlist)
     }
 
-    pub fn list_playlists(&self) -> Result<Vec<Playlist>, PlaylistError> {
+    pub async fn list_playlists(&self) -> Result<Vec<Playlist>, PlaylistError> {
         let mut playlists = Vec::new();
         
         if !self.playlists_dir.exists() {
             return Ok(playlists);
         }
         
-        for entry in fs::read_dir(&self.playlists_dir)? {
-            let entry = entry?;
+        let mut entries = fs::read_dir(&self.playlists_dir).await?;
+        
+        while let Some(entry) = entries.next_entry().await? {
             let path = entry.path();
             
             if path.extension().and_then(|s| s.to_str()) == Some("json") {
-                if let Ok(json) = fs::read_to_string(&path) {
+                if let Ok(json) = fs::read_to_string(&path).await {
                     if let Ok(playlist) = serde_json::from_str::<Playlist>(&json) {
                         playlists.push(playlist);
                     }
@@ -130,35 +134,35 @@ impl PlaylistManager {
         Ok(playlists)
     }
 
-    pub fn delete_playlist(&self, playlist_id: &str) -> Result<(), PlaylistError> {
+    pub async fn delete_playlist(&self, playlist_id: &str) -> Result<(), PlaylistError> {
         let path = self.get_playlist_path(playlist_id);
         
         if !path.exists() {
             return Err(PlaylistError::NotFound(playlist_id.to_string()));
         }
         
-        fs::remove_file(path)?;
+        fs::remove_file(path).await?;
         Ok(())
     }
 
-    pub fn add_track(&self, playlist_id: &str, track: Track) -> Result<Playlist, PlaylistError> {
-        let mut playlist = self.load_playlist(playlist_id)?;
+    pub async fn add_track(&self, playlist_id: &str, track: Track) -> Result<Playlist, PlaylistError> {
+        let mut playlist = self.load_playlist(playlist_id).await?;
         playlist.tracks.push(track);
         playlist.modified_at = chrono::Utc::now();
-        self.save_playlist(&playlist)?;
+        self.save_playlist(&playlist).await?;
         Ok(playlist)
     }
 
-    pub fn remove_track(&self, playlist_id: &str, track_id: &str) -> Result<Playlist, PlaylistError> {
-        let mut playlist = self.load_playlist(playlist_id)?;
+    pub async fn remove_track(&self, playlist_id: &str, track_id: &str) -> Result<Playlist, PlaylistError> {
+        let mut playlist = self.load_playlist(playlist_id).await?;
         playlist.tracks.retain(|t| t.id != track_id);
         playlist.modified_at = chrono::Utc::now();
-        self.save_playlist(&playlist)?;
+        self.save_playlist(&playlist).await?;
         Ok(playlist)
     }
 
-    pub fn reorder_tracks(&self, playlist_id: &str, track_ids: Vec<String>) -> Result<Playlist, PlaylistError> {
-        let mut playlist = self.load_playlist(playlist_id)?;
+    pub async fn reorder_tracks(&self, playlist_id: &str, track_ids: Vec<String>) -> Result<Playlist, PlaylistError> {
+        let mut playlist = self.load_playlist(playlist_id).await?;
         
         // Create a map of track_id to track for quick lookup
         let track_map: std::collections::HashMap<String, Track> = playlist.tracks
@@ -176,19 +180,19 @@ impl PlaylistManager {
         
         playlist.tracks = new_tracks;
         playlist.modified_at = chrono::Utc::now();
-        self.save_playlist(&playlist)?;
+        self.save_playlist(&playlist).await?;
         Ok(playlist)
     }
 
-    pub fn update_playlist(&self, playlist_id: &str, name: Option<String>) -> Result<Playlist, PlaylistError> {
-        let mut playlist = self.load_playlist(playlist_id)?;
+    pub async fn update_playlist(&self, playlist_id: &str, name: Option<String>) -> Result<Playlist, PlaylistError> {
+        let mut playlist = self.load_playlist(playlist_id).await?;
         
         if let Some(new_name) = name {
             playlist.name = new_name;
         }
         
         playlist.modified_at = chrono::Utc::now();
-        self.save_playlist(&playlist)?;
+        self.save_playlist(&playlist).await?;
         Ok(playlist)
     }
 }
@@ -239,9 +243,9 @@ mod tests {
         "[A-Za-z0-9 ]{3,30}"
     }
 
-    #[test]
-    fn test_playlist_manager_creation() {
-        let manager = PlaylistManager::new();
+    #[tokio::test]
+    async fn test_playlist_manager_creation() {
+        let manager = PlaylistManager::new().await;
         assert!(manager.is_ok());
     }
 
@@ -249,21 +253,26 @@ mod tests {
     // **Validates: Requirements 9.1, 9.2, 9.5**
     // For any playlist modification (create, add track, remove track, reorder), 
     // the changes should be immediately persisted to disk and retrievable after application restart.
+    // Note: proptest doesn't support async tests directly, so we use tokio::runtime::Runtime
     proptest! {
         #[test]
         fn prop_playlist_create_persistence(name in arb_playlist_name()) {
-            let (manager, _temp_dir) = create_test_manager();
-            
-            // Create playlist
-            let playlist = manager.create_playlist(name.clone()).unwrap();
-            
-            // Load it back
-            let loaded = manager.load_playlist(&playlist.id).unwrap();
-            
-            // Verify all fields match
-            prop_assert_eq!(loaded.id, playlist.id);
-            prop_assert_eq!(loaded.name, name);
-            prop_assert_eq!(loaded.tracks.len(), 0);
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(async {
+                let (manager, _temp_dir) = create_test_manager();
+                
+                // Create playlist
+                let playlist = manager.create_playlist(name.clone()).await.unwrap();
+                
+                // Load it back
+                let loaded = manager.load_playlist(&playlist.id).await.unwrap();
+                
+                // Verify all fields match
+                prop_assert_eq!(loaded.id, playlist.id);
+                prop_assert_eq!(loaded.name, name);
+                prop_assert_eq!(loaded.tracks.len(), 0);
+                Ok(())
+            }).unwrap();
         }
 
         #[test]
@@ -271,19 +280,23 @@ mod tests {
             name in arb_playlist_name(),
             track in arb_track()
         ) {
-            let (manager, _temp_dir) = create_test_manager();
-            
-            // Create playlist and add track
-            let playlist = manager.create_playlist(name).unwrap();
-            let _updated = manager.add_track(&playlist.id, track.clone()).unwrap();
-            
-            // Load it back
-            let loaded = manager.load_playlist(&playlist.id).unwrap();
-            
-            // Verify track was persisted
-            prop_assert_eq!(loaded.tracks.len(), 1);
-            prop_assert_eq!(&loaded.tracks[0].id, &track.id);
-            prop_assert_eq!(&loaded.tracks[0].title, &track.title);
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(async {
+                let (manager, _temp_dir) = create_test_manager();
+                
+                // Create playlist and add track
+                let playlist = manager.create_playlist(name).await.unwrap();
+                let _updated = manager.add_track(&playlist.id, track.clone()).await.unwrap();
+                
+                // Load it back
+                let loaded = manager.load_playlist(&playlist.id).await.unwrap();
+                
+                // Verify track was persisted
+                prop_assert_eq!(loaded.tracks.len(), 1);
+                prop_assert_eq!(&loaded.tracks[0].id, &track.id);
+                prop_assert_eq!(&loaded.tracks[0].title, &track.title);
+                Ok(())
+            }).unwrap();
         }
 
         #[test]
@@ -291,25 +304,29 @@ mod tests {
             name in arb_playlist_name(),
             tracks in prop::collection::vec(arb_track(), 1..5)
         ) {
-            let (manager, _temp_dir) = create_test_manager();
-            
-            // Create playlist and add tracks
-            let playlist = manager.create_playlist(name).unwrap();
-            let mut current_playlist = playlist;
-            for track in &tracks {
-                current_playlist = manager.add_track(&current_playlist.id, track.clone()).unwrap();
-            }
-            
-            // Remove first track
-            let track_to_remove = tracks[0].id.clone();
-            manager.remove_track(&current_playlist.id, &track_to_remove).unwrap();
-            
-            // Load it back
-            let loaded = manager.load_playlist(&current_playlist.id).unwrap();
-            
-            // Verify track was removed and persisted
-            prop_assert_eq!(loaded.tracks.len(), tracks.len() - 1);
-            prop_assert!(!loaded.tracks.iter().any(|t| t.id == track_to_remove));
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(async {
+                let (manager, _temp_dir) = create_test_manager();
+                
+                // Create playlist and add tracks
+                let playlist = manager.create_playlist(name).await.unwrap();
+                let mut current_playlist = playlist;
+                for track in &tracks {
+                    current_playlist = manager.add_track(&current_playlist.id, track.clone()).await.unwrap();
+                }
+                
+                // Remove first track
+                let track_to_remove = tracks[0].id.clone();
+                manager.remove_track(&current_playlist.id, &track_to_remove).await.unwrap();
+                
+                // Load it back
+                let loaded = manager.load_playlist(&current_playlist.id).await.unwrap();
+                
+                // Verify track was removed and persisted
+                prop_assert_eq!(loaded.tracks.len(), tracks.len() - 1);
+                prop_assert!(!loaded.tracks.iter().any(|t| t.id == track_to_remove));
+                Ok(())
+            }).unwrap();
         }
 
         #[test]
@@ -317,27 +334,31 @@ mod tests {
             name in arb_playlist_name(),
             tracks in prop::collection::vec(arb_track(), 2..5)
         ) {
-            let (manager, _temp_dir) = create_test_manager();
-            
-            // Create playlist and add tracks
-            let playlist = manager.create_playlist(name).unwrap();
-            let mut current_playlist = playlist;
-            for track in &tracks {
-                current_playlist = manager.add_track(&current_playlist.id, track.clone()).unwrap();
-            }
-            
-            // Reverse the order
-            let mut reversed_ids: Vec<String> = tracks.iter().map(|t| t.id.clone()).collect();
-            reversed_ids.reverse();
-            
-            manager.reorder_tracks(&current_playlist.id, reversed_ids.clone()).unwrap();
-            
-            // Load it back
-            let loaded = manager.load_playlist(&current_playlist.id).unwrap();
-            
-            // Verify order was persisted
-            let loaded_ids: Vec<String> = loaded.tracks.iter().map(|t| t.id.clone()).collect();
-            prop_assert_eq!(loaded_ids, reversed_ids);
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(async {
+                let (manager, _temp_dir) = create_test_manager();
+                
+                // Create playlist and add tracks
+                let playlist = manager.create_playlist(name).await.unwrap();
+                let mut current_playlist = playlist;
+                for track in &tracks {
+                    current_playlist = manager.add_track(&current_playlist.id, track.clone()).await.unwrap();
+                }
+                
+                // Reverse the order
+                let mut reversed_ids: Vec<String> = tracks.iter().map(|t| t.id.clone()).collect();
+                reversed_ids.reverse();
+                
+                manager.reorder_tracks(&current_playlist.id, reversed_ids.clone()).await.unwrap();
+                
+                // Load it back
+                let loaded = manager.load_playlist(&current_playlist.id).await.unwrap();
+                
+                // Verify order was persisted
+                let loaded_ids: Vec<String> = loaded.tracks.iter().map(|t| t.id.clone()).collect();
+                prop_assert_eq!(loaded_ids, reversed_ids);
+                Ok(())
+            }).unwrap();
         }
 
         // **Feature: milk-player, Property 21: Track removal non-destructive**
@@ -348,51 +369,55 @@ mod tests {
             name in arb_playlist_name(),
             tracks in prop::collection::vec(arb_track(), 1..5)
         ) {
-            let (manager, temp_dir) = create_test_manager();
-            
-            // Create test audio files for tracks with file paths
-            let mut file_paths = Vec::new();
-            for (i, track) in tracks.iter().enumerate() {
-                if track.file_path.is_some() {
-                    let file_path = temp_dir.path().join(format!("test_audio_{}.mp3", i));
-                    std::fs::write(&file_path, b"fake audio data").unwrap();
-                    file_paths.push(file_path);
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(async {
+                let (manager, temp_dir) = create_test_manager();
+                
+                // Create test audio files for tracks with file paths
+                let mut file_paths = Vec::new();
+                for (i, track) in tracks.iter().enumerate() {
+                    if track.file_path.is_some() {
+                        let file_path = temp_dir.path().join(format!("test_audio_{}.mp3", i));
+                        std::fs::write(&file_path, b"fake audio data").unwrap();
+                        file_paths.push(file_path);
+                    }
                 }
-            }
-            
-            // Create playlist and add tracks
-            let playlist = manager.create_playlist(name).unwrap();
-            let mut current_playlist = playlist;
-            
-            // Add tracks with actual file paths
-            for (i, mut track) in tracks.clone().into_iter().enumerate() {
-                if track.file_path.is_some() && i < file_paths.len() {
-                    track.file_path = Some(file_paths[i].to_string_lossy().to_string());
+                
+                // Create playlist and add tracks
+                let playlist = manager.create_playlist(name).await.unwrap();
+                let mut current_playlist = playlist;
+                
+                // Add tracks with actual file paths
+                for (i, mut track) in tracks.clone().into_iter().enumerate() {
+                    if track.file_path.is_some() && i < file_paths.len() {
+                        track.file_path = Some(file_paths[i].to_string_lossy().to_string());
+                    }
+                    current_playlist = manager.add_track(&current_playlist.id, track).await.unwrap();
                 }
-                current_playlist = manager.add_track(&current_playlist.id, track).unwrap();
-            }
-            
-            // Remove first track
-            let track_to_remove = &current_playlist.tracks[0];
-            let removed_file_path = track_to_remove.file_path.clone();
-            
-            manager.remove_track(&current_playlist.id, &track_to_remove.id).unwrap();
-            
-            // Verify the original file still exists if it had a file path
-            if let Some(path) = removed_file_path {
-                let path_buf = std::path::PathBuf::from(path);
-                if path_buf.exists() {
-                    // File should still exist
-                    prop_assert!(path_buf.exists());
-                    // File content should be unchanged
-                    let content = std::fs::read(&path_buf).unwrap();
-                    prop_assert_eq!(content, b"fake audio data");
+                
+                // Remove first track
+                let track_to_remove = &current_playlist.tracks[0];
+                let removed_file_path = track_to_remove.file_path.clone();
+                
+                manager.remove_track(&current_playlist.id, &track_to_remove.id).await.unwrap();
+                
+                // Verify the original file still exists if it had a file path
+                if let Some(path) = removed_file_path {
+                    let path_buf = std::path::PathBuf::from(path);
+                    if path_buf.exists() {
+                        // File should still exist
+                        prop_assert!(path_buf.exists());
+                        // File content should be unchanged
+                        let content = std::fs::read(&path_buf).unwrap();
+                        prop_assert_eq!(content, b"fake audio data");
+                    }
                 }
-            }
-            
-            // Verify track was removed from playlist
-            let loaded = manager.load_playlist(&current_playlist.id).unwrap();
-            prop_assert_eq!(loaded.tracks.len(), tracks.len() - 1);
+                
+                // Verify track was removed from playlist
+                let loaded = manager.load_playlist(&current_playlist.id).await.unwrap();
+                prop_assert_eq!(loaded.tracks.len(), tracks.len() - 1);
+                Ok(())
+            }).unwrap();
         }
     }
 }

@@ -94,9 +94,16 @@ impl MetadataExtractor {
         {
             let mut cache = self.cache.lock().unwrap();
             if let Some(cached) = cache.get(&path_str) {
+                // Cache hit - record for performance tracking
+                #[cfg(not(test))]
+                crate::performance::record_cache_hit();
                 return Ok(cached.clone());
             }
         }
+        
+        // Cache miss - record for performance tracking
+        #[cfg(not(test))]
+        crate::performance::record_cache_miss();
 
         // Extract metadata based on file extension
         let extension = file_path

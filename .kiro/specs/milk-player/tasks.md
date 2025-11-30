@@ -375,14 +375,14 @@
   - **Property 24: API bridge interface compliance**
   - **Validates: Requirements 11.4**
 
-- [ ] 16. Integrate streaming service metadata into UI
+- [x] 16. Integrate streaming service metadata into UI
   - Update Player component to display streaming service metadata
   - Add source indicator (local, Spotify, YouTube)
   - Implement metadata update handlers for streaming services
   - Connect visualizer to system audio capture for streaming playback
   - _Requirements: 2.2, 2.3, 2.4, 3.2, 3.3, 5.4_
 
-- [ ] 17. Implement first-run setup flow with farmer
+- [x] 17. Implement first-run setup flow with farmer
   - Detect first launch (no configuration file)
   - Trigger farmer prompting state for library path
   - Create setup wizard UI with farmer guidance
@@ -392,7 +392,7 @@
   - Save initial configuration
   - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 18. Optimize performance and resource usage
+- [x] 18. Optimize performance and resource usage
   - Implement lazy loading for playlist tracks
   - Add bounded metadata cache with LRU eviction
   - Optimize visualizer rendering (throttle when not focused)
@@ -402,7 +402,7 @@
   - Measure and optimize startup time (target <2s)
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-- [ ] 19. Add comprehensive error handling and logging
+- [x] 19. Add comprehensive error handling and logging
   - Implement error types for all error categories
   - Add graceful degradation for non-critical failures
   - Connect all error paths to farmer error state
@@ -411,7 +411,7 @@
   - Create user-friendly error messages for farmer
   - _Requirements: 6.3, 10.3_
 
-- [ ] 20. Build and package application
+- [x] 20. Build and package application
   - Configure Tauri build settings for Windows
   - Create application icon and assets
   - Build release executable (verify <15MB size)

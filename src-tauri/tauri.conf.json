@@ -29,11 +29,26 @@
   "bundle": {
     "active": true,
     "targets": [
-      "msi"
+      "msi",
+      "nsis"
     ],
+    "publisher": "milk contributors",
+    "copyright": "Copyright (c) 2024 milk contributors",
+    "category": "Audio",
+    "shortDescription": "A desktop audio visual media buddy inspired by Winamp",
+    "longDescription": "milk is a lightweight desktop audio player that combines local audio playback, streaming service metadata integration, Winamp skin compatibility, and an animated companion. Experience the nostalgic feel of 2000s-era media players with modern reliability.",
     "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "",
       "wix": {
-        "language": "en-US"
+        "language": "en-US",
+        "fragmentPaths": ["wix/file-associations.wxs"],
+        "componentRefs": ["FileAssociationComponents"]
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["English"]
       }
     },
     "icon": [

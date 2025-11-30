@@ -1,6 +1,7 @@
 // Tauri IPC client wrapper functions
 import { invoke } from '@tauri-apps/api/core';
 import type { Track, Playlist, AppConfig } from '../types';
+import { handleError } from '../utils/errorHandler';
 
 // Configuration commands
 export async function loadConfig(): Promise<AppConfig> {
@@ -9,6 +10,14 @@ export async function loadConfig(): Promise<AppConfig> {
 
 export async function saveConfig(config: AppConfig): Promise<void> {
     await invoke('save_config', { config });
+}
+
+export async function isFirstRun(): Promise<boolean> {
+    return await invoke<boolean>('is_first_run');
+}
+
+export async function validateDirectoryPath(path: string): Promise<boolean> {
+    return await invoke<boolean>('validate_directory_path', { path });
 }
 
 // Library commands
@@ -99,6 +108,10 @@ export async function spotifyGetNowPlaying(): Promise<SpotifyTrackMetadata | nul
     return await invoke<SpotifyTrackMetadata | null>('spotify_get_now_playing');
 }
 
+export async function youtubeGetNowPlaying(): Promise<SpotifyTrackMetadata | null> {
+    return await invoke<SpotifyTrackMetadata | null>('youtube_get_now_playing');
+}
+
 export async function spotifyRefreshToken(credentials: SpotifyCredentials): Promise<SpotifyToken> {
     return await invoke<SpotifyToken>('spotify_refresh_token', { credentials });
 }
@@ -123,4 +136,108 @@ export async function retrieveCredential(key: string): Promise<string | null> {
 
 export async function deleteCredential(key: string): Promise<void> {
     await invoke('delete_credential', { key });
+}
+
+
+// Error-handling wrappers for common operations
+
+/**
+ * Load config with automatic error handling
+ */
+export async function loadConfigSafe(): Promise<AppConfig | null> {
+    try {
+        return await loadConfig();
+    } catch (error) {
+        handleError(error, 'Failed to load configuration');
+        return null;
+    }
+}
+
+/**
+ * Save config with automatic error handling
+ */
+export async function saveConfigSafe(config: AppConfig): Promise<boolean> {
+    try {
+        await saveConfig(config);
+        return true;
+    } catch (error) {
+        handleError(error, 'Failed to save configuration');
+        return false;
+    }
+}
+
+/**
+ * Scan library with automatic error handling
+ */
+export async function scanLibrarySafe(path: string): Promise<Track[]> {
+    try {
+        return await scanLibrary(path);
+    } catch (error) {
+        handleError(error, 'Failed to scan library');
+        return [];
+    }
+}
+
+/**
+ * Load skin with automatic error handling and fallback
+ */
+export async function loadSkinSafe(skinPath: string): Promise<import('../types').ParsedSkin | null> {
+    try {
+        return await loadSkin(skinPath);
+    } catch (error) {
+        handleError(error, 'Failed to load skin');
+        return null;
+    }
+}
+
+/**
+ * Apply skin with automatic error handling
+ */
+export async function applySkinSafe(skinPath: string): Promise<import('../types').ParsedSkin | null> {
+    try {
+        return await applySkin(skinPath);
+    } catch (error) {
+        handleError(error, 'Failed to apply skin');
+        return null;
+    }
+}
+
+/**
+ * Create playlist with automatic error handling
+ */
+export async function createPlaylistSafe(name: string): Promise<Playlist | null> {
+    try {
+        return await createPlaylist(name);
+    } catch (error) {
+        handleError(error, 'Failed to create playlist');
+        return null;
+    }
+}
+
+/**
+ * Spotify authenticate with automatic error handling
+ */
+export async function spotifyAuthenticateSafe(credentials: SpotifyCredentials, authCode: string): Promise<SpotifyToken | null> {
+    try {
+        return await spotifyAuthenticate(credentials, authCode);
+    } catch (error) {
+        handleError(error, 'Spotify authentication failed');
+        return null;
+    }
+}
+
+/**
+ * Get Spotify now playing with automatic error handling (silent for no playback)
+ */
+export async function spotifyGetNowPlayingSafe(): Promise<SpotifyTrackMetadata | null> {
+    try {
+        return await spotifyGetNowPlaying();
+    } catch (error) {
+        // Don't show error for "no active playback" - this is expected
+        const errorMsg = String(error).toLowerCase();
+        if (!errorMsg.includes('no active playback')) {
+            handleError(error, 'Failed to get Spotify playback info');
+        }
+        return null;
+    }
 }
