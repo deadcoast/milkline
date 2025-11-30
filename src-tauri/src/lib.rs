@@ -9,6 +9,7 @@ mod youtube;
 mod performance;
 mod error;
 mod logging;
+mod media_editor;
 
 #[cfg(test)]
 mod error_tests;
@@ -25,6 +26,8 @@ use error::{MilkError, MilkResult};
 use logging::{log_error, log_warn, log_info, log_error_with_context, LoggerConfig};
 use std::sync::OnceLock;
 use performance::Timer;
+use media_editor::image_ops::crop_image_command;
+use media_editor::video_ops::{probe_video_metadata_command, trim_and_crop_video_command};
 
 // Global metadata extractor instance
 static METADATA_EXTRACTOR: OnceLock<MetadataExtractor> = OnceLock::new();
@@ -808,7 +811,10 @@ pub fn run() {
             get_cache_hit_rate,
             get_error_category,
             is_error_critical,
-            is_error_recoverable
+            is_error_recoverable,
+            crop_image_command,
+            probe_video_metadata_command,
+            trim_and_crop_video_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

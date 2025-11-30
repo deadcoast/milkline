@@ -2,13 +2,14 @@
 
 ## Overview
 
-The Media Editor is a Python desktop application built with PySide6 (Qt for Python) that provides intuitive image and video editing capabilities. The application uses a clean architecture with separation between GUI components, business logic services, and backend processing tools (Pillow for images, FFmpeg for videos).
+The Media Editor is a feature window within the milk Tauri application that provides intuitive image and video editing capabilities. It integrates with the existing Tauri + Svelte architecture, using Rust backend commands for FFmpeg video processing and image manipulation, with a Svelte frontend for the UI.
 
 The design emphasizes:
-- Unified crop overlay system shared between image and video editing
-- Service-oriented architecture for media processing
-- Configurable export settings for future extensibility
-- Clear separation of concerns between UI, services, and models
+- Integration with existing milk application architecture
+- Tauri commands for backend media processing (Rust + FFmpeg)
+- Svelte components for the editing UI
+- Reusable crop overlay component for both images and videos
+- Configurable export settings
 
 ## Architecture
 
@@ -16,207 +17,250 @@ The design emphasizes:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                     GUI Layer (PySide6)                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ MainWindow   │  │ ImageEditor  │  │ VideoEditor  │  │
-│  │              │  │   Widget     │  │   Widget     │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-│         │                  │                  │          │
-│         └──────────────────┴──────────────────┘          │
-│                            │                             │
-│                   ┌────────▼────────┐                    │
-│                   │  CropOverlay    │                    │
-│                   │    Widget       │                    │
-│                   └─────────────────┘                    │
+│              Frontend (Svelte Components)               │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
+│  │MediaEditor   │  │ ImageEditor  │  │ VideoEditor  │   │
+│  │  Window      │  │  Component   │  │  Component   │   │
+│  └──────────────┘  └──────────────┘  └──────────────┘   │
+│         │                  │                  │         │
+│         └──────────────────┴──────────────────┘         │
+│                            │                            │
+│                   ┌────────▼────────┐                   │
+│                   │  CropOverlay    │                   │
+│                   │   Component     │                   │
+│                   └─────────────────┘                   │
+└─────────────────────────────────────────────────────────┘
+                            │
+                    Tauri IPC (invoke)
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│              Backend (Rust Tauri Commands)              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
+│  │ media_editor │  │ image_ops    │  │  video_ops   │   │
+│  │   module     │  │   module     │  │   module     │   │
+│  └──────────────┘  └──────────────┘  └──────────────┘   │
 └─────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────┐
-│                    Models Layer                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ MediaState   │  │  CropState   │  │  TrimState   │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│                   Services Layer                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ImageService  │  │VideoService  │  │FFmpegService │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│              Backend Tools (External)                    │
-│         Pillow (Images)    FFmpeg (Videos)               │
+│              External Tools (System)                    │
+│         image crate (Rust)    FFmpeg (subprocess)       │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ### Directory Structure
 
 ```
-media_editor/
-  pyproject.toml
-  media_editor/
-    __init__.py
-    main.py                # Application entry point
-    
-    models/
-      __init__.py
-      media_state.py       # State containers
-      enums.py             # MediaType enum
-    
-    services/
-      __init__.py
-      image_service.py     # Image operations (Pillow)
-      video_service.py     # Video operations (FFmpeg)
-      ffmpeg_service.py    # FFmpeg command execution
-    
-    ui/
-      __init__.py
-      main_window.py       # Main application window
-      image_editor.py      # Image editing widget
-      video_editor.py      # Video editing widget
-      crop_overlay.py      # Shared crop overlay
-    
-    config/
-      __init__.py
-      defaults.py          # Default settings
-      presets.py           # Export presets
-      schema.py            # Configuration schemas
-    
-    utils/
-      __init__.py
-      paths.py             # Path utilities
-      math_utils.py        # Coordinate mapping
+milk/
+├── src/                           # Svelte frontend
+│   ├── lib/
+│   │   ├── components/
+│   │   │   ├── media-editor/     # NEW: Media editor components
+│   │   │   │   ├── MediaEditorWindow.svelte
+│   │   │   │   ├── ImageEditor.svelte
+│   │   │   │   ├── VideoEditor.svelte
+│   │   │   │   ├── CropOverlay.svelte
+│   │   │   │   └── Timeline.svelte
+│   │   ├── stores/
+│   │   │   └── mediaEditor.ts    # NEW: Media editor state
+│   │   └── utils/
+│   │       └── coordinates.ts    # NEW: Coordinate mapping
+│   └── routes/
+│       └── media-editor/         # NEW: Media editor route
+│           └── +page.svelte
+│
+├── src-tauri/                     # Rust backend
+│   └── src/
+│       ├── media_editor/         # NEW: Media editor module
+│       │   ├── mod.rs
+│       │   ├── image_ops.rs      # Image operations
+│       │   ├── video_ops.rs      # Video operations (FFmpeg)
+│       │   ├── types.rs          # Shared types
+│       │   └── config.rs         # Export configuration
+│       └── main.rs               # Register commands
+│
+└── .kiro/specs/media-editor/     # Specification files
 ```
 
 ## Components and Interfaces
 
-### Models
+### Frontend (Svelte)
 
-#### MediaState
-Central state container that tracks the current media file and editing operations.
+#### MediaEditorStore
+Svelte store that tracks the current media file and editing operations.
 
-```python
-@dataclass
-class MediaState:
-    path: Optional[Path]              # Current media file path
-    media_type: Optional[MediaType]   # IMAGE or VIDEO
-    crop: CropState                   # Crop rectangle state
-    trim: TrimState                   # Video trim state
+```typescript
+interface MediaEditorState {
+  filePath: string | null;
+  mediaType: 'image' | 'video' | null;
+  crop: CropRect | null;        // {x, y, width, height}
+  trim: TrimState | null;       // {startSec, endSec, durationSec}
+  isLoading: boolean;
+  error: string | null;
+}
 ```
 
-#### CropState
-Stores crop rectangle in source coordinates.
-
-```python
-@dataclass
-class CropState:
-    rect: Optional[Rect]  # (x, y, width, height) in source coords
-```
-
-#### TrimState
-Stores video trim points.
-
-```python
-@dataclass
-class TrimState:
-    start_sec: float      # Trim start time
-    end_sec: float        # Trim end time
-    duration_sec: float   # Total video duration
-```
-
-### Services
-
-#### ImageService
-Handles image loading and cropping using Pillow.
-
-**Interface:**
-- `load_image(path: Path) -> Image.Image`
-- `crop_image(input_path: Path, output_path: Path, rect: Rect) -> None`
-
-#### VideoService
-Handles video operations using FFmpeg.
-
-**Interface:**
-- `probe_duration(input_path: Path) -> float`
-- `probe_resolution(input_path: Path) -> tuple[int, int]`
-- `trim_and_crop_video(input_path: Path, output_path: Path, start_sec: float, end_sec: float, crop_rect: Optional[Rect]) -> None`
-
-#### FFmpegService
-Low-level FFmpeg command execution.
-
-**Interface:**
-- `run_ffmpeg(args: List[str]) -> None`
-  - Raises `FFmpegError` on non-zero exit code
-
-### UI Components
-
-#### MainWindow
-Main application window with menu bar and stacked widget for switching between editors.
+#### MediaEditorWindow.svelte
+Main component that routes between image and video editors.
 
 **Responsibilities:**
-- File menu (Open, Save As)
+- File open/save dialogs
 - Route to appropriate editor based on media type
-- Coordinate save operations
+- Coordinate save operations via Tauri commands
 
-#### CropOverlay
-Transparent overlay widget that handles crop rectangle drawing and coordinate mapping.
+#### CropOverlay.svelte
+Reusable component for drawing and managing crop rectangles.
 
-**Key Features:**
-- Mouse drag to create crop rectangle
-- Coordinate normalization (widget → preview → source)
-- Shared between image and video editors
+**Props:**
+- `sourceWidth: number` - Original media width
+- `sourceHeight: number` - Original media height
+- `previewWidth: number` - Display preview width
+- `previewHeight: number` - Display preview height
 
-**Interface:**
-- `set_source_resolution(w: int, h: int) -> None`
-- `set_preview_rect(rect: QRect) -> None`
-- `get_crop_rect_source() -> Optional[tuple[int, int, int, int]]`
-- `clear_crop() -> None`
-- `has_crop() -> bool`
+**Events:**
+- `on:cropChange` - Emits crop rectangle in source coordinates
 
-#### ImageEditorWidget
-Image preview and editing interface.
+#### ImageEditor.svelte
+Hande preview and editing interface.
 
 **Responsibilities:**
-- Display image scaled to fit widget
+- Display image scaled to fit container
 - Integrate CropOverlay
 - Calculate preview rectangle for coordinate mapping
-- Export cropped image
 
-#### VideoEditorWidget
+#### VideoEditor.svelte
 Video preview and timeline interface.
 
 **Responsibilities:**
 - Display video preview frame
-- Provide timeline sliders for trim points
+- Provide timeline controls for trim points
 - Integrate CropOverlay
-- Export trimmed and cropped video
+
+#### Timeline.svelte
+Timeline component with start/end handles.
+
+**Props:**
+- `duration: number` - Total video duration in seconds
+- `startTime: number` - Current start time
+- `endTime: number` - Current end time
+
+**Events:**
+- `on:trimChange` - Emits {startSec, endSec}
+
+### Backend (Rust Tauri Commands)
+
+#### Image Operations
+
+**Command: `crop_image`**
+```rust
+#[tauri::command]
+async fn crop_image(
+    input_path: String,
+    output_path: String,
+    crop_rect: CropRect,
+) -> Result<(), String>
+```
+
+Uses the `image` crate to load and crop images.
+
+#### Video Operations
+
+**Command: `probe_video_metadata`**
+```rust
+#[tauri::command]
+async fn probe_video_metadata(
+    path: String,
+) -> Result<VideoMetadata, String>
+
+struct VideoMetadata {
+    duration_sec: f64,
+    width: u32,
+    height: u32,
+}
+```
+
+Uses FFprobe to extract video metadata.
+
+**Command: `trim_and_crop_video`**
+```rust
+#[tauri::command]
+async fn trim_and_crop_video(
+    input_path: String,
+    output_path: String,
+    start_sec: f64,
+    end_sec: f64,
+    crop_rect: Option<CropRect>,
+    config: ExportConfig,
+) -> Result<(), String>
+```
+
+Uses FFmpeg subprocess to process video.
+
+#### Shared Types
+
+```rust
+#[derive(Serialize, Deserialize)]
+struct CropRect {
+    x: u32,
+    y: u32,
+    width: u32,
+    height: u32,
+}
+
+#[derive(Serialize, Deserialize)]
+struct ExportConfig {
+    video_codec: String,
+    audio_codec: String,
+    quality: String,
+}
+```
 
 ### Configuration
 
-#### Defaults Module
-Centralized default settings for export operations.
+#### Export Configuration (Rust)
 
-```python
-DEFAULT_VIDEO_CODEC = "libx264"
-DEFAULT_AUDIO_CODEC = "aac"
-DEFAULT_IMAGE_FORMAT = "png"
-DEFAULT_VIDEO_QUALITY = "23"  # CRF value
-```
+```rust
+// src-tauri/src/media_editor/config.rs
 
-#### Presets Module
-Named export presets for common use cases.
-
-```python
-PRESETS = {
-    "high_quality_video": {...},
-    "mobile_video": {...},
-    "png_lossless": {...},
-    "jpeg_small": {...}
+pub struct ExportDefaults {
+    pub video_codec: &'static str,
+    pub audio_codec: &'static str,
+    pub image_format: &'static str,
+    pub video_quality: &'static str,
 }
+
+pub const DEFAULT_CONFIG: ExportDefaults = ExportDefaults {
+    video_codec: "libx264",
+    audio_codec: "aac",
+    image_format: "png",
+    video_quality: "23",  // CRF value
+};
+
+pub struct ExportPreset {
+    pub name: &'static str,
+    pub video_codec: &'static str,
+    pub crf: u8,
+    pub preset: &'stattr,
+    pub audio_codec: &'static str,
+}
+
+pub const PRESETS: &[ExportPreset] = &[
+    ExportPreset {
+        name: "high_quality_video",
+        video_codec: "libx264",
+        crf: 18,
+        preset: "slow",
+        audio_codec: "aac",
+    },
+    ExportPreset {
+        name: "mobile_video",
+        video_codec: "libx265",
+        crf: 28,
+        preset: "fast",
+        audio_codec: "aac",
+    },
+];
 ```
 
 ## Data Models
@@ -351,41 +395,56 @@ All error messages should:
 
 ### Unit Testing
 
+#### Rust Backend Tests
+
 Unit tests will verify specific examples and edge cases:
 
-**Image Service Tests:**
+**Image Operations Tests (`src-tauri/src/media_editor/image_ops.rs`):**
 - Loading various image formats
 - Cropping with valid rectangles
 - Cropping at image boundaries
 - Handling invalid crop rectangles
 
-**Video Service Tests:**
+**Video Operations Tests (`src-tauri/src/media_editor/video_ops.rs`):**
 - Probing duration and resolution
 - Trimming with valid time ranges
 - Trimming at video boundaries
 - Cropping with valid rectangles
 - Combined trim and crop operations
 
-**Coordinate Mapping Tests:**
+#### Frontend Tests
+
+**Coordinate Mapping Tests (`src/lib/utils/coordinates.test.ts`):**
 - Mapping from widget to source coordinates
 - Handling different aspect ratios
 - Scaling calculations
 - Boundary clamping
 
-**UI Component Tests:**
-- Crop overlay mouse interactions
+**Component Tests:**
+- Crop overlay mouse interactions (Svelte Testing Library)
 - Timeline slider constraints
 - File dialog interactions
 - Error message display
 
 ### Property-Based Testing
 
-Property-based tests will verify universal properties across all inputs using the **Hypothesis** library for Python.
+#### Rust Property Tests
+
+Property-based tests will verify universal properties across all inputs using the **proptest** crate (already in dev-dependencies).
 
 **Configuration:**
 - Each property test SHALL run a minimum of 100 iterations
 - Each test SHALL be tagged with a comment referencing the design document property
-- Tag format: `# Feature: media-editor, Property {number}: {property_text}`
+- Tag format: `// Feature: media-editor, Property {number}: {property_text}`
+
+#### Frontend Property Tests
+
+Property-based tests using **fast-check** library (already in package.json).
+
+**Configuration:**
+- Each property test SHALL run a minimum of 100 iterations
+- Each test SHALL be tagged with a comment referencing the design document property
+- Tag format: `// Feature: media-editor, Property {number}: {property_text}`
 
 **Property Test Coverage:**
 
@@ -451,12 +510,26 @@ Tests will use:
 - **FFmpeg**: Video processing (must be installed separately and in PATH)
 - **FFprobe**: Video metadata extraction (included with FFmpeg)
 
-### Python Dependencies
+### Rust Dependencies (Cargo.toml)
 
-- **PySide6**: Qt bindings for GUI (>=6.0)
-- **Pillow**: Image processing (>=9.0)
-- **Hypothesis**: Property-based testing (>=6.0, dev dependency)
-- **pytest**: Test framework (dev dependency)
+```toml
+[dependencies]
+# Existing dependencies...
+image = "0.25"  # Already present
+tokio = { version = "1", features = ["full"] }  # Already present
+
+# No new dependencies needed - FFmpeg via subprocess
+```
+
+### Frontend Dependencies (package.json)
+
+```json
+{
+  "devDependencies": {
+    "fast-check": "^4.3.0"  // Already present for property-based testing
+  }
+}
+```
 
 ### Installation
 
@@ -464,13 +537,12 @@ Tests will use:
 # Install FFmpeg (platform-specific)
 # macOS: brew install ffmpeg
 # Linux: apt-get install ffmpeg
-# Windows: Download from ffmpeg.org
+# Windows: Download from ffmpeg.org and add to PATH
 
-# Install Python dependencies
-pip install PySide6 Pillow
+# Install frontend dependencies (already done)
+pnpm install
 
-# Install dev dependencies
-pip install pytest hypothesis
+# Rust dependencies are managed by Cargo
 ```
 
 ## Future Enhancements
