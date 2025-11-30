@@ -72,7 +72,7 @@ impl LibraryScanner {
                 // Check if file has supported extension
                 if let Some(extension) = entry_path.extension() {
                     let ext_str = extension.to_string_lossy().to_lowercase();
-                    if Self::SUPPORTED_EXTENSIONS.contains(&ext_str.as_str()) {
+                    if Self::is_supported_extension(&ext_str) {
                         // Create track from file
                         if let Some(track) = Self::create_track(&entry_path) {
                             tracks.push(track);

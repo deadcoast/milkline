@@ -135,6 +135,16 @@ impl YouTubeBridge {
         }
     }
 
+    /// Public wrapper to check if the current access token has expired
+    pub fn check_token_expired(&self) -> Result<bool, ApiError> {
+        self.is_token_expired()
+    }
+
+    /// Public wrapper to get or refresh a valid token
+    pub async fn ensure_valid_token(&self, credentials: Option<Credentials>) -> Result<String, ApiError> {
+        self.get_valid_token(credentials).await
+    }
+
     /// Parse ISO 8601 duration to milliseconds
     fn parse_duration(&self, duration: &str) -> Result<u64, ApiError> {
         // YouTube duration format: PT#H#M#S (e.g., PT4M13S, PT1H2M3S)

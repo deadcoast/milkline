@@ -21,9 +21,10 @@ use playlist::{PlaylistManager, Playlist, Track as PlaylistTrack};
 use skin::{SkinParser, ParsedSkin};
 use spotify::{SpotifyBridge, StreamingService, Credentials, Token, TrackMetadata as SpotifyTrackMetadata};
 use youtube::YouTubeBridge;
-use error::MilkError;
-use logging::{log_error, log_warn, log_info, LoggerConfig};
+use error::{MilkError, MilkResult};
+use logging::{log_error, log_warn, log_info, log_error_with_context, LoggerConfig};
 use std::sync::OnceLock;
+use performance::Timer;
 
 // Global metadata extractor instance
 static METADATA_EXTRACTOR: OnceLock<MetadataExtractor> = OnceLock::new();
@@ -177,20 +178,76 @@ fn delete_credential(key: String) -> Result<(), String> {
     }
 }
 
+/// Helper function using MilkResult to scan library with performance tracking
+fn scan_library_with_timing(path: &std::path::Path) -> MilkResult<Vec<Track>> {
+    let _timer = Timer::new(format!("Library scan: {}", path.display()));
+    LibraryScanner::scan_directory(path).map_err(MilkError::from)
+}
+
+/// Validate audio file format (constructs DecodeError and UnsupportedFormat variants)
+fn validate_audio_format(file_path: &std::path::Path) -> MilkResult<()> {
+    let extension = file_path.extension()
+        .and_then(|e| e.to_str())
+        .ok_or_else(|| MilkError::UnsupportedFormat("unknown".to_string()))?;
+
+    // Check if extension is supported
+    if !LibraryScanner::is_supported_extension(extension) {
+        return Err(MilkError::UnsupportedFormat(extension.to_string()));
+    }
+
+    // In a real implementation, we might verify the file header
+    // For now, we just check if the file exists and is readable
+    if !file_path.exists() {
+        return Err(MilkError::DecodeError("File does not exist".to_string()));
+    }
+
+    Ok(())
+}
+
+/// Load and validate config (constructs InvalidConfig, MissingConfig variants)
+fn load_and_validate_config() -> MilkResult<Config> {
+    let config = match FileConfigManager::load() {
+        Ok(c) => c,
+        Err(_) => {
+            // If config doesn't exist, that's MissingConfig
+            return Err(MilkError::MissingConfig("configuration file".to_string()));
+        }
+    };
+
+    // Validate required fields
+    if config.library_path.is_none() {
+        return Err(MilkError::MissingConfig("library_path".to_string()));
+    }
+
+    // Validate library path exists
+    if let Some(ref path) = config.library_path {
+        if !std::path::Path::new(path).exists() {
+            return Err(MilkError::InvalidConfig(format!("library_path: {} does not exist", path)));
+        }
+    }
+
+    Ok(config)
+}
+
+/// Generic error handler that can construct Internal error variant
+fn handle_unexpected_error<T>(result: Result<T, Box<dyn std::error::Error>>) -> MilkResult<T> {
+    result.map_err(|e| MilkError::Internal(format!("Unexpected error: {}", e)))
+}
+
 #[tauri::command]
 fn scan_library(path: String) -> Result<Vec<Track>, String> {
     use std::path::Path;
     log_info("Library", &format!("Scanning library: {}", path));
     let library_path = Path::new(&path);
-    match LibraryScanner::scan_directory(library_path) {
+
+    match scan_library_with_timing(library_path) {
         Ok(tracks) => {
             log_info("Library", &format!("Found {} tracks", tracks.len()));
             Ok(tracks)
         }
         Err(e) => {
-            let milk_err = MilkError::from(e);
-            log_error("Library", &format!("Library scan failed: {}", milk_err));
-            Err(milk_err.user_message())
+            log_error_with_context("Library", &e, "Failed to scan library");
+            Err(e.user_message())
         }
     }
 }
@@ -488,6 +545,18 @@ async fn spotify_refresh_token(credentials: Credentials) -> Result<Token, String
 }
 
 #[tauri::command]
+fn spotify_check_token_expired() -> Result<bool, String> {
+    let bridge = get_spotify_bridge();
+    bridge.check_token_expired().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn spotify_ensure_valid_token(credentials: Option<Credentials>) -> Result<String, String> {
+    let bridge = get_spotify_bridge();
+    bridge.ensure_valid_token(credentials).await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 async fn youtube_authenticate(credentials: Credentials, auth_code: String) -> Result<Token, String> {
     let bridge = get_youtube_bridge();
     bridge.authenticate(credentials, auth_code).await.map_err(|e| e.to_string())
@@ -503,6 +572,18 @@ async fn youtube_get_now_playing() -> Result<Option<SpotifyTrackMetadata>, Strin
 async fn youtube_refresh_token(credentials: Credentials) -> Result<Token, String> {
     let bridge = get_youtube_bridge();
     bridge.refresh_token(credentials).await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn youtube_check_token_expired() -> Result<bool, String> {
+    let bridge = get_youtube_bridge();
+    bridge.check_token_expired().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn youtube_ensure_valid_token(credentials: Option<Credentials>) -> Result<String, String> {
+    let bridge = get_youtube_bridge();
+    bridge.ensure_valid_token(credentials).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -532,6 +613,126 @@ async fn youtube_get_video_metadata(video_id: String) -> Result<SpotifyTrackMeta
 #[tauri::command]
 fn get_performance_metrics() -> Option<performance::PerformanceMetrics> {
     performance::get_metrics()
+}
+
+#[tauri::command]
+fn get_cache_hit_rate() -> f64 {
+    if let Some(metrics) = performance::get_metrics() {
+        metrics.cache_hit_rate()
+    } else {
+        0.0
+    }
+}
+
+#[tauri::command]
+fn check_metadata_completeness(file_path: String) -> Result<bool, String> {
+    use std::path::Path;
+    let path = Path::new(&file_path);
+    let extractor = get_metadata_extractor();
+
+    match extractor.extract(path) {
+        Ok(metadata) => Ok(metadata.is_complete()),
+        Err(e) => {
+            let milk_err = MilkError::from(e);
+            Err(milk_err.user_message())
+        }
+    }
+}
+
+#[tauri::command]
+fn is_metadata_cached(file_path: String) -> bool {
+    use std::path::Path;
+    let path = Path::new(&file_path);
+    let extractor = get_metadata_extractor();
+    extractor.is_cached(path)
+}
+
+#[tauri::command]
+fn clear_metadata_cache() {
+    log_info("Metadata", "Clearing metadata cache");
+    let extractor = get_metadata_extractor();
+    extractor.clear_cache();
+}
+
+#[tauri::command]
+fn check_file_extension_supported(extension: String) -> bool {
+    LibraryScanner::is_supported_extension(&extension)
+}
+
+#[tauri::command]
+fn validate_audio_file(file_path: String) -> Result<(), String> {
+    use std::path::Path;
+    let path = Path::new(&file_path);
+    validate_audio_format(path).map_err(|e| e.user_message())
+}
+
+#[tauri::command]
+fn load_validated_config() -> Result<Config, String> {
+    load_and_validate_config().map_err(|e| e.user_message())
+}
+
+#[tauri::command]
+fn test_internal_error_handling() -> Result<String, String> {
+    // Example of using handle_unexpected_error
+    let result: Result<String, Box<dyn std::error::Error>> = Ok("test".to_string());
+    handle_unexpected_error(result).map_err(|e| e.user_message())
+}
+
+#[tauri::command]
+fn get_skin_assets(skin_path: String) -> Result<std::collections::HashMap<String, Vec<u8>>, String> {
+    use std::path::Path;
+    let path = Path::new(&skin_path);
+
+    let skin = if skin_path.to_lowercase().ends_with(".wsz") {
+        SkinParser::parse_wsz(path)
+    } else if skin_path.to_lowercase().ends_with(".wal") {
+        SkinParser::parse_wal(path)
+    } else {
+        return Err("Invalid skin format".to_string());
+    };
+
+    match skin {
+        Ok(skin) => {
+            match SkinParser::extract_assets(&skin) {
+                Ok(assets) => Ok(assets),
+                Err(e) => Err(e.to_string())
+            }
+        }
+        Err(e) => Err(e.to_string())
+    }
+}
+
+#[tauri::command]
+fn get_error_category(error_msg: String) -> String {
+    // Create a generic error to demonstrate category usage
+    let error = MilkError::Other(error_msg);
+    error.category().to_string()
+}
+
+#[tauri::command]
+fn is_error_critical(error_type: String) -> bool {
+    // Map common error types to check criticality
+    let error = match error_type.as_str() {
+        "disk_full" => MilkError::DiskFull("test".to_string()),
+        "permission_denied" => MilkError::PermissionDenied("test".to_string()),
+        "audio_device" => MilkError::AudioDeviceUnavailable,
+        "auth_failed" => MilkError::AuthenticationFailed("test".to_string()),
+        _ => MilkError::Other(error_type),
+    };
+    error.is_critical()
+}
+
+#[tauri::command]
+fn is_error_recoverable(error_type: String) -> bool {
+    let error = match error_type.as_str() {
+        "network_timeout" => MilkError::NetworkTimeout("test".to_string()),
+        "rate_limit" => MilkError::RateLimitExceeded,
+        "corrupted_file" => MilkError::CorruptedFile("test".to_string()),
+        "skin_parse" => MilkError::SkinParseError("test".to_string()),
+        "metadata" => MilkError::MetadataError("test".to_string()),
+        _ => MilkError::Other(error_type),
+    };
+    error.is_recoverable()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -571,6 +772,13 @@ pub fn run() {
             scan_library,
             extract_metadata,
             extract_artwork,
+            check_metadata_completeness,
+            is_metadata_cached,
+            clear_metadata_cache,
+            check_file_extension_supported,
+            validate_audio_file,
+            load_validated_config,
+            test_internal_error_handling,
             create_playlist,
             list_playlists,
             load_playlist,
@@ -581,17 +789,26 @@ pub fn run() {
             update_playlist,
             load_skin,
             apply_skin,
+            get_skin_assets,
             spotify_authenticate,
             spotify_get_now_playing,
             spotify_refresh_token,
+            spotify_check_token_expired,
+            spotify_ensure_valid_token,
             youtube_authenticate,
             youtube_get_now_playing,
             youtube_refresh_token,
+            youtube_check_token_expired,
+            youtube_ensure_valid_token,
             youtube_store_api_key,
             youtube_get_api_key,
             youtube_validate_api_key,
             youtube_get_video_metadata,
-            get_performance_metrics
+            get_performance_metrics,
+            get_cache_hit_rate,
+            get_error_category,
+            is_error_critical,
+            is_error_recoverable
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

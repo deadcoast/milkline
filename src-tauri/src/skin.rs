@@ -144,6 +144,15 @@ impl SkinParser {
             ));
         }
 
+        // Check for main.bmp (required for classic Winamp skins)
+        let has_main_bmp = skin.assets.keys().any(|name| {
+            name.to_lowercase() == "main.bmp"
+        });
+
+        if !has_main_bmp {
+            return Err(SkinError::MissingAsset("main.bmp".to_string()));
+        }
+
         Ok(())
     }
 

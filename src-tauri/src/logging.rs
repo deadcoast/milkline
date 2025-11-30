@@ -177,20 +177,25 @@ impl Logger {
     }
 }
 
-// Global logger instance
-static mut GLOBAL_LOGGER: Option<Logger> = None;
+// Global logger instance using OnceLock (thread-safe)
+use std::sync::OnceLock;
+static GLOBAL_LOGGER: OnceLock<Logger> = OnceLock::new();
 
 /// Initialize the global logger
 pub fn init_logger(config: LoggerConfig) -> Result<(), std::io::Error> {
-    unsafe {
-        GLOBAL_LOGGER = Some(Logger::new(config)?);
-    }
+    let logger = Logger::new(config)?;
+    GLOBAL_LOGGER.set(logger).map_err(|_| {
+        std::io::Error::new(
+            std::io::ErrorKind::AlreadyExists,
+            "Logger already initialized"
+        )
+    })?;
     Ok(())
 }
 
 /// Get the global logger instance
 fn get_logger() -> Option<&'static Logger> {
-    unsafe { GLOBAL_LOGGER.as_ref() }
+    GLOBAL_LOGGER.get()
 }
 
 /// Log an error message

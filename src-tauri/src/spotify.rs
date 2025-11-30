@@ -172,6 +172,16 @@ impl SpotifyBridge {
             Err(ApiError::TokenExpired)
         }
     }
+
+    /// Public wrapper to check if the current access token has expired
+    pub fn check_token_expired(&self) -> Result<bool, ApiError> {
+        self.is_token_expired()
+    }
+
+    /// Public wrapper to get or refresh a valid token
+    pub async fn ensure_valid_token(&self, credentials: Option<Credentials>) -> Result<String, ApiError> {
+        self.get_valid_token(credentials).await
+    }
 }
 
 impl StreamingService for SpotifyBridge {
