@@ -86,14 +86,22 @@ pub fn trim_and_crop_video(
     crop_rect: Option<CropRect>,
     config: &ExportConfig,
 ) -> Result<(), String> {
+    // For accurate trimming:
+    // 1. Use -ss after -i for frame-accurate seeking (slower but precise)
+    // 2. Use -t for duration instead of -to
+    // 3. Add -avoid_negative_ts make_zero for timestamp handling
+    let duration = end_sec - start_sec;
+    
     let mut args = vec![
         "-y".to_string(), // Overwrite output file
         "-i".to_string(),
         input_path.to_string(),
         "-ss".to_string(),
         start_sec.to_string(),
-        "-to".to_string(),
-        end_sec.to_string(),
+        "-t".to_string(),
+        duration.to_string(),
+        "-avoid_negative_ts".to_string(),
+        "make_zero".to_string(),
     ];
 
     // Add crop filter if provided
@@ -151,12 +159,15 @@ mod tests {
 
     /// Helper function to create a test video file
     fn create_test_video(path: &str, duration_sec: f64, width: u32, height: u32) -> Result<(), String> {
+        // Use 30 fps for better granularity in trimming tests
+        // Also set keyframe interval to 1 for frame-accurate seeking
         let output = StdCommand::new("ffmpeg")
             .args([
                 "-y",
                 "-f", "lavfi",
-                "-i", &format!("testsrc=duration={}:size={}x{}:rate=1", duration_sec, width, height),
+                "-i", &format!("testsrc=duration={}:size={}x{}:rate=30", duration_sec, width, height),
                 "-pix_fmt", "yuv420p",
+                "-g", "1", // Set keyframe interval to 1 (every frame is a keyframe)
                 path,
             ])
             .output()

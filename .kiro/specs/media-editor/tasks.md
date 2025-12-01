@@ -147,8 +147,8 @@
     - **Property 5: Crop rectangle normalization is consistent**
     - **Validates: Requirements 1.2, 2.2, 6.2**
 
-- [ ] 9. Implement Timeline Svelte component
-  - [ ] 9.1 Create Timeline component
+- [x] 9. Implement Timeline Svelte component
+  - [x] 9.1 Create Timeline component
     - Accept duration, startTime, endTime props
     - Render timeline bar with start and end handles
     - Implement drag handlers for both handles
@@ -157,17 +157,17 @@
     - Display current trim times as label
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
   
-  - [ ] 9.2 Write component tests for Timeline
+  - [x] 9.2 Write component tests for Timeline
     - Test handle dragging updates times
     - Test start handle constraint
     - _Requirements: 3.2, 3.3, 3.4_
   
-  - [ ] 9.3 Write property test for timeline constraints
+  - [x] 9.3 Write property test for timeline constraints
     - **Property 2: Timeline trim constraints are maintained**
     - **Validates: Requirements 3.2, 3.3, 3.4**
 
-- [ ] 10. Implement ImageEditor Svelte component
-  - [ ] 10.1 Create ImageEditor component
+- [x] 10. Implement ImageEditor Svelte component
+  - [x] 10.1 Create ImageEditor component
     - Accept filePath prop
     - Load and display image scaled to fit container
     - Calculate preview dimensions
@@ -175,15 +175,15 @@
     - Handle cropChange events to update store
     - _Requirements: 1.1, 1.2_
   
-  - [ ] 10.2 Implement image export functionality
+  - [x] 10.2 Implement image export functionality
     - Create export method that calls crop_image Tauri command
     - Get crop rectangle from store
     - Handle case where no crop exists (copy file)
     - Display error messages on failure
     - _Requirements: 1.4, 1.5, 5.3, 8.3_
 
-- [ ] 11. Implement VideoEditor Svelte component
-  - [ ] 11.1 Create VideoEditor component
+- [x] 11. Implement VideoEditor Svelte component
+  - [x] 11.1 Create VideoEditor component
     - Accept filePath prop
     - Call probe_video_metadata Tauri command on mount
     - Display video preview frame (placeholder for now)
@@ -193,15 +193,15 @@
     - Handle cropChange and trimChange events to update store
     - _Requirements: 2.1, 3.1, 3.2, 3.3_
   
-  - [ ] 11.2 Implement video export functionality
+  - [x] 11.2 Implement video export functionality
     - Create export method that calls trim_and_crop_video Tauri command
     - Get crop rectangle and trim times from store
     - Pass export config from defaults
     - Display error messages on failure
     - _Requirements: 2.4, 2.5, 3.5, 5.4, 8.2_
 
-- [ ] 12. Implement MediaEditorWindow Svelte component
-  - [ ] 12.1 Create MediaEditorWindow component
+- [x] 12. Implement MediaEditorWindow Svelte component
+  - [x] 12.1 Create MediaEditorWindow component
     - Create file menu with Open and Save As buttons
     - Implement file open dialog using Tauri dialog API
     - Determine media type from file extension
@@ -210,30 +210,30 @@
     - Display error for unsupported extensions
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
   
-  - [ ] 12.2 Implement file save logic
+  - [x] 12.2 Implement file save logic
     - Implement save dialog using Tauri dialog API
     - Check if media is loaded, show info message if not
     - Delegate to appropriate editor export method based on media type
     - Display error messages on failure
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 8.2, 8.3_
   
-  - [ ] 12.3 Write property test for media type routing
+  - [x] 12.3 Write property test for media type routing
     - **Property 3: Media type determines editor routing**
     - **Validates: Requirements 4.2, 4.3**
   
-  - [ ] 12.4 Write unit tests for error handling
+  - [x] 12.4 Write unit tests for error handling
     - Test save without loaded media shows info message
     - Test export errors display error dialog
     - _Requirements: 5.2, 5.5, 8.2, 8.3_
 
-- [ ] 13. Create media editor route
-  - [ ] 13.1 Create route page
+- [x] 13. Create media editor route
+  - [x] 13.1 Create route page
     - Create `src/routes/media-editor/+page.svelte`
     - Import and render MediaEditorWindow component
     - Add route to navigation if needed
     - _Requirements: All_
 
-- [ ] 14. Checkpoint - Ensure all tests pass
+- [x] 14. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 15. Write integration tests
