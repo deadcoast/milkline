@@ -3,11 +3,15 @@
   import { playerStore } from '$lib/stores';
   import type { Track } from '$lib/types';
   import { spotifyGetNowPlaying, youtubeGetNowPlaying } from '$lib/tauri/ipc';
-  import Visualizer from './Visualizer.svelte';
 
-  let audioElement: HTMLAudioElement | null = null;
+  // Props - audio element bindable for parent components (visualizer integration)
+  let {
+    audioElement = $bindable(null)
+  }: {
+    audioElement?: HTMLAudioElement | null;
+  } = $props();
+  
   let positionUpdateInterval: number | null = null;
-  let visualizerComponent: any = null;
   let streamingMetadataInterval: number | null = null;
 
   // Subscribe to player state
@@ -112,28 +116,16 @@
   function handlePlay() {
     playerStore.setPlaying(true);
     startPositionTracking();
-    // Start visualizer when playback starts
-    if (visualizerComponent) {
-      visualizerComponent.start();
-    }
   }
 
   function handlePause() {
     playerStore.setPlaying(false);
     stopPositionTracking();
-    // Stop visualizer when playback pauses
-    if (visualizerComponent) {
-      visualizerComponent.stop();
-    }
   }
 
   function handleEnded() {
     playerStore.setPlaying(false);
     stopPositionTracking();
-    // Stop visualizer when track ends
-    if (visualizerComponent) {
-      visualizerComponent.stop();
-    }
     next(); // Auto-play next track
   }
 
@@ -367,16 +359,6 @@
   <div class="queue-info">
     <span>Queue: {queue.length} track{queue.length !== 1 ? 's' : ''}</span>
   </div>
-
-  <!-- Visualizer -->
-  <Visualizer 
-    bind:this={visualizerComponent}
-    {audioElement}
-    style="bars"
-    width={600}
-    height={150}
-    useSystemAudio={currentTrack?.source === 'spotify' || currentTrack?.source === 'youtube'}
-  />
 </div>
 
 <style>
@@ -386,8 +368,14 @@
     gap: 12px;
     padding: 16px;
     background-color: var(--color-player-bg, #1a1a1a);
+    background-image: var(--skin-main-bg, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: var(--color-text, #ffffff);
     min-width: 300px;
+    width: var(--skin-width, auto);
+    max-width: var(--skin-width, 100%);
   }
 
   .track-info {
@@ -482,23 +470,38 @@
     cursor: pointer;
     transition: background-color 0.2s;
     color: var(--color-text, #ffffff);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Apply skin assets to buttons if available */
+  .control-btn {
+    background-image: var(--skin-control-buttons, none);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
   .control-btn:hover {
     background-color: var(--color-accent, #3a3a3a);
+    filter: brightness(1.2);
   }
 
   .control-btn:active {
     background-color: var(--color-accent-dark, #4a4a4a);
+    filter: brightness(0.9);
   }
 
   .control-btn.play-pause {
     padding: 8px 16px;
+    background-image: var(--skin-play-pause-button, none);
   }
 
   .icon {
     font-size: 18px;
     display: inline-block;
+    position: relative;
+    z-index: 1;
   }
 
   .position-section {
@@ -518,6 +521,9 @@
     flex: 1;
     height: 8px;
     background-color: var(--color-surface, #2a2a2a);
+    background-image: var(--skin-position-bar, none);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     border-radius: 4px;
     cursor: pointer;
     position: relative;
@@ -528,6 +534,8 @@
     height: 100%;
     background-color: var(--color-accent, #00aaff);
     transition: width 0.1s linear;
+    position: relative;
+    z-index: 1;
   }
 
   .volume-section {
@@ -546,6 +554,9 @@
     -webkit-appearance: none;
     appearance: none;
     background: var(--color-surface, #2a2a2a);
+    background-image: var(--skin-volume-slider, none);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     border-radius: 3px;
     outline: none;
   }

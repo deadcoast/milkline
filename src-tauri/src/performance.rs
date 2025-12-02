@@ -10,6 +10,8 @@ pub struct PerformanceMetrics {
     pub metadata_cache_hits: u64,
     pub metadata_cache_misses: u64,
     pub playlist_operations: u64,
+    pub memory_usage_bytes: Option<u64>,
+    pub peak_memory_bytes: Option<u64>,
 }
 
 impl PerformanceMetrics {
@@ -19,6 +21,8 @@ impl PerformanceMetrics {
             metadata_cache_hits: 0,
             metadata_cache_misses: 0,
             playlist_operations: 0,
+            memory_usage_bytes: None,
+            peak_memory_bytes: None,
         }
     }
 
@@ -29,6 +33,14 @@ impl PerformanceMetrics {
         } else {
             (self.metadata_cache_hits as f64) / (total as f64)
         }
+    }
+
+    pub fn memory_usage_mb(&self) -> Option<f64> {
+        self.memory_usage_bytes.map(|bytes| bytes as f64 / 1_048_576.0)
+    }
+
+    pub fn peak_memory_mb(&self) -> Option<f64> {
+        self.peak_memory_bytes.map(|bytes| bytes as f64 / 1_048_576.0)
     }
 }
 
@@ -80,8 +92,58 @@ pub fn record_playlist_operation() {
     }
 }
 
-/// Get current metrics
+/// Update memory usage metrics
+pub fn update_memory_usage() {
+    #[cfg(target_os = "macos")]
+    {
+        use std::process::Command;
+        
+        // Get current process ID
+        let pid = std::process::id();
+        
+        // Use ps command to get memory usage on macOS
+        if let Ok(output) = Command::new("ps")
+            .args(&["-o", "rss=", "-p", &pid.to_string()])
+            .output()
+        {
+            if let Ok(rss_str) = String::from_utf8(output.stdout) {
+                if let Ok(rss_kb) = rss_str.trim().parse::<u64>() {
+                    let bytes = rss_kb * 1024; // Convert KB to bytes
+                    
+                    let mut metrics = METRICS.lock().unwrap();
+                    if let Some(ref mut m) = *metrics {
+                        m.memory_usage_bytes = Some(bytes);
+                        
+                        // Update peak if current is higher
+                        if let Some(peak) = m.peak_memory_bytes {
+                            if bytes > peak {
+                                m.peak_memory_bytes = Some(bytes);
+                            }
+                        } else {
+                            m.peak_memory_bytes = Some(bytes);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    #[cfg(target_os = "windows")]
+    {
+        // Windows memory tracking would go here
+        // For now, we'll skip it as the task focuses on the implementation
+    }
+    
+    #[cfg(target_os = "linux")]
+    {
+        // Linux memory tracking would go here
+        // For now, we'll skip it as the task focuses on the implementation
+    }
+}
+
+/// Get current metrics with updated memory usage
 pub fn get_metrics() -> Option<PerformanceMetrics> {
+    update_memory_usage();
     let metrics = METRICS.lock().unwrap();
     metrics.clone()
 }

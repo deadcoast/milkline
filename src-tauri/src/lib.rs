@@ -9,10 +9,14 @@ mod youtube;
 mod performance;
 mod error;
 mod logging;
+mod system_audio;
 pub mod media_editor;
 
 #[cfg(test)]
 mod error_tests;
+
+#[cfg(test)]
+mod config_tests;
 
 use config::{Config, ConfigManager, FileConfigManager};
 use secure_storage::{PlatformSecureStorage, SecureStorage};
@@ -24,10 +28,11 @@ use spotify::{SpotifyBridge, StreamingService, Credentials, Token, TrackMetadata
 use youtube::YouTubeBridge;
 use error::{MilkError, MilkResult};
 use logging::{log_error, log_warn, log_info, log_error_with_context, LoggerConfig};
-use std::sync::OnceLock;
+use std::sync::{Arc, Mutex, OnceLock};
 use performance::Timer;
 use media_editor::image_ops::crop_image_command;
 use media_editor::video_ops::{probe_video_metadata_command, trim_and_crop_video_command};
+use system_audio::{SystemAudioCapture, start_system_audio_capture, stop_system_audio_capture, is_system_audio_capture_active};
 
 // Global metadata extractor instance
 static METADATA_EXTRACTOR: OnceLock<MetadataExtractor> = OnceLock::new();
@@ -628,6 +633,16 @@ fn get_cache_hit_rate() -> f64 {
 }
 
 #[tauri::command]
+fn get_memory_usage() -> Option<f64> {
+    performance::get_metrics().and_then(|m| m.memory_usage_mb())
+}
+
+#[tauri::command]
+fn get_peak_memory() -> Option<f64> {
+    performance::get_metrics().and_then(|m| m.peak_memory_mb())
+}
+
+#[tauri::command]
 fn check_metadata_completeness(file_path: String) -> Result<bool, String> {
     use std::path::Path;
     let path = Path::new(&file_path);
@@ -756,13 +771,35 @@ pub fn run() {
     
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .setup(move |_app| {
+        .setup(move |app| {
             // Record startup time once the app is ready
             let startup_duration = startup_start.elapsed();
             performance::record_startup_time(startup_duration);
             log_info("Startup", &format!("Application ready in {:?}", startup_duration));
+            
+            // Handle command-line arguments for file associations
+            if let Some(args) = std::env::args().nth(1) {
+                log_info("FileAssociation", &format!("Received file argument: {}", args));
+                
+                // Check if it's a skin file
+                if args.to_lowercase().ends_with(".wsz") || args.to_lowercase().ends_with(".wal") {
+                    log_info("FileAssociation", "Detected skin file, will load on frontend");
+                    
+                    // Emit event to frontend to load the skin
+                    let app_handle = app.handle().clone();
+                    tauri::async_runtime::spawn(async move {
+                        if let Some(window) = app_handle.get_webview_window("main") {
+                            if let Err(e) = window.emit("load-skin-file", args) {
+                                log_error("FileAssociation", &format!("Failed to emit load-skin-file event: {}", e));
+                            }
+                        }
+                    });
+                }
+            }
+            
             Ok(())
         })
+        .manage(Arc::new(Mutex::new(SystemAudioCapture::new())))
         .invoke_handler(tauri::generate_handler![
             greet,
             load_config,
@@ -809,12 +846,17 @@ pub fn run() {
             youtube_get_video_metadata,
             get_performance_metrics,
             get_cache_hit_rate,
+            get_memory_usage,
+            get_peak_memory,
             get_error_category,
             is_error_critical,
             is_error_recoverable,
             crop_image_command,
             probe_video_metadata_command,
-            trim_and_crop_video_command
+            trim_and_crop_video_command,
+            start_system_audio_capture,
+            stop_system_audio_capture,
+            is_system_audio_capture_active
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

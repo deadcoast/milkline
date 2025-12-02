@@ -79,10 +79,19 @@ pub struct MetadataExtractor {
 }
 
 impl MetadataExtractor {
-    /// Create a new MetadataExtractor with LRU cache (max 1000 entries)
+    /// Create a new MetadataExtractor with optimized LRU cache
+    /// Reduced from 1000 to 500 entries to optimize memory usage
+    /// Target: ~100MB RAM, each entry ~200 bytes = ~500 entries
     pub fn new() -> Self {
         Self {
-            cache: Mutex::new(LruCache::new(NonZeroUsize::new(1000).unwrap())),
+            cache: Mutex::new(LruCache::new(NonZeroUsize::new(500).unwrap())),
+        }
+    }
+    
+    /// Create a new MetadataExtractor with custom cache size
+    pub fn with_cache_size(size: usize) -> Self {
+        Self {
+            cache: Mutex::new(LruCache::new(NonZeroUsize::new(size).unwrap())),
         }
     }
 

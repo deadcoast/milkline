@@ -9,12 +9,15 @@
         deletePlaylist,
         addTrackToPlaylist,
         removeTrackFromPlaylist,
-        reorderPlaylistTracks 
+        reorderPlaylistTracks,
+        extractMetadata 
     } from '../tauri/ipc';
     import { onMount } from 'svelte';
 
     let newPlaylistName = '';
     let draggedTrackIndex: number | null = null;
+    let loadingMetadata = new Set<string>();
+    let trackMetadataCache = new Map<string, any>();
 
     onMount(async () => {
         await loadAllPlaylists();
@@ -27,6 +30,34 @@
         } catch (error) {
             console.error('Failed to load playlists:', error);
         }
+    }
+
+    // Lazy load metadata for a track on-demand
+    async function loadTrackMetadata(track: Track) {
+        if (!track.filePath) return;
+        
+        // Check if already loaded or loading
+        if (trackMetadataCache.has(track.id) || loadingMetadata.has(track.id)) {
+            return;
+        }
+
+        loadingMetadata.add(track.id);
+        
+        try {
+            const metadata = await extractMetadata(track.filePath);
+            trackMetadataCache.set(track.id, metadata);
+            // Force re-render
+            trackMetadataCache = trackMetadataCache;
+        } catch (error) {
+            console.warn(`Failed to load metadata for ${track.id}:`, error);
+        } finally {
+            loadingMetadata.delete(track.id);
+        }
+    }
+
+    // Get metadata for a track (lazy loaded)
+    function getTrackMetadata(track: Track) {
+        return trackMetadataCache.get(track.id);
     }
 
     async function handleCreatePlaylist() {
@@ -168,11 +199,15 @@
                         on:dragstart={(e) => handleDragStart(e, index)}
                         on:dragover={handleDragOver}
                         on:drop={(e) => handleDrop(e, index, currentPlaylist)}
+                        on:mouseenter={() => loadTrackMetadata(track)}
                     >
                         <span class="track-number">{index + 1}</span>
                         <div class="track-info">
                             <div class="track-title">{track.title}</div>
                             <div class="track-artist">{track.artist} - {track.album}</div>
+                            {#if loadingMetadata.has(track.id)}
+                                <div class="metadata-loading">Loading metadata...</div>
+                            {/if}
                         </div>
                         <span class="track-duration">
                             {Math.floor(track.duration / 60)}:{String(Math.floor(track.duration % 60)).padStart(2, '0')}
@@ -385,5 +420,11 @@
         align-items: center;
         height: 100%;
         color: #999;
+    }
+
+    .metadata-loading {
+        font-size: 0.8rem;
+        color: #666;
+        font-style: italic;
     }
 </style>

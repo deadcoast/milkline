@@ -12,6 +12,7 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "milk",
         "width": 275,
         "height": 116,
@@ -19,7 +20,8 @@
         "decorations": true,
         "center": true,
         "minWidth": 275,
-        "minHeight": 116
+        "minHeight": 116,
+        "dragDropEnabled": true
       }
     ],
     "security": {

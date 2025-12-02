@@ -82,6 +82,10 @@ pub enum MilkError {
     #[error("Secure storage error: {0}")]
     SecureStorageError(String),
     
+    // System Audio Errors
+    #[error("System audio capture error: {0}")]
+    SystemAudio(String),
+    
     // Generic Errors
     #[error("Internal error: {0}")]
     Internal(String),
@@ -202,6 +206,11 @@ impl MilkError {
                 "Had trouble with secure storage. Your credentials might need re-entry.".to_string()
             }
 
+            // System Audio Errors
+            MilkError::SystemAudio(details) => {
+                format!("System audio capture issue: {}. Visualizer may not work with streaming.", details)
+            }
+
             // Generic Errors
             MilkError::Internal(details) => {
                 format!("Something unexpected happened: {}. Let's try again!", details)
@@ -242,6 +251,8 @@ impl MilkError {
             MilkError::PlaylistNotFound(_) | MilkError::InvalidPlaylistOperation(_) => "Playlist",
 
             MilkError::SecureStorageError(_) => "Storage",
+
+            MilkError::SystemAudio(_) => "SystemAudio",
 
             MilkError::Internal(_) | MilkError::Other(_) => "General",
         }

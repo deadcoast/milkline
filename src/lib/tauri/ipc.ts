@@ -76,6 +76,10 @@ export async function applySkin(skinPath: string): Promise<import('../types').Pa
     return await invoke('apply_skin', { skinPath });
 }
 
+export async function getSkinAssets(skinPath: string): Promise<Record<string, number[]>> {
+    return await invoke('get_skin_assets', { skinPath });
+}
+
 // Spotify streaming service commands
 export interface SpotifyCredentials {
     client_id: string;
@@ -240,4 +244,43 @@ export async function spotifyGetNowPlayingSafe(): Promise<SpotifyTrackMetadata |
         }
         return null;
     }
+}
+
+// System audio capture commands
+export async function startSystemAudioCapture(): Promise<void> {
+    await invoke('start_system_audio_capture');
+}
+
+export async function stopSystemAudioCapture(): Promise<void> {
+    await invoke('stop_system_audio_capture');
+}
+
+export async function isSystemAudioCaptureActive(): Promise<boolean> {
+    return await invoke<boolean>('is_system_audio_capture_active');
+}
+
+// Performance monitoring commands
+export interface PerformanceMetrics {
+    startup_time_ms: number | null;
+    metadata_cache_hits: number;
+    metadata_cache_misses: number;
+    playlist_operations: number;
+    memory_usage_bytes: number | null;
+    peak_memory_bytes: number | null;
+}
+
+export async function getPerformanceMetrics(): Promise<PerformanceMetrics | null> {
+    return await invoke<PerformanceMetrics | null>('get_performance_metrics');
+}
+
+export async function getCacheHitRate(): Promise<number> {
+    return await invoke<number>('get_cache_hit_rate');
+}
+
+export async function getMemoryUsage(): Promise<number | null> {
+    return await invoke<number | null>('get_memory_usage');
+}
+
+export async function getPeakMemory(): Promise<number | null> {
+    return await invoke<number | null>('get_peak_memory');
 }

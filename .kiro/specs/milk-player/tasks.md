@@ -421,5 +421,105 @@
   - Verify file associations (.wsz, .wal)
   - _Requirements: 8.1_
 
-- [ ] 21. Final checkpoint - Ensure all tests pass
+- [x] 21. Integrate components into main application layout
+  - Update +page.svelte to include Playlist component in playlist-section
+  - Update +page.svelte to include FarmerBuddy component in farmer-section
+  - Update +page.svelte to include SkinRenderer component
+  - Wire up component interactions (playlist to player queue, farmer to player state)
+  - Test full application flow with all components integrated
+  - _Requirements: 11.3_
+
+- [x] 22. Implement system audio capture for streaming visualizer
+  - Research and implement system audio capture API for Windows
+  - Connect system audio to visualizer when streaming services are active
+  - Add fallback behavior when system audio capture is unavailable
+  - Test visualizer with Spotify and YouTube playback
+  - _Requirements: 5.4_
+
+- [x] 23. Complete skin renderer implementation
+  - Implement asset-to-UI-region mapping logic
+  - Convert BMP/PNG byte arrays to data URLs for CSS backgrounds
+  - Apply skin assets to Player component buttons and controls
+  - Implement window dimension adjustment based on skin regions
+  - Test with multiple .wsz skin files
+  - _Requirements: 4.2, 4.3_
+
+- [x] 24. Add file association handling for skin files
+  - Configure Tauri to register .wsz and .wal file associations
+  - Implement command-line argument handling for opening skin files
+  - Add skin file drag-and-drop support to main window
+  - Test skin loading from file explorer double-click
+  - _Requirements: 4.1_
+
+- [x] 25. Implement first-run detection and setup flow integration
+  - Ensure isFirstRun() backend command is implemented
+  - Test first-run detection logic
+  - Verify SetupWizard appears on first launch
+  - Test configuration persistence after setup completion
+  - _Requirements: 6.1, 6.2, 10.1_
+
+- [x] 26. Add streaming service authentication UI
+  - Create OAuth flow UI for Spotify authentication
+  - Create API key input UI for YouTube authentication
+  - Implement credential validation and storage
+  - Add re-authentication prompts via farmer on auth failure
+  - Test authentication flows end-to-end
+  - _Requirements: 2.1, 2.5, 3.1, 3.4_
+
+- [x] 27. Implement performance optimizations
+  - Add lazy loading for playlist tracks (load metadata on-demand)
+  - Implement visualizer throttling when window is not focused
+  - Add memory profiling and optimize cache sizes
+  - Measure and optimize startup time
+  - Test memory usage during idle and active playback
+  - _Requirements: 8.2, 8.3, 8.4_
+
+- [ ] 28. Add comprehensive error handling and user feedback
+  - Connect all error paths to farmer error state
+  - Implement user-friendly error messages for common failures
+  - Add error recovery mechanisms (token refresh, config reset)
+  - Test error scenarios (invalid paths, network failures, corrupted files)
+  - _Requirements: 6.3, 10.3_
+
+- [ ] 29. Write frontend property tests for player controls
+  - **Property 1: Supported audio format playback**
+  - **Validates: Requirements 1.1**
+
+- [ ] 30. Write frontend property tests for playback position
+  - **Property 3: Playback position accuracy**
+  - **Validates: Requirements 1.3**
+
+- [ ] 31. Write frontend property tests for volume control
+  - **Property 4: Volume control responsiveness**
+  - **Validates: Requirements 1.4**
+
+- [ ] 32. Write frontend property tests for playback state transitions
+  - **Property 5: Playback control state transitions**
+  - **Validates: Requirements 1.5**
+
+- [ ] 33. Write frontend property tests for visualizer
+  - **Property 12: Visualizer activation**
+  - **Property 13: Visualizer frame rate**
+  - **Property 14: Visualizer style switching**
+  - **Validates: Requirements 5.1, 5.3, 5.4, 5.5**
+
+- [ ] 34. Write frontend property tests for farmer state machine
+  - **Property 15: farmer error state handling**
+  - **Property 16: farmer state machine transitions**
+  - **Property 17: farmer listening state animations**
+  - **Validates: Requirements 6.3, 6.4, 7.1, 7.2, 7.3, 7.4**
+
+- [ ] 35. Build and package application for Windows
+  - Configure Tauri build settings for Windows x64
+  - Create application icon and assets
+  - Build release executable and verify size (<15MB target)
+  - Generate MSI installer with proper metadata
+  - Create portable ZIP distribution
+  - Test installation, uninstallation, and file associations
+  - _Requirements: 8.1_
+
+- [ ] 36. Final checkpoint - Ensure all tests pass
+  - Run all unit tests and property tests
+  - Verify all requirements are met
+  - Test end-to-end user flows
   - Ensure all tests pass, ask the user if questions arise.
