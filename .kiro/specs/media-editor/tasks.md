@@ -236,7 +236,7 @@
 - [x] 14. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 15. Write integration tests
+- [x] 15. Write integration tests
   - Test complete workflow: load image → crop → export → verify (Rust)
   - Test complete workflow: load video → trim → export → verify (Rust)
   - Test complete workflow: load video → crop → trim → export → verify (Rust)
@@ -244,8 +244,8 @@
   - Test Tauri command invocations from frontend (E2E)
   - _Requirements: All_
 
-- [ ] 16. Update documentation
-  - [ ] 16.1 Update README with media editor feature
+- [-] 16. Update documentation
+  - [-] 16.1 Update README with media editor feature
     - Document FFmpeg installation requirement
     - Document media editor capabilities
     - Document supported formats

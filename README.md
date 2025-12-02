@@ -11,6 +11,7 @@ A desktop audio visual media buddy inspired by Winamp.
 ## Features
 
 - **Local Audio Playback** - Play mp3, flac, and wav files
+- **Media Editor** - Crop images and videos, trim video clips
 - **Winamp Skin Support** - Load classic .wsz and .wal skins
 - **Real-time Visualizer** - Audio visualization with multiple styles
 - **Animated Companion** - "farmer" buddy guides you through setup
@@ -33,6 +34,10 @@ A desktop audio visual media buddy inspired by Winamp.
 - Node.js 18+ (with npm)
 - pnpm (`npm install -g pnpm`)
 - Rust toolchain (automatically installs required targets)
+- **FFmpeg** (required for media editor video features)
+  - macOS: `brew install ffmpeg`
+  - Windows: Download from [ffmpeg.org](https://ffmpeg.org) and add to PATH
+  - Linux: `apt-get install ffmpeg` or equivalent
 
 ### Development
 

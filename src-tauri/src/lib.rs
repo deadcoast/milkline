@@ -9,7 +9,7 @@ mod youtube;
 mod performance;
 mod error;
 mod logging;
-mod media_editor;
+pub mod media_editor;
 
 #[cfg(test)]
 mod error_tests;
