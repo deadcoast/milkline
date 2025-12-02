@@ -244,14 +244,14 @@
   - Test Tauri command invocations from frontend (E2E)
   - _Requirements: All_
 
-- [-] 16. Update documentation
-  - [-] 16.1 Update README with media editor feature
+- [x] 16. Update documentation
+  - [x] 16.1 Update README with media editor feature
     - Document FFmpeg installation requirement
     - Document media editor capabilities
     - Document supported formats
     - _Requirements: All_
   
-  - [ ] 16.2 Create media editor user guide
+  - [x] 16.2 Create media editor user guide
     - Document how to open media files
     - Document how to crop images and videos
     - Document how to trim videos

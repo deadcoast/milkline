@@ -20,10 +20,33 @@ A desktop audio visual media buddy inspired by Winamp.
 - **Lightweight** - <15MB executable, <100MB RAM usage
 - **Fast Startup** - <2 second launch time
 
+## Media Editor
+
+The built-in media editor provides simple, intuitive tools for basic image and video editing:
+
+### Capabilities
+
+- **Image Cropping** - Drag to select and crop images
+- **Video Cropping** - Remove black bars or unwanted portions from video frames
+- **Video Trimming** - Extract specific segments using timeline controls
+- **Combined Operations** - Crop and trim videos simultaneously
+
+### Supported Formats
+
+**Images**: PNG, JPG, JPEG, BMP, GIF  
+**Videos**: MP4, MOV, MKV
+
+### Requirements
+
+The media editor requires **FFmpeg** to be installed and available in your system PATH for video operations. Image operations use the built-in Rust `image` crate.
+
+See the **[Media Editor User Guide](docs/MEDIA_EDITOR_GUIDE.md)** for detailed usage instructions.
+
 ## Tech Stack
 
 - **Frontend**: Svelte 5 + TypeScript + Vite
 - **Backend**: Rust + Tauri 2.x
+- **Media Processing**: FFmpeg (video), Rust `image` crate (images)
 - **Package Manager**: pnpm
 - **Platforms**: macOS (aarch64/x86_64) + Windows (x86_64-pc-windows-msvc)
 
@@ -61,6 +84,7 @@ pnpm tauri:build
 
 ### Quick Links
 
+- **[Media Editor User Guide](docs/MEDIA_EDITOR_GUIDE.md)** - How to use the media editor
 - **[Cross-Platform Build Guide](docs/CROSS_PLATFORM_BUILD.md)** - Build for macOS & Windows
 - **[Quick Build Guide](docs/BUILDING.md)** - Get started building milk
 - **[Build & Package Guide](docs/BUILD.md)** - Comprehensive build documentation
