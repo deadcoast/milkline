@@ -6,8 +6,9 @@ mod playlist;
 mod skin;
 mod spotify;
 mod youtube;
-mod performance;
+pub mod performance;
 mod error;
+mod error_recovery;
 mod logging;
 mod system_audio;
 pub mod media_editor;
@@ -27,6 +28,7 @@ use skin::{SkinParser, ParsedSkin};
 use spotify::{SpotifyBridge, StreamingService, Credentials, Token, TrackMetadata as SpotifyTrackMetadata};
 use youtube::YouTubeBridge;
 use error::{MilkError, MilkResult};
+use tauri::Emitter;
 use logging::{log_error, log_warn, log_info, log_error_with_context, LoggerConfig};
 use std::sync::{Arc, Mutex, OnceLock};
 use performance::Timer;
@@ -788,10 +790,8 @@ pub fn run() {
                     // Emit event to frontend to load the skin
                     let app_handle = app.handle().clone();
                     tauri::async_runtime::spawn(async move {
-                        if let Some(window) = app_handle.get_webview_window("main") {
-                            if let Err(e) = window.emit("load-skin-file", args) {
-                                log_error("FileAssociation", &format!("Failed to emit load-skin-file event: {}", e));
-                            }
+                        if let Err(e) = app_handle.emit("load-skin-file", args) {
+                            log_error("FileAssociation", &format!("Failed to emit load-skin-file event: {}", e));
                         }
                     });
                 }
@@ -799,7 +799,7 @@ pub fn run() {
             
             Ok(())
         })
-        .manage(Arc::new(Mutex::new(SystemAudioCapture::new())))
+        .manage(system_audio::SystemAudioCaptureState(Arc::new(Mutex::new(SystemAudioCapture::new()))))
         .invoke_handler(tauri::generate_handler![
             greet,
             load_config,

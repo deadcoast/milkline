@@ -474,42 +474,42 @@
   - Test memory usage during idle and active playback
   - _Requirements: 8.2, 8.3, 8.4_
 
-- [ ] 28. Add comprehensive error handling and user feedback
+- [x] 28. Add comprehensive error handling and user feedback
   - Connect all error paths to farmer error state
   - Implement user-friendly error messages for common failures
   - Add error recovery mechanisms (token refresh, config reset)
   - Test error scenarios (invalid paths, network failures, corrupted files)
   - _Requirements: 6.3, 10.3_
 
-- [ ] 29. Write frontend property tests for player controls
+- [x] 29. Write frontend property tests for player controls
   - **Property 1: Supported audio format playback**
   - **Validates: Requirements 1.1**
 
-- [ ] 30. Write frontend property tests for playback position
+- [x] 30. Write frontend property tests for playback position
   - **Property 3: Playback position accuracy**
   - **Validates: Requirements 1.3**
 
-- [ ] 31. Write frontend property tests for volume control
+- [x] 31. Write frontend property tests for volume control
   - **Property 4: Volume control responsiveness**
   - **Validates: Requirements 1.4**
 
-- [ ] 32. Write frontend property tests for playback state transitions
+- [x] 32. Write frontend property tests for playback state transitions
   - **Property 5: Playback control state transitions**
   - **Validates: Requirements 1.5**
 
-- [ ] 33. Write frontend property tests for visualizer
+- [x] 33. Write frontend property tests for visualizer
   - **Property 12: Visualizer activation**
   - **Property 13: Visualizer frame rate**
   - **Property 14: Visualizer style switching**
   - **Validates: Requirements 5.1, 5.3, 5.4, 5.5**
 
-- [ ] 34. Write frontend property tests for farmer state machine
+- [x] 34. Write frontend property tests for farmer state machine
   - **Property 15: farmer error state handling**
   - **Property 16: farmer state machine transitions**
   - **Property 17: farmer listening state animations**
   - **Validates: Requirements 6.3, 6.4, 7.1, 7.2, 7.3, 7.4**
 
-- [ ] 35. Build and package application for Windows
+- [x] 35. Build and package application for Windows
   - Configure Tauri build settings for Windows x64
   - Create application icon and assets
   - Build release executable and verify size (<15MB target)
@@ -518,7 +518,7 @@
   - Test installation, uninstallation, and file associations
   - _Requirements: 8.1_
 
-- [ ] 36. Final checkpoint - Ensure all tests pass
+- [x] 36. Final checkpoint - Ensure all tests pass
   - Run all unit tests and property tests
   - Verify all requirements are met
   - Test end-to-end user flows

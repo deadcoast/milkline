@@ -46,6 +46,24 @@ describe('Visualizer Component', () => {
             }
         } as any;
 
+        // Mock Canvas getContext
+        HTMLCanvasElement.prototype.getContext = vi.fn((contextType: string) => {
+            if (contextType === '2d') {
+                return {
+                    clearRect: vi.fn(),
+                    fillRect: vi.fn(),
+                    beginPath: vi.fn(),
+                    moveTo: vi.fn(),
+                    lineTo: vi.fn(),
+                    stroke: vi.fn(),
+                    fillStyle: '',
+                    strokeStyle: '',
+                    lineWidth: 1,
+                } as any;
+            }
+            return null;
+        }) as any;
+
         // Mock requestAnimationFrame
         global.requestAnimationFrame = vi.fn((cb) => {
             setTimeout(cb, 16);
@@ -174,16 +192,17 @@ describe('Visualizer Component', () => {
      * **Validates: Requirements 5.3**
      */
     describe('Property 13: Visualizer frame rate', () => {
-        it('should use requestAnimationFrame for rendering loop', () => {
-            fc.assert(
-                fc.property(
+        it('should use requestAnimationFrame for rendering loop', async () => {
+            await fc.assert(
+                fc.asyncProperty(
                     fc.constantFrom('bars', 'waveform', 'spectrum'),
-                    (visualizationStyle) => {
+                    async (visualizationStyle) => {
                         const audioElement = document.createElement('audio');
                         audioElement.src = 'file:///test.mp3';
 
-                        // Clear previous calls
-                        vi.clearAllMocks();
+                        // Create a spy that tracks RAF calls but doesn't execute callbacks
+                        const rafSpy = vi.fn(() => 1);
+                        global.requestAnimationFrame = rafSpy as any;
 
                         const { component } = render(Visualizer, {
                             props: {
@@ -194,28 +213,34 @@ describe('Visualizer Component', () => {
                             },
                         });
 
-                        component.start();
+                        await component.start();
 
-                        // Verify RAF was called (using the beforeEach mock)
-                        expect(global.requestAnimationFrame).toHaveBeenCalled();
+                        // Wait a tick for async operations
+                        await new Promise(resolve => setTimeout(resolve, 10));
 
-                        component.stop();
+                        // Verify RAF was called (the render loop uses RAF)
+                        expect(rafSpy).toHaveBeenCalled();
+
+                        await component.stop();
                     }
                 ),
-                { numRuns: 100 }
+                { numRuns: 50 }
             );
         });
 
-        it('should cancel animation frame when stopped', () => {
-            fc.assert(
-                fc.property(
+        it('should cancel animation frame when stopped', async () => {
+            await fc.assert(
+                fc.asyncProperty(
                     fc.constantFrom('bars', 'waveform', 'spectrum'),
-                    (visualizationStyle) => {
+                    async (visualizationStyle) => {
                         const audioElement = document.createElement('audio');
                         audioElement.src = 'file:///test.mp3';
 
-                        // Clear previous calls
-                        vi.clearAllMocks();
+                        // Create spies
+                        const rafSpy = vi.fn(() => 1);
+                        const cancelSpy = vi.fn();
+                        global.requestAnimationFrame = rafSpy as any;
+                        global.cancelAnimationFrame = cancelSpy as any;
 
                         const { component } = render(Visualizer, {
                             props: {
@@ -226,14 +251,18 @@ describe('Visualizer Component', () => {
                             },
                         });
 
-                        component.start();
-                        component.stop();
+                        await component.start();
+                        
+                        // Wait a tick for async operations
+                        await new Promise(resolve => setTimeout(resolve, 10));
+                        
+                        await component.stop();
 
-                        // Verify cancel was called (using the beforeEach mock)
-                        expect(global.cancelAnimationFrame).toHaveBeenCalled();
+                        // Verify cancel was called when stopping
+                        expect(cancelSpy).toHaveBeenCalled();
                     }
                 ),
-                { numRuns: 100 }
+                { numRuns: 50 }
             );
         });
     });

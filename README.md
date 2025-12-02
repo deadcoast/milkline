@@ -86,6 +86,8 @@ pnpm tauri:build
 
 - **[Media Editor User Guide](docs/MEDIA_EDITOR_GUIDE.md)** - How to use the media editor
 - **[Cross-Platform Build Guide](docs/CROSS_PLATFORM_BUILD.md)** - Build for macOS & Windows
+- **[Windows Build Guide](docs/BUILD_WINDOWS.md)** - Windows-specific build instructions
+- **[Release Process](docs/RELEASE_PROCESS.md)** - Complete release workflow
 - **[Quick Build Guide](docs/BUILDING.md)** - Get started building milk
 - **[Build & Package Guide](docs/BUILD.md)** - Comprehensive build documentation
 - **[Technical Specification](docs/milk_tech_spec.md)** - Architecture and design
@@ -124,10 +126,13 @@ milk/
 - **App Bundle**: `src-tauri/target/release/bundle/macos/milk.app`
 - **DMG Installer**: macOS disk image installer
 
-#### Windows (via GitHub Actions)
-- **Executable**: `src-tauri/target/x86_64-pc-windows-msvc/release/milk.exe`
-- **MSI Installer**: Windows installer with file associations
+#### Windows
+- **Executable**: `src-tauri/target/x86_64-pc-windows-msvc/release/milk.exe` (<15MB target)
+- **MSI Installer**: Windows installer with file associations (.wsz, .wal)
 - **NSIS Installer**: Alternative Windows installer
+- **Portable ZIP**: No-installation portable distribution
+
+See **[Windows Build Guide](docs/BUILD_WINDOWS.md)** for detailed Windows build instructions.
 
 ### Build Commands
 

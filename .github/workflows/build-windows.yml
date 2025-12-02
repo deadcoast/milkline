@@ -1,0 +1,147 @@
+name: Build Windows Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., 0.1.0)'
+        required: true
+        default: '0.1.0'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+      
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-pc-windows-msvc
+          override: true
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Run tests
+        run: pnpm test
+      
+      - name: Run Rust tests
+        working-directory: src-tauri
+        run: cargo test --release
+      
+      - name: Build application
+        run: pnpm run tauri:build:windows
+      
+      - name: Verify executable size
+        shell: pwsh
+        run: |
+          $exe = Get-Item "src-tauri/target/x86_64-pc-windows-msvc/release/milk.exe"
+          $sizeMB = [math]::Round($exe.Length / 1MB, 2)
+          Write-Host "Executable size: $sizeMB MB"
+          
+          if ($sizeMB -ge 15) {
+            Write-Host "::warning::Executable size ($sizeMB MB) exceeds 15MB target"
+          } else {
+            Write-Host "::notice::Executable size ($sizeMB MB) meets requirement"
+          }
+      
+      - name: Create portable distribution
+        shell: pwsh
+        run: .\scripts\create-portable.ps1
+      
+      - name: Run verification
+        shell: pwsh
+        run: .\scripts\verify-windows-build.ps1
+      
+      - name: Generate checksums
+        shell: pwsh
+        run: |
+          $files = @(
+            "src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/milk_0.1.0_x64.msi",
+            "dist/milk_portable_v0.1.0.zip"
+          )
+          
+          $checksums = @()
+          foreach ($file in $files) {
+            if (Test-Path $file) {
+              $hash = (Get-FileHash $file -Algorithm SHA256).Hash
+              $name = Split-Path $file -Leaf
+              $checksums += "$hash  $name"
+            }
+          }
+          
+          $checksums | Out-File "SHA256SUMS.txt"
+          Write-Host "Checksums generated:"
+          Get-Content "SHA256SUMS.txt"
+      
+      - name: Upload MSI installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: milk-msi-installer
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/milk_*.msi
+          if-no-files-found: error
+      
+      - name: Upload NSIS installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: milk-nsis-installer
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/milk_*-setup.exe
+          if-no-files-found: warn
+      
+      - name: Upload portable distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: milk-portable
+          path: dist/milk_portable_*.zip
+          if-no-files-found: error
+      
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums
+          path: SHA256SUMS.txt
+          if-no-files-found: error
+      
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/milk_*.msi
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/milk_*-setup.exe
+            dist/milk_portable_*.zip
+            SHA256SUMS.txt
+          draft: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build summary
+        shell: pwsh
+        run: |
+          Write-Host "::notice::Build completed successfully!"
+          Write-Host "::notice::Artifacts uploaded and ready for release"
+          
+          # Display file sizes
+          $msi = Get-Item "src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/milk_*.msi"
+          $portable = Get-Item "dist/milk_portable_*.zip"
+          
+          Write-Host "::notice::MSI size: $([math]::Round($msi.Length / 1MB, 2)) MB"
+          Write-Host "::notice::Portable size: $([math]::Round($portable.Length / 1MB, 2)) MB"
