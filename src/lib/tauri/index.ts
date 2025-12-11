@@ -1,2 +1,2 @@
 // Export Tauri IPC functions
-export * from './ipc';
+export * from "./ipc";

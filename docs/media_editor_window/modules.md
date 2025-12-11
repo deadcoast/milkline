@@ -1,6 +1,6 @@
 Below is a **clean, expandable upgrade** that adds BOTH:
 
-1. **A unified CROP system** shared by images *and* videos
+1. **A unified CROP system** shared by images _and_ videos
    → one crop widget, one coordinate mapping pipeline
    → both editors use it
 
@@ -29,16 +29,16 @@ ui/
 
 This component handles:
 
-* Mouse dragging
-* Drawing the crop rectangle
-* Normalized crop values (0–1 space)
-* Mapping back to image/video coordinates
+- Mouse dragging
+- Drawing the crop rectangle
+- Normalized crop values (0–1 space)
+- Mapping back to image/video coordinates
 
 Image/video editors only:
 
-* Supply the preview dimensions
-* Supply the source media resolution
-* Use the crop rect returned by the overlay widget
+- Supply the preview dimensions
+- Supply the source media resolution
+- Use the crop rect returned by the overlay widget
 
 ---
 
@@ -255,9 +255,9 @@ trim_and_crop_video(
 
 This immediately gives you:
 
-* timeline trim
-* video crop
-* same cropping behavior as images
+- timeline trim
+- video crop
+- same cropping behavior as images
 
 Even if your video preview is just a single frame or placeholder, the crop overlay works correctly because it’s mapped to the preview rectangle.
 
@@ -413,33 +413,33 @@ You now have:
 
 ### ✔ A unified crop overlay
 
-* shared between image and video
-* consistent behavior
-* converts from widget → preview → media coordinates correctly
-* future-proof for overlays, aspect ratio locks, guides, rule-of-thirds, etc.
+- shared between image and video
+- consistent behavior
+- converts from widget → preview → media coordinates correctly
+- future-proof for overlays, aspect ratio locks, guides, rule-of-thirds, etc.
 
 ### ✔ Config system ready to expand
 
-* codecs, quality, presets
-* toggles for GPU encoding or ImageMagick backend
-* export profiles
-* central place for future settings UI
+- codecs, quality, presets
+- toggles for GPU encoding or ImageMagick backend
+- export profiles
+- central place for future settings UI
 
 ### ✔ Clean SRP structure
 
-* image/video services remain simple
-* editors handle UI only
-* crop component is isolated
-* configuration is decoupled
+- image/video services remain simple
+- editors handle UI only
+- crop component is isolated
+- configuration is decoupled
 
 ---
 
 If you want, I can continue with:
 
-* **Add a real video preview (QVideoWidget / mpv integration)**
-* **Add an export settings dialog that loads presets dynamically**
-* **Add aspect ratio lock / guides in the crop overlay**
-* **Add undo/redo architecture**
-* **Add drag-to-pan & zoom in the preview area**
+- **Add a real video preview (QVideoWidget / mpv integration)**
+- **Add an export settings dialog that loads presets dynamically**
+- **Add aspect ratio lock / guides in the crop overlay**
+- **Add undo/redo architecture**
+- **Add drag-to-pan & zoom in the preview area**
 
 Just tell me the next expansion you want.

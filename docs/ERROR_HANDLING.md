@@ -6,6 +6,7 @@
 ## Overview
 
 The milk application implements comprehensive error handling and logging to ensure:
+
 - User-friendly error messages displayed via the farmer buddy
 - Graceful degradation for non-critical failures
 - Detailed logging for debugging and troubleshooting
@@ -61,21 +62,27 @@ All errors in the application are categorized using the `MilkError` enum, which 
 Each error has the following properties:
 
 ### `is_critical() -> bool`
+
 Indicates if the error requires immediate user attention:
+
 - Disk full
 - Permission denied
 - Audio device unavailable
 - Authentication failures
 
 ### `is_recoverable() -> bool`
+
 Indicates if the error can be handled gracefully:
+
 - Network timeouts
 - Rate limit exceeded
 - Corrupted files (fallback to defaults)
 - Skin/metadata errors (fallback available)
 
 ### `user_message() -> String`
+
 Returns a friendly, actionable message suitable for display via farmer:
+
 ```rust
 let err = MilkError::InvalidPath("/some/path".to_string());
 println!("{}", err.user_message());
@@ -83,7 +90,9 @@ println!("{}", err.user_message());
 ```
 
 ### `category() -> &'static str`
+
 Returns the error category for logging purposes:
+
 - "FileSystem"
 - "Network"
 - "Playback"
@@ -99,6 +108,7 @@ Returns the error category for logging purposes:
 ### Log Levels
 
 The application supports three log levels:
+
 - `ERROR` - Critical issues requiring user attention
 - `WARN` - Non-critical issues with graceful degradation
 - `INFO` - Normal operational messages
@@ -147,6 +157,7 @@ log_info!("Playlist", "Created playlist: {}", playlist_id);
 ### Log File Location
 
 Logs are stored in the application's config directory:
+
 - **Windows**: `%APPDATA%\milk\milk.log`
 - **macOS**: `~/Library/Application Support/milk/milk.log`
 - **Linux**: `~/.config/milk/milk.log`
@@ -154,6 +165,7 @@ Logs are stored in the application's config directory:
 ### Log Rotation
 
 When a log file reaches the configured size limit (default 10MB):
+
 1. Current log is renamed to `milk.log.1`
 2. Previous rotated logs are incremented (`milk.log.1` → `milk.log.2`)
 3. Oldest log beyond the limit is deleted
@@ -168,24 +180,28 @@ This ensures logs don't consume excessive disk space while maintaining history.
 The frontend provides utilities for connecting backend errors to the farmer state:
 
 ```typescript
-import { handleError, withErrorHandling, showSuccess } from '$lib/utils/errorHandler';
+import {
+  handleError,
+  withErrorHandling,
+  showSuccess,
+} from "$lib/utils/errorHandler";
 
 // Handle an error and show via farmer
 try {
-    await someOperation();
+  await someOperation();
 } catch (error) {
-    handleError(error, 'Operation failed');
+  handleError(error, "Operation failed");
 }
 
 // Wrap async operations with automatic error handling
 const result = await withErrorHandling(
-    () => loadConfig(),
-    'Failed to load configuration',
-    (config) => console.log('Config loaded:', config)
+  () => loadConfig(),
+  "Failed to load configuration",
+  (config) => console.log("Config loaded:", config),
 );
 
 // Show success message
-showSuccess('Configuration saved!', 2000);
+showSuccess("Configuration saved!", 2000);
 ```
 
 ### Safe IPC Wrappers
@@ -193,18 +209,18 @@ showSuccess('Configuration saved!', 2000);
 Safe wrappers are provided for common IPC operations:
 
 ```typescript
-import { 
-    loadConfigSafe, 
-    saveConfigSafe, 
-    scanLibrarySafe,
-    loadSkinSafe,
-    applySkinSafe 
-} from '$lib/tauri/ipc';
+import {
+  loadConfigSafe,
+  saveConfigSafe,
+  scanLibrarySafe,
+  loadSkinSafe,
+  applySkinSafe,
+} from "$lib/tauri/ipc";
 
 // These automatically handle errors and show via farmer
 const config = await loadConfigSafe();
-const tracks = await scanLibrarySafe('/path/to/music');
-const skin = await applySkinSafe('/path/to/skin.wsz');
+const tracks = await scanLibrarySafe("/path/to/music");
+const skin = await applySkinSafe("/path/to/skin.wsz");
 ```
 
 ## Graceful Degradation
@@ -212,28 +228,36 @@ const skin = await applySkinSafe('/path/to/skin.wsz');
 The application implements graceful degradation for non-critical failures:
 
 ### Skin Loading
+
 If a custom skin fails to load or validate:
+
 1. Error is logged as WARNING
 2. Default skin is applied automatically
 3. User is notified via farmer
 4. Application continues normally
 
 ### Metadata Extraction
+
 If metadata extraction fails:
+
 1. Error is logged as WARNING
 2. Fallback parsing from filename/directory is attempted
 3. Basic track info is still available
 4. Playback is not affected
 
 ### Configuration Corruption
+
 If configuration file is corrupted:
+
 1. Error is logged as ERROR
 2. Default configuration is created
 3. User is notified via farmer
 4. Application starts with defaults
 
 ### Network Failures
+
 If streaming service API calls fail:
+
 1. Error is logged based on severity
 2. Local playback continues unaffected
 3. User is notified if authentication is needed
@@ -244,6 +268,7 @@ If streaming service API calls fail:
 ### Backend (Rust)
 
 1. **Always use MilkError for public APIs**
+
    ```rust
    pub fn some_operation() -> Result<T, MilkError> {
        // ...
@@ -251,6 +276,7 @@ If streaming service API calls fail:
    ```
 
 2. **Log before returning errors**
+
    ```rust
    match operation() {
        Ok(result) => Ok(result),
@@ -275,30 +301,29 @@ If streaming service API calls fail:
 ### Frontend (TypeScript)
 
 1. **Use safe wrappers for IPC calls**
+
    ```typescript
    const config = await loadConfigSafe();
    if (!config) {
-       // Handle null case (error already shown via farmer)
-       return;
+     // Handle null case (error already shown via farmer)
+     return;
    }
    ```
 
 2. **Use withErrorHandling for complex operations**
+
    ```typescript
-   await withErrorHandling(
-       async () => {
-           const config = await loadConfig();
-           await processConfig(config);
-           await saveConfig(config);
-       },
-       'Failed to update configuration'
-   );
+   await withErrorHandling(async () => {
+     const config = await loadConfig();
+     await processConfig(config);
+     await saveConfig(config);
+   }, "Failed to update configuration");
    ```
 
 3. **Show success feedback**
    ```typescript
    await saveConfig(config);
-   showSuccess('Settings saved!');
+   showSuccess("Settings saved!");
    ```
 
 ## Testing
@@ -306,6 +331,7 @@ If streaming service API calls fail:
 Error handling is tested at multiple levels:
 
 ### Unit Tests
+
 ```rust
 #[test]
 fn test_error_user_messages() {
@@ -315,14 +341,17 @@ fn test_error_user_messages() {
 ```
 
 ### Integration Tests
+
 Verify that errors propagate correctly through the IPC layer and trigger farmer state changes.
 
 ### Property-Based Tests
+
 Ensure error handling works correctly across a wide range of inputs and error conditions.
 
 ## Requirements Validation
 
 This implementation satisfies:
+
 - **Requirement 6.3**: Farmer transitions to error state and displays helpful messages
 - **Requirement 10.3**: Configuration corruption recovery with user notification
 

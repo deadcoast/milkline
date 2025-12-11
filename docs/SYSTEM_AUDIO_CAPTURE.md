@@ -67,7 +67,7 @@ The visualizer component has been enhanced to support system audio:
 The visualizer automatically switches to system audio mode when streaming services are active:
 
 ```svelte
-<Visualizer 
+<Visualizer
   bind:this={visualizerComponent}
   {audioElement}
   style={$configStore.visualizerStyle || 'bars'}
@@ -85,6 +85,7 @@ The visualizer automatically switches to system audio mode when streaming servic
 ### Fallback
 
 If system audio capture fails (e.g., no audio device, permissions denied):
+
 - The visualizer continues to render but may show minimal activity
 - Error is logged to console but doesn't break the application
 - User experience degrades gracefully
@@ -92,16 +93,19 @@ If system audio capture fails (e.g., no audio device, permissions denied):
 ## Platform Support
 
 ### Windows
+
 - ✅ Full support via WASAPI loopback
 - Captures all system audio output
 - No additional permissions required
 
 ### macOS
+
 - ⚠️ Limited support (falls back to microphone input)
 - Requires user permission for microphone access
 - Does not capture system audio directly
 
 ### Linux
+
 - ⚠️ Limited support (falls back to microphone input)
 - Requires user permission for microphone access
 - Does not capture system audio directly

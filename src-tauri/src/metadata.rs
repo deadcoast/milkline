@@ -1,9 +1,9 @@
+use id3::TagLike;
+use lru::LruCache;
 use serde::{Deserialize, Serialize};
+use std::num::NonZeroUsize;
 use std::path::Path;
 use std::sync::Mutex;
-use lru::LruCache;
-use std::num::NonZeroUsize;
-use id3::TagLike;
 
 /// Track metadata extracted from audio files
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -87,7 +87,7 @@ impl MetadataExtractor {
             cache: Mutex::new(LruCache::new(NonZeroUsize::new(500).unwrap())),
         }
     }
-    
+
     /// Create a new MetadataExtractor with custom cache size
     pub fn with_cache_size(size: usize) -> Self {
         Self {
@@ -109,7 +109,7 @@ impl MetadataExtractor {
                 return Ok(cached.clone());
             }
         }
-        
+
         // Cache miss - record for performance tracking
         #[cfg(not(test))]
         crate::performance::record_cache_miss();
@@ -219,18 +219,14 @@ impl MetadataExtractor {
                 .and_then(|v| v.genre())
                 .and_then(|g| g.first())
                 .map(|s| s.to_string()),
-            track_number: vorbis
-                .and_then(|v| v.track()),
+            track_number: vorbis.and_then(|v| v.track()),
             duration: None, // FLAC duration requires more complex parsing
         })
     }
 
     /// Parse metadata from filename and directory structure as fallback
     fn parse_fallback(&self, file_path: &Path) -> TrackMetadata {
-        let file_name = file_path
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .unwrap_or("");
+        let file_name = file_path.file_stem().and_then(|s| s.to_str()).unwrap_or("");
 
         let parent_dir = file_path
             .parent()
@@ -241,7 +237,10 @@ impl MetadataExtractor {
         let (artist, title) = if file_name.contains(" - ") {
             let parts: Vec<&str> = file_name.splitn(2, " - ").collect();
             if parts.len() == 2 {
-                (Some(parts[0].trim().to_string()), Some(parts[1].trim().to_string()))
+                (
+                    Some(parts[0].trim().to_string()),
+                    Some(parts[1].trim().to_string()),
+                )
             } else {
                 (None, Some(file_name.to_string()))
             }
@@ -326,13 +325,12 @@ impl Default for MetadataExtractor {
     }
 }
 
-
 #[cfg(test)]
 mod property_tests {
     use super::*;
     use proptest::prelude::*;
-    use tempfile::TempDir;
     use std::fs;
+    use tempfile::TempDir;
 
     // Helper to create a test MP3 file with ID3 tags
     fn create_test_mp3_with_tags(
@@ -431,16 +429,16 @@ mod property_tests {
             title in arb_metadata_string(),
         ) {
             let temp_dir = TempDir::new().unwrap();
-            
+
             // Use a fixed album directory to avoid filesystem issues
             let album_name = "TestAlbum";
             let album_dir = temp_dir.path().join(album_name);
             fs::create_dir(&album_dir).unwrap();
-            
+
             // Create file with "Artist - Title" format
             let file_name = format!("{} - {}.mp3", artist, title);
             let file_path = album_dir.join(&file_name);
-            
+
             // Create a minimal MP3 file without tags
             let mp3_data = vec![
                 0xFF, 0xFB, 0x90, 0x00,
@@ -502,7 +500,7 @@ mod property_tests {
             // Artwork should be successfully extracted
             prop_assert!(extracted_artwork.is_some());
             let extracted = extracted_artwork.unwrap();
-            
+
             // The extracted artwork should match the embedded artwork
             prop_assert_eq!(extracted, artwork_data);
         }

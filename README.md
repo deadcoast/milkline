@@ -122,11 +122,13 @@ milk/
 ### Build Artifacts
 
 #### macOS
+
 - **Executable**: `src-tauri/target/release/milk` (3.7MB)
 - **App Bundle**: `src-tauri/target/release/bundle/macos/milk.app`
 - **DMG Installer**: macOS disk image installer
 
 #### Windows
+
 - **Executable**: `src-tauri/target/x86_64-pc-windows-msvc/release/milk.exe` (<15MB target)
 - **MSI Installer**: Windows installer with file associations (.wsz, .wal)
 - **NSIS Installer**: Alternative Windows installer
@@ -195,6 +197,7 @@ See [docs/PERFORMANCE_OPTIMIZATIONS.md](docs/PERFORMANCE_OPTIMIZATIONS.md) for o
 ### Continuous Integration
 
 GitHub Actions automatically builds for all platforms on:
+
 - Push to `main` branch
 - Pull requests
 - Manual workflow dispatch

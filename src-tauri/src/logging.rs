@@ -1,9 +1,9 @@
 // Logging system with file rotation and size limits
+use chrono::Local;
 use std::fs::{self, File, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Mutex;
-use chrono::Local;
 
 /// Log levels for the application
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -26,8 +26,8 @@ impl LogLevel {
 /// Logger configuration
 pub struct LoggerConfig {
     pub max_file_size: u64,  // Maximum log file size in bytes (default: 10MB)
-    pub max_files: usize,     // Maximum number of rotated log files to keep (default: 5)
-    pub min_level: LogLevel,  // Minimum log level to record (default: Info)
+    pub max_files: usize,    // Maximum number of rotated log files to keep (default: 5)
+    pub min_level: LogLevel, // Minimum log level to record (default: Info)
 }
 
 impl Default for LoggerConfig {
@@ -51,7 +51,7 @@ impl Logger {
     /// Create a new logger with the given configuration
     pub fn new(config: LoggerConfig) -> Result<Self, std::io::Error> {
         let log_path = Self::get_log_path()?;
-        
+
         // Ensure log directory exists
         if let Some(parent) = log_path.parent() {
             fs::create_dir_all(parent)?;
@@ -72,14 +72,15 @@ impl Logger {
 
     /// Get the log file path in the AppData directory
     fn get_log_path() -> Result<PathBuf, std::io::Error> {
-        let app_data = dirs::config_dir()
-            .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::NotFound, "Config directory not found"))?;
+        let app_data = dirs::config_dir().ok_or_else(|| {
+            std::io::Error::new(std::io::ErrorKind::NotFound, "Config directory not found")
+        })?;
         let milk_dir = app_data.join("milk");
-        
+
         if !milk_dir.exists() {
             fs::create_dir_all(&milk_dir)?;
         }
-        
+
         Ok(milk_dir.join("milk.log"))
     }
 
@@ -91,7 +92,13 @@ impl Logger {
         }
 
         let timestamp = Local::now().format("%Y-%m-%d %H:%M:%S%.3f");
-        let log_line = format!("[{}] [{}] [{}] {}\n", timestamp, level.as_str(), category, message);
+        let log_line = format!(
+            "[{}] [{}] [{}] {}\n",
+            timestamp,
+            level.as_str(),
+            category,
+            message
+        );
 
         // Also print to stderr for development
         eprint!("{}", log_line);
@@ -116,7 +123,7 @@ impl Logger {
     /// Rotate log files when size limit is reached
     fn rotate_logs(&self) -> Result<(), std::io::Error> {
         let mut file_guard = self.log_file.lock().unwrap();
-        
+
         // Close current log file
         *file_guard = None;
 
@@ -124,7 +131,7 @@ impl Logger {
         for i in (1..self.config.max_files).rev() {
             let old_path = self.get_rotated_log_path(i);
             let new_path = self.get_rotated_log_path(i + 1);
-            
+
             if old_path.exists() {
                 if i + 1 > self.config.max_files {
                     // Delete oldest log file
@@ -187,7 +194,7 @@ pub fn init_logger(config: LoggerConfig) -> Result<(), std::io::Error> {
     GLOBAL_LOGGER.set(logger).map_err(|_| {
         std::io::Error::new(
             std::io::ErrorKind::AlreadyExists,
-            "Logger already initialized"
+            "Logger already initialized",
         )
     })?;
     Ok(())
@@ -284,12 +291,12 @@ mod tests {
     fn test_logging_writes_to_file() {
         let temp_dir = TempDir::new().unwrap();
         let log_path = temp_dir.path().join("test.log");
-        
+
         let config = LoggerConfig::default();
         let logger = Logger::new(config).unwrap();
-        
+
         logger.info("Test", "Test message");
-        
+
         // File should exist and contain content
         let log_path = Logger::get_log_path().unwrap();
         assert!(log_path.exists());
@@ -299,7 +306,7 @@ mod tests {
     fn test_log_rotation_path() {
         let config = LoggerConfig::default();
         let logger = Logger::new(config).unwrap();
-        
+
         let rotated_path = logger.get_rotated_log_path(1);
         assert!(rotated_path.to_string_lossy().contains("milk.log.1"));
     }

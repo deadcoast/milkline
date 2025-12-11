@@ -46,7 +46,10 @@ fn test_first_run_detection_no_config() {
     let is_first = manager.is_first_run();
 
     // Assert: Should be first run when no config exists
-    assert!(is_first, "Should be first run when config file doesn't exist");
+    assert!(
+        is_first,
+        "Should be first run when config file doesn't exist"
+    );
 }
 
 #[test]
@@ -83,8 +86,14 @@ fn test_setup_flow_creates_config() {
     manager.save_config(config).unwrap();
 
     // Assert: Config file should now exist
-    assert!(manager.get_config_path().exists(), "Config file should exist after setup");
-    assert!(!manager.is_first_run(), "Should no longer be first run after setup");
+    assert!(
+        manager.get_config_path().exists(),
+        "Config file should exist after setup"
+    );
+    assert!(
+        !manager.is_first_run(),
+        "Should no longer be first run after setup"
+    );
 }
 
 #[test]
@@ -94,7 +103,8 @@ fn test_setup_flow_persists_library_path() {
 
     // Act: Save config with library path (simulating setup wizard completion)
     let library_path = "/Users/test/Music";
-    let config = format!(r#"{{
+    let config = format!(
+        r#"{{
         "library_path": "{}",
         "last_skin": null,
         "volume": 0.7,
@@ -103,13 +113,17 @@ fn test_setup_flow_persists_library_path() {
         "youtube_enabled": false,
         "window_position": {{"x": 100, "y": 100}},
         "window_size": {{"width": 800, "height": 600}}
-    }}"#, library_path);
+    }}"#,
+        library_path
+    );
     manager.save_config(&config).unwrap();
 
     // Assert: Load config and verify library path was persisted
     let loaded_config = manager.load_config().unwrap();
-    assert!(loaded_config.contains(library_path), 
-        "Loaded config should contain the library path set during setup");
+    assert!(
+        loaded_config.contains(library_path),
+        "Loaded config should contain the library path set during setup"
+    );
 }
 
 #[test]
@@ -132,10 +146,14 @@ fn test_setup_flow_persists_streaming_settings() {
 
     // Assert: Load config and verify streaming settings were persisted
     let loaded_config = manager.load_config().unwrap();
-    assert!(loaded_config.contains(r#""spotify_enabled": true"#), 
-        "Spotify should be enabled");
-    assert!(loaded_config.contains(r#""youtube_enabled": true"#), 
-        "YouTube should be enabled");
+    assert!(
+        loaded_config.contains(r#""spotify_enabled": true"#),
+        "Spotify should be enabled"
+    );
+    assert!(
+        loaded_config.contains(r#""youtube_enabled": true"#),
+        "YouTube should be enabled"
+    );
 }
 
 #[test]
@@ -157,10 +175,15 @@ fn test_setup_flow_allows_skipping_library_path() {
     manager.save_config(config).unwrap();
 
     // Assert: Config should be saved even with null library path
-    assert!(manager.get_config_path().exists(), "Config should exist even when library path is skipped");
+    assert!(
+        manager.get_config_path().exists(),
+        "Config should exist even when library path is skipped"
+    );
     let loaded_config = manager.load_config().unwrap();
-    assert!(loaded_config.contains(r#""library_path": null"#), 
-        "Library path should be null when skipped");
+    assert!(
+        loaded_config.contains(r#""library_path": null"#),
+        "Library path should be null when skipped"
+    );
 }
 
 #[test]
@@ -190,6 +213,8 @@ fn test_config_file_location() {
     let config_path = manager.get_config_path();
 
     // Assert: Config path should end with config.json
-    assert!(config_path.to_string_lossy().ends_with("config.json"),
-        "Config file should be named config.json");
+    assert!(
+        config_path.to_string_lossy().ends_with("config.json"),
+        "Config file should be named config.json"
+    );
 }

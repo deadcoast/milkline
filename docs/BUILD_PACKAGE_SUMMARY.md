@@ -19,6 +19,7 @@ The milk application is configured for Windows x64 builds with comprehensive pac
 ### Cargo Release Profile (`src-tauri/Cargo.toml`)
 
 Optimized for size:
+
 - `opt-level = "z"` - Maximum size optimization
 - `lto = true` - Link-time optimization enabled
 - `codegen-units = 1` - Single codegen unit for better optimization
@@ -37,11 +38,13 @@ Optimized for size:
 ## Build Artifacts
 
 ### 1. Executable
+
 - **Location**: `src-tauri/target/x86_64-pc-windows-msvc/release/milk.exe`
 - **Target Size**: < 15MB
 - **Features**: Fully optimized, stripped binary
 
 ### 2. MSI Installer
+
 - **Location**: `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/milk_0.1.0_x64.msi`
 - **Features**:
   - Standard Windows installation
@@ -51,6 +54,7 @@ Optimized for size:
   - WiX-based installer
 
 ### 3. NSIS Installer
+
 - **Location**: `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/milk_0.1.0_x64-setup.exe`
 - **Features**:
   - Alternative installer format
@@ -58,6 +62,7 @@ Optimized for size:
   - Per-user installation
 
 ### 4. Portable Distribution
+
 - **Location**: `dist/milk_portable_v0.1.0.zip`
 - **Contents**:
   - milk.exe
@@ -73,19 +78,24 @@ Optimized for size:
 ### Build Scripts
 
 #### `scripts/create-portable.ps1` (PowerShell)
+
 Creates portable ZIP distribution with:
+
 - Executable
 - README documentation
 - Assets directory structure
 - Size verification
 
 #### `scripts/create-portable.sh` (Bash)
+
 Cross-platform version for Unix-like systems.
 
 ### Verification Scripts
 
 #### `scripts/verify-windows-build.ps1`
+
 Comprehensive build verification:
+
 1. Executable existence and size
 2. MSI installer presence
 3. NSIS installer presence
@@ -98,6 +108,7 @@ Comprehensive build verification:
 10. Portable script presence
 
 #### `scripts/verify-build.ps1`
+
 General build verification (existing).
 
 ## Documentation
@@ -105,7 +116,9 @@ General build verification (existing).
 ### Build Documentation
 
 #### `docs/BUILD_WINDOWS.md`
+
 Complete guide for building on Windows:
+
 - Prerequisites (Rust, Node.js, Visual Studio, WiX)
 - Build instructions
 - Cross-compilation notes
@@ -114,7 +127,9 @@ Complete guide for building on Windows:
 - Performance targets
 
 #### `docs/RELEASE_PROCESS.md`
+
 Step-by-step release workflow:
+
 - Version updates
 - Testing procedures
 - Artifact creation
@@ -124,6 +139,7 @@ Step-by-step release workflow:
 - Post-release tasks
 
 #### `docs/BUILD_PACKAGE_SUMMARY.md` (this file)
+
 Overview of build infrastructure.
 
 ## CI/CD Integration
@@ -131,6 +147,7 @@ Overview of build infrastructure.
 ### GitHub Actions Workflow (`.github/workflows/build-windows.yml`)
 
 Automated build pipeline:
+
 1. Checkout code
 2. Setup Node.js, pnpm, Rust
 3. Install dependencies
@@ -144,10 +161,12 @@ Automated build pipeline:
 11. Create GitHub release (on tag push)
 
 **Triggers**:
+
 - Push to tags matching `v*`
 - Manual workflow dispatch
 
 **Artifacts**:
+
 - MSI installer
 - NSIS installer
 - Portable ZIP
@@ -158,6 +177,7 @@ Automated build pipeline:
 ### Configuration (`src-tauri/wix/file-associations.wxs`)
 
 Registers file associations for:
+
 - `.wsz` - Winamp Skin (ZIP format)
 - `.wal` - Winamp Skin (WAL format)
 
@@ -207,6 +227,7 @@ Both open with milk when double-clicked.
 ### Cross-Compilation (macOS/Linux)
 
 Cross-compilation from macOS/Linux to Windows is complex and requires:
+
 - Windows SDK
 - Cross-compilation toolchain
 - Wine (for testing)
@@ -301,6 +322,7 @@ milk_portable_v0.1.0.zip
 ## Status
 
 ✅ **Completed**:
+
 - Tauri configuration optimized for Windows x64
 - Cargo release profile configured for size optimization
 - MSI installer with file associations
@@ -313,6 +335,7 @@ milk_portable_v0.1.0.zip
 - Icons and assets in place
 
 ⚠️ **Note**:
+
 - Actual build requires Windows environment
 - Cross-compilation from macOS has limitations
 - Use CI/CD or Windows VM for production builds
@@ -322,6 +345,7 @@ milk_portable_v0.1.0.zip
 To complete the build and packaging:
 
 1. **On Windows machine**:
+
    ```powershell
    pnpm run tauri:build:windows
    .\scripts\create-portable.ps1

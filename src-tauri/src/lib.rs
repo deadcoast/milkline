@@ -1,17 +1,17 @@
 mod config;
-mod secure_storage;
-mod library;
-mod metadata;
-mod playlist;
-mod skin;
-mod spotify;
-mod youtube;
-pub mod performance;
 mod error;
 mod error_recovery;
+mod library;
 mod logging;
-mod system_audio;
 pub mod media_editor;
+mod metadata;
+pub mod performance;
+mod playlist;
+mod secure_storage;
+mod skin;
+mod spotify;
+mod system_audio;
+mod youtube;
 
 #[cfg(test)]
 mod error_tests;
@@ -20,21 +20,26 @@ mod error_tests;
 mod config_tests;
 
 use config::{Config, ConfigManager, FileConfigManager};
-use secure_storage::{PlatformSecureStorage, SecureStorage};
-use library::{LibraryScanner, Track};
-use metadata::{MetadataExtractor, TrackMetadata};
-use playlist::{PlaylistManager, Playlist, Track as PlaylistTrack};
-use skin::{SkinParser, ParsedSkin};
-use spotify::{SpotifyBridge, StreamingService, Credentials, Token, TrackMetadata as SpotifyTrackMetadata};
-use youtube::YouTubeBridge;
 use error::{MilkError, MilkResult};
-use tauri::Emitter;
-use logging::{log_error, log_warn, log_info, log_error_with_context, LoggerConfig};
-use std::sync::{Arc, Mutex, OnceLock};
-use performance::Timer;
+use library::{LibraryScanner, Track};
+use logging::{log_error, log_error_with_context, log_info, log_warn, LoggerConfig};
 use media_editor::image_ops::crop_image_command;
 use media_editor::video_ops::{probe_video_metadata_command, trim_and_crop_video_command};
-use system_audio::{SystemAudioCapture, start_system_audio_capture, stop_system_audio_capture, is_system_audio_capture_active};
+use metadata::{MetadataExtractor, TrackMetadata};
+use performance::Timer;
+use playlist::{Playlist, PlaylistManager, Track as PlaylistTrack};
+use secure_storage::{PlatformSecureStorage, SecureStorage};
+use skin::{ParsedSkin, SkinParser};
+use spotify::{
+    Credentials, SpotifyBridge, StreamingService, Token, TrackMetadata as SpotifyTrackMetadata,
+};
+use std::sync::{Arc, Mutex, OnceLock};
+use system_audio::{
+    is_system_audio_capture_active, start_system_audio_capture, stop_system_audio_capture,
+    SystemAudioCapture,
+};
+use tauri::Emitter;
+use youtube::YouTubeBridge;
 
 // Global metadata extractor instance
 static METADATA_EXTRACTOR: OnceLock<MetadataExtractor> = OnceLock::new();
@@ -50,7 +55,9 @@ async fn get_playlist_manager() -> &'static tokio::sync::Mutex<PlaylistManager> 
     // Use get_or_try_init for async initialization
     if PLAYLIST_MANAGER.get().is_none() {
         let _ = PLAYLIST_MANAGER.set(tokio::sync::Mutex::new(
-            PlaylistManager::new().await.expect("Failed to initialize playlist manager")
+            PlaylistManager::new()
+                .await
+                .expect("Failed to initialize playlist manager"),
         ));
     }
     PLAYLIST_MANAGER.get().unwrap()
@@ -95,7 +102,7 @@ fn load_config() -> Result<Config, String> {
         Err(e) => {
             let milk_err = MilkError::from(e);
             log_error("Config", &format!("Failed to load config: {}", milk_err));
-            
+
             // Return user-friendly error message
             Err(milk_err.user_message())
         }
@@ -112,17 +119,17 @@ fn is_first_run() -> Result<bool, String> {
 fn validate_directory_path(path: String) -> Result<bool, String> {
     use std::path::Path;
     let dir_path = Path::new(&path);
-    
+
     // Check if path exists
     if !dir_path.exists() {
         return Ok(false);
     }
-    
+
     // Check if it's a directory
     if !dir_path.is_dir() {
         return Ok(false);
     }
-    
+
     // Check if we can read the directory
     match std::fs::read_dir(dir_path) {
         Ok(_) => Ok(true),
@@ -155,7 +162,10 @@ fn store_credential(key: String, value: String) -> Result<(), String> {
         Ok(()) => Ok(()),
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Storage", &format!("Failed to store credential: {}", milk_err));
+            log_error(
+                "Storage",
+                &format!("Failed to store credential: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
@@ -168,7 +178,10 @@ fn retrieve_credential(key: String) -> Result<Option<String>, String> {
         Ok(value) => Ok(value),
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Storage", &format!("Failed to retrieve credential: {}", milk_err));
+            log_error(
+                "Storage",
+                &format!("Failed to retrieve credential: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
@@ -182,7 +195,10 @@ fn delete_credential(key: String) -> Result<(), String> {
         Ok(()) => Ok(()),
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Storage", &format!("Failed to delete credential: {}", milk_err));
+            log_error(
+                "Storage",
+                &format!("Failed to delete credential: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
@@ -196,7 +212,8 @@ fn scan_library_with_timing(path: &std::path::Path) -> MilkResult<Vec<Track>> {
 
 /// Validate audio file format (constructs DecodeError and UnsupportedFormat variants)
 fn validate_audio_format(file_path: &std::path::Path) -> MilkResult<()> {
-    let extension = file_path.extension()
+    let extension = file_path
+        .extension()
         .and_then(|e| e.to_str())
         .ok_or_else(|| MilkError::UnsupportedFormat("unknown".to_string()))?;
 
@@ -232,7 +249,10 @@ fn load_and_validate_config() -> MilkResult<Config> {
     // Validate library path exists
     if let Some(ref path) = config.library_path {
         if !std::path::Path::new(path).exists() {
-            return Err(MilkError::InvalidConfig(format!("library_path: {} does not exist", path)));
+            return Err(MilkError::InvalidConfig(format!(
+                "library_path: {} does not exist",
+                path
+            )));
         }
     }
 
@@ -271,7 +291,10 @@ fn extract_metadata(file_path: String) -> Result<TrackMetadata, String> {
         Ok(metadata) => Ok(metadata),
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_warn("Metadata", &format!("Metadata extraction failed for {}: {}", file_path, milk_err));
+            log_warn(
+                "Metadata",
+                &format!("Metadata extraction failed for {}: {}", file_path, milk_err),
+            );
             // For metadata errors, we still want to return something (fallback will be applied)
             // So we log as warning but still return the error
             Err(milk_err.user_message())
@@ -299,7 +322,10 @@ async fn create_playlist(name: String) -> Result<Playlist, String> {
         }
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Playlist", &format!("Failed to create playlist: {}", milk_err));
+            log_error(
+                "Playlist",
+                &format!("Failed to create playlist: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
@@ -313,7 +339,10 @@ async fn list_playlists() -> Result<Vec<Playlist>, String> {
         Ok(playlists) => Ok(playlists),
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Playlist", &format!("Failed to list playlists: {}", milk_err));
+            log_error(
+                "Playlist",
+                &format!("Failed to list playlists: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
@@ -328,7 +357,10 @@ async fn load_playlist(playlist_id: String) -> Result<Playlist, String> {
         Ok(playlist) => Ok(playlist),
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Playlist", &format!("Failed to load playlist: {}", milk_err));
+            log_error(
+                "Playlist",
+                &format!("Failed to load playlist: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
@@ -346,15 +378,24 @@ async fn delete_playlist(playlist_id: String) -> Result<(), String> {
         }
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Playlist", &format!("Failed to delete playlist: {}", milk_err));
+            log_error(
+                "Playlist",
+                &format!("Failed to delete playlist: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
 }
 
 #[tauri::command]
-async fn add_track_to_playlist(playlist_id: String, track: PlaylistTrack) -> Result<Playlist, String> {
-    log_info("Playlist", &format!("Adding track to playlist: {}", playlist_id));
+async fn add_track_to_playlist(
+    playlist_id: String,
+    track: PlaylistTrack,
+) -> Result<Playlist, String> {
+    log_info(
+        "Playlist",
+        &format!("Adding track to playlist: {}", playlist_id),
+    );
     let manager = get_playlist_manager().await;
     let manager = manager.lock().await;
     match manager.add_track(&playlist_id, track).await {
@@ -368,8 +409,14 @@ async fn add_track_to_playlist(playlist_id: String, track: PlaylistTrack) -> Res
 }
 
 #[tauri::command]
-async fn remove_track_from_playlist(playlist_id: String, track_id: String) -> Result<Playlist, String> {
-    log_info("Playlist", &format!("Removing track from playlist: {}", playlist_id));
+async fn remove_track_from_playlist(
+    playlist_id: String,
+    track_id: String,
+) -> Result<Playlist, String> {
+    log_info(
+        "Playlist",
+        &format!("Removing track from playlist: {}", playlist_id),
+    );
     let manager = get_playlist_manager().await;
     let manager = manager.lock().await;
     match manager.remove_track(&playlist_id, &track_id).await {
@@ -383,15 +430,24 @@ async fn remove_track_from_playlist(playlist_id: String, track_id: String) -> Re
 }
 
 #[tauri::command]
-async fn reorder_playlist_tracks(playlist_id: String, track_ids: Vec<String>) -> Result<Playlist, String> {
-    log_info("Playlist", &format!("Reordering tracks in playlist: {}", playlist_id));
+async fn reorder_playlist_tracks(
+    playlist_id: String,
+    track_ids: Vec<String>,
+) -> Result<Playlist, String> {
+    log_info(
+        "Playlist",
+        &format!("Reordering tracks in playlist: {}", playlist_id),
+    );
     let manager = get_playlist_manager().await;
     let manager = manager.lock().await;
     match manager.reorder_tracks(&playlist_id, track_ids).await {
         Ok(playlist) => Ok(playlist),
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Playlist", &format!("Failed to reorder tracks: {}", milk_err));
+            log_error(
+                "Playlist",
+                &format!("Failed to reorder tracks: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
@@ -406,7 +462,10 @@ async fn update_playlist(playlist_id: String, name: Option<String>) -> Result<Pl
         Ok(playlist) => Ok(playlist),
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_error("Playlist", &format!("Failed to update playlist: {}", milk_err));
+            log_error(
+                "Playlist",
+                &format!("Failed to update playlist: {}", milk_err),
+            );
             Err(milk_err.user_message())
         }
     }
@@ -417,7 +476,7 @@ fn load_skin(skin_path: String) -> Result<ParsedSkin, String> {
     use std::path::Path;
     log_info("Skin", &format!("Loading skin: {}", skin_path));
     let path = Path::new(&skin_path);
-    
+
     // Try to parse as .wsz or .wal
     let result = if skin_path.to_lowercase().ends_with(".wsz") {
         SkinParser::parse_wsz(path)
@@ -439,7 +498,10 @@ fn load_skin(skin_path: String) -> Result<ParsedSkin, String> {
                 }
                 Err(e) => {
                     let milk_err = MilkError::from(e);
-                    log_warn("Skin", &format!("Skin validation failed, using default: {}", milk_err));
+                    log_warn(
+                        "Skin",
+                        &format!("Skin validation failed, using default: {}", milk_err),
+                    );
                     Ok(SkinParser::get_default_skin())
                 }
             }
@@ -447,7 +509,10 @@ fn load_skin(skin_path: String) -> Result<ParsedSkin, String> {
         Err(e) => {
             // Return default skin on error (graceful degradation)
             let milk_err = MilkError::from(e);
-            log_warn("Skin", &format!("Failed to load skin, using default: {}", milk_err));
+            log_warn(
+                "Skin",
+                &format!("Failed to load skin, using default: {}", milk_err),
+            );
             Ok(SkinParser::get_default_skin())
         }
     }
@@ -458,7 +523,7 @@ fn apply_skin(skin_path: String) -> Result<ParsedSkin, String> {
     use std::path::Path;
     log_info("Skin", &format!("Applying skin: {}", skin_path));
     let path = Path::new(&skin_path);
-    
+
     // Load and validate the skin
     let skin = if skin_path.to_lowercase().ends_with(".wsz") {
         SkinParser::parse_wsz(path)
@@ -476,7 +541,8 @@ fn apply_skin(skin_path: String) -> Result<ParsedSkin, String> {
             match SkinParser::validate_skin(&skin) {
                 Ok(_) => {
                     // Save the skin path to config
-                    let mut config = FileConfigManager::load().unwrap_or_else(|_| FileConfigManager::get_default());
+                    let mut config = FileConfigManager::load()
+                        .unwrap_or_else(|_| FileConfigManager::get_default());
                     config.last_skin = Some(skin_path.clone());
                     if let Err(e) = FileConfigManager.save(&config) {
                         log_warn("Skin", &format!("Failed to save skin preference: {}", e));
@@ -486,21 +552,30 @@ fn apply_skin(skin_path: String) -> Result<ParsedSkin, String> {
                 }
                 Err(e) => {
                     let milk_err = MilkError::from(e);
-                    log_warn("Skin", &format!("Skin validation failed, using default: {}", milk_err));
+                    log_warn(
+                        "Skin",
+                        &format!("Skin validation failed, using default: {}", milk_err),
+                    );
                     Ok(SkinParser::get_default_skin())
                 }
             }
         }
         Err(e) => {
             let milk_err = MilkError::from(e);
-            log_warn("Skin", &format!("Failed to apply skin, using default: {}", milk_err));
+            log_warn(
+                "Skin",
+                &format!("Failed to apply skin, using default: {}", milk_err),
+            );
             Ok(SkinParser::get_default_skin())
         }
     }
 }
 
 #[tauri::command]
-async fn spotify_authenticate(credentials: Credentials, auth_code: String) -> Result<Token, String> {
+async fn spotify_authenticate(
+    credentials: Credentials,
+    auth_code: String,
+) -> Result<Token, String> {
     log_info("Spotify", "Authenticating with Spotify");
     let bridge = get_spotify_bridge();
     match bridge.authenticate(credentials, auth_code).await {
@@ -525,12 +600,15 @@ async fn spotify_get_now_playing() -> Result<Option<SpotifyTrackMetadata>, Strin
             // Check error type before converting
             let is_no_playback = matches!(e, spotify::ApiError::NoActivePlayback);
             let milk_err = MilkError::from(e);
-            
+
             // Only log as warning for "no active playback" which is not really an error
             if is_no_playback {
                 log_info("Spotify", "No active playback");
             } else {
-                log_warn("Spotify", &format!("Failed to get now playing: {}", milk_err));
+                log_warn(
+                    "Spotify",
+                    &format!("Failed to get now playing: {}", milk_err),
+                );
             }
             Err(milk_err.user_message())
         }
@@ -563,13 +641,22 @@ fn spotify_check_token_expired() -> Result<bool, String> {
 #[tauri::command]
 async fn spotify_ensure_valid_token(credentials: Option<Credentials>) -> Result<String, String> {
     let bridge = get_spotify_bridge();
-    bridge.ensure_valid_token(credentials).await.map_err(|e| e.to_string())
+    bridge
+        .ensure_valid_token(credentials)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-async fn youtube_authenticate(credentials: Credentials, auth_code: String) -> Result<Token, String> {
+async fn youtube_authenticate(
+    credentials: Credentials,
+    auth_code: String,
+) -> Result<Token, String> {
     let bridge = get_youtube_bridge();
-    bridge.authenticate(credentials, auth_code).await.map_err(|e| e.to_string())
+    bridge
+        .authenticate(credentials, auth_code)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -581,7 +668,10 @@ async fn youtube_get_now_playing() -> Result<Option<SpotifyTrackMetadata>, Strin
 #[tauri::command]
 async fn youtube_refresh_token(credentials: Credentials) -> Result<Token, String> {
     let bridge = get_youtube_bridge();
-    bridge.refresh_token(credentials).await.map_err(|e| e.to_string())
+    bridge
+        .refresh_token(credentials)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -593,7 +683,10 @@ fn youtube_check_token_expired() -> Result<bool, String> {
 #[tauri::command]
 async fn youtube_ensure_valid_token(credentials: Option<Credentials>) -> Result<String, String> {
     let bridge = get_youtube_bridge();
-    bridge.ensure_valid_token(credentials).await.map_err(|e| e.to_string())
+    bridge
+        .ensure_valid_token(credentials)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -611,13 +704,19 @@ fn youtube_get_api_key() -> Result<Option<String>, String> {
 #[tauri::command]
 async fn youtube_validate_api_key(api_key: String) -> Result<bool, String> {
     let bridge = get_youtube_bridge();
-    bridge.validate_api_key(&api_key).await.map_err(|e| e.to_string())
+    bridge
+        .validate_api_key(&api_key)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 async fn youtube_get_video_metadata(video_id: String) -> Result<SpotifyTrackMetadata, String> {
     let bridge = get_youtube_bridge();
-    bridge.get_video_metadata(&video_id).await.map_err(|e| e.to_string())
+    bridge
+        .get_video_metadata(&video_id)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -699,7 +798,9 @@ fn test_internal_error_handling() -> Result<String, String> {
 }
 
 #[tauri::command]
-fn get_skin_assets(skin_path: String) -> Result<std::collections::HashMap<String, Vec<u8>>, String> {
+fn get_skin_assets(
+    skin_path: String,
+) -> Result<std::collections::HashMap<String, Vec<u8>>, String> {
     use std::path::Path;
     let path = Path::new(&skin_path);
 
@@ -712,13 +813,11 @@ fn get_skin_assets(skin_path: String) -> Result<std::collections::HashMap<String
     };
 
     match skin {
-        Ok(skin) => {
-            match SkinParser::extract_assets(&skin) {
-                Ok(assets) => Ok(assets),
-                Err(e) => Err(e.to_string())
-            }
-        }
-        Err(e) => Err(e.to_string())
+        Ok(skin) => match SkinParser::extract_assets(&skin) {
+            Ok(assets) => Ok(assets),
+            Err(e) => Err(e.to_string()),
+        },
+        Err(e) => Err(e.to_string()),
     }
 }
 
@@ -758,48 +857,62 @@ fn is_error_recoverable(error_type: String) -> bool {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     use std::time::Instant;
-    
+
     // Initialize logging system
     let log_config = LoggerConfig::default();
     if let Err(e) = logging::init_logger(log_config) {
         eprintln!("Failed to initialize logger: {}", e);
     }
-    
+
     log_info("Startup", "milk application starting");
-    
+
     // Start tracking startup time
     let startup_start = Instant::now();
     performance::init_performance_tracking();
-    
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .setup(move |app| {
             // Record startup time once the app is ready
             let startup_duration = startup_start.elapsed();
             performance::record_startup_time(startup_duration);
-            log_info("Startup", &format!("Application ready in {:?}", startup_duration));
-            
+            log_info(
+                "Startup",
+                &format!("Application ready in {:?}", startup_duration),
+            );
+
             // Handle command-line arguments for file associations
             if let Some(args) = std::env::args().nth(1) {
-                log_info("FileAssociation", &format!("Received file argument: {}", args));
-                
+                log_info(
+                    "FileAssociation",
+                    &format!("Received file argument: {}", args),
+                );
+
                 // Check if it's a skin file
                 if args.to_lowercase().ends_with(".wsz") || args.to_lowercase().ends_with(".wal") {
-                    log_info("FileAssociation", "Detected skin file, will load on frontend");
-                    
+                    log_info(
+                        "FileAssociation",
+                        "Detected skin file, will load on frontend",
+                    );
+
                     // Emit event to frontend to load the skin
                     let app_handle = app.handle().clone();
                     tauri::async_runtime::spawn(async move {
                         if let Err(e) = app_handle.emit("load-skin-file", args) {
-                            log_error("FileAssociation", &format!("Failed to emit load-skin-file event: {}", e));
+                            log_error(
+                                "FileAssociation",
+                                &format!("Failed to emit load-skin-file event: {}", e),
+                            );
                         }
                     });
                 }
             }
-            
+
             Ok(())
         })
-        .manage(system_audio::SystemAudioCaptureState(Arc::new(Mutex::new(SystemAudioCapture::new()))))
+        .manage(system_audio::SystemAudioCaptureState(Arc::new(Mutex::new(
+            SystemAudioCapture::new(),
+        ))))
         .invoke_handler(tauri::generate_handler![
             greet,
             load_config,

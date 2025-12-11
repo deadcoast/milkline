@@ -43,17 +43,23 @@ impl SystemAudioCapture {
             };
 
             // Get the default config
-            let config = device
-                .default_input_config()
-                .map_err(|e| MilkError::SystemAudio(format!("Failed to get default config: {}", e)))?;
+            let config = device.default_input_config().map_err(|e| {
+                MilkError::SystemAudio(format!("Failed to get default config: {}", e))
+            })?;
 
             let is_active = Arc::clone(&self.is_active);
 
             // Build the input stream
             let stream = match config.sample_format() {
-                cpal::SampleFormat::F32 => self.build_stream::<f32>(&device, &config.into(), app_handle, is_active)?,
-                cpal::SampleFormat::I16 => self.build_stream::<i16>(&device, &config.into(), app_handle, is_active)?,
-                cpal::SampleFormat::U16 => self.build_stream::<u16>(&device, &config.into(), app_handle, is_active)?,
+                cpal::SampleFormat::F32 => {
+                    self.build_stream::<f32>(&device, &config.into(), app_handle, is_active)?
+                }
+                cpal::SampleFormat::I16 => {
+                    self.build_stream::<i16>(&device, &config.into(), app_handle, is_active)?
+                }
+                cpal::SampleFormat::U16 => {
+                    self.build_stream::<u16>(&device, &config.into(), app_handle, is_active)?
+                }
                 _ => {
                     return Err(MilkError::SystemAudio(
                         "Unsupported sample format".to_string(),
@@ -129,26 +135,26 @@ impl SystemAudioCapture {
 
                     // Convert samples to f32 and mix down to mono
                     let mut buffer = buffer.lock().unwrap();
-                    
+
                     for chunk in data.chunks(channels) {
                         // Mix down to mono by averaging channels
-                        let mono_sample: f32 = chunk
-                            .iter()
-                            .map(|&s| f32::from(s))
-                            .sum::<f32>()
-                            / channels as f32;
-                        
+                        let mono_sample: f32 =
+                            chunk.iter().map(|&s| f32::from(s)).sum::<f32>() / channels as f32;
+
                         buffer.push(mono_sample);
 
                         // When buffer is full, send to frontend
                         if buffer.len() >= buffer_size {
                             let audio_data: Vec<f32> = buffer.drain(..).collect();
-                            
+
                             // Emit event to frontend with audio data
-                            let _ = app_handle.emit("system-audio-data", SystemAudioData {
-                                samples: audio_data,
-                                sample_rate,
-                            });
+                            let _ = app_handle.emit(
+                                "system-audio-data",
+                                SystemAudioData {
+                                    samples: audio_data,
+                                    sample_rate,
+                                },
+                            );
                         }
                     }
                 },

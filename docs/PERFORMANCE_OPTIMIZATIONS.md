@@ -5,6 +5,7 @@ This document describes the performance optimizations implemented for the milk p
 ## Overview
 
 The following optimizations have been implemented to ensure the application meets the performance targets:
+
 - **Target**: <100MB RAM usage during idle playback
 - **Target**: <2 second startup time
 - **Target**: 30+ FPS visualization
@@ -16,12 +17,14 @@ The following optimizations have been implemented to ensure the application meet
 **Location**: `src/lib/components/Playlist.svelte`
 
 **Implementation**:
+
 - Metadata is now loaded on-demand when the user hovers over a track
 - Tracks are displayed immediately with basic information
 - Full metadata (including album art) is fetched only when needed
 - Reduces initial memory footprint and improves playlist loading speed
 
 **Benefits**:
+
 - Faster playlist loading (no upfront metadata extraction)
 - Reduced memory usage (metadata loaded only for visible/interacted tracks)
 - Better user experience (immediate UI response)
@@ -31,6 +34,7 @@ The following optimizations have been implemented to ensure the application meet
 **Location**: `src/lib/components/Visualizer.svelte`
 
 **Implementation**:
+
 - Adaptive frame rate based on window state:
   - **Focused**: 30 FPS (full quality)
   - **Unfocused**: 10 FPS (reduced CPU usage)
@@ -39,6 +43,7 @@ The following optimizations have been implemented to ensure the application meet
 - Uses `focus`/`blur` events to detect window focus state
 
 **Benefits**:
+
 - Reduced CPU usage when application is not in focus
 - Minimal resource consumption when window is hidden
 - Maintains smooth visualization when user is actively watching
@@ -49,6 +54,7 @@ The following optimizations have been implemented to ensure the application meet
 **Frontend Location**: `src/lib/stores/metadataCache.ts`
 
 **Implementation**:
+
 - Reduced backend metadata cache from 1000 to 500 entries
 - Reduced frontend metadata cache from 1000 to 500 entries
 - Implemented LRU (Least Recently Used) eviction with access frequency tracking
@@ -56,6 +62,7 @@ The following optimizations have been implemented to ensure the application meet
 - Total cache memory: ~100KB (500 entries × 200 bytes)
 
 **Benefits**:
+
 - Reduced memory footprint
 - Better cache hit rates due to frequency-aware eviction
 - Maintains performance for frequently accessed tracks
@@ -65,6 +72,7 @@ The following optimizations have been implemented to ensure the application meet
 **Location**: `src-tauri/src/performance.rs`
 
 **Implementation**:
+
 - Added memory usage tracking (current and peak)
 - Platform-specific implementation (macOS using `ps` command)
 - Memory metrics exposed via IPC commands:
@@ -73,6 +81,7 @@ The following optimizations have been implemented to ensure the application meet
   - `get_performance_metrics()` - Complete metrics including memory
 
 **Benefits**:
+
 - Real-time monitoring of memory usage
 - Ability to detect memory leaks
 - Performance regression detection
@@ -82,6 +91,7 @@ The following optimizations have been implemented to ensure the application meet
 **Location**: `src/lib/components/PerformanceMonitor.svelte`
 
 **Implementation**:
+
 - Real-time performance dashboard
 - Displays:
   - Startup time
@@ -92,6 +102,7 @@ The following optimizations have been implemented to ensure the application meet
 - Toggleable visibility
 
 **Benefits**:
+
 - Easy performance monitoring during development
 - Visual feedback on optimization effectiveness
 - Helps identify performance bottlenecks
@@ -99,11 +110,13 @@ The following optimizations have been implemented to ensure the application meet
 ## Performance Metrics
 
 ### Startup Time
+
 - **Target**: <2 seconds
 - **Tracking**: Measured from application start to window display
 - **Location**: `src-tauri/src/lib.rs` (run function)
 
 ### Memory Usage
+
 - **Target**: <100MB during idle playback
 - **Tracking**: Real-time via `ps` command on macOS
 - **Optimizations**:
@@ -112,12 +125,14 @@ The following optimizations have been implemented to ensure the application meet
   - Efficient LRU eviction
 
 ### Cache Performance
+
 - **Metric**: Cache hit rate
 - **Target**: >70% hit rate for optimal performance
 - **Tracking**: Metadata cache hits vs misses
 - **Display**: Performance monitor shows hit rate percentage
 
 ### Visualizer Performance
+
 - **Target**: 30+ FPS when focused
 - **Adaptive**: 10 FPS when unfocused, 5 FPS when hidden
 - **Tracking**: Frame timing in render loop
@@ -126,6 +141,7 @@ The following optimizations have been implemented to ensure the application meet
 ## Testing
 
 ### Manual Testing
+
 1. **Memory Usage Test**:
    - Open Performance Monitor
    - Load a large playlist (100+ tracks)
@@ -153,6 +169,7 @@ The following optimizations have been implemented to ensure the application meet
    - Verify it's under 2 seconds
 
 ### Automated Testing
+
 - Performance metrics tests: `src-tauri/tests/performance_test.rs`
 - Tests cover:
   - Metrics initialization
@@ -164,6 +181,7 @@ The following optimizations have been implemented to ensure the application meet
 ## Future Optimizations
 
 ### Potential Improvements
+
 1. **Virtual Scrolling**: Implement virtual scrolling for very large playlists
 2. **Web Workers**: Move metadata processing to web workers
 3. **IndexedDB**: Use IndexedDB for persistent frontend caching
@@ -171,6 +189,7 @@ The following optimizations have been implemented to ensure the application meet
 5. **Image Optimization**: Compress album art before caching
 
 ### Monitoring
+
 - Continue tracking performance metrics in production
 - Set up alerts for memory usage exceeding 100MB
 - Monitor cache hit rates to optimize cache size
@@ -179,12 +198,16 @@ The following optimizations have been implemented to ensure the application meet
 ## Configuration
 
 ### Cache Size Configuration
+
 To adjust cache sizes, modify:
+
 - Backend: `src-tauri/src/metadata.rs` - `MetadataExtractor::new()`
 - Frontend: `src/lib/stores/metadataCache.ts` - `MAX_CACHE_SIZE`
 
 ### Visualizer Frame Rates
+
 To adjust frame rates, modify:
+
 - `src/lib/components/Visualizer.svelte`:
   - `TARGET_FPS` - Focused frame rate (default: 30)
   - `TARGET_FPS_UNFOCUSED` - Unfocused frame rate (default: 10)

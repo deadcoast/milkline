@@ -5,6 +5,7 @@ This document explains how to build milk for both macOS and Windows.
 ## Quick Start
 
 ### Local Development (macOS only)
+
 ```bash
 # Build for your current platform
 pnpm tauri:build
@@ -14,6 +15,7 @@ pnpm tauri:build:macos
 ```
 
 ### Cross-Platform Builds (GitHub Actions)
+
 For Windows builds, use GitHub Actions which builds on native Windows runners:
 
 1. Push your code to GitHub
@@ -22,23 +24,25 @@ For Windows builds, use GitHub Actions which builds on native Windows runners:
 
 ## Build Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm tauri:build` | Build for current platform (auto-detects) |
-| `pnpm tauri:build:macos` | Build for macOS (aarch64) |
+| Command                    | Description                                |
+| -------------------------- | ------------------------------------------ |
+| `pnpm tauri:build`         | Build for current platform (auto-detects)  |
+| `pnpm tauri:build:macos`   | Build for macOS (aarch64)                  |
 | `pnpm tauri:build:windows` | Build for Windows (requires Windows or CI) |
-| `pnpm tauri:build:all` | Build for all platforms (requires setup) |
+| `pnpm tauri:build:all`     | Build for all platforms (requires setup)   |
 
 ## Build Artifacts
 
 After building, find your artifacts here:
 
 ### macOS
+
 - **Executable**: `src-tauri/target/aarch64-apple-darwin/release/milk`
 - **App Bundle**: `src-tauri/target/aarch64-apple-darwin/release/bundle/macos/milk.app`
 - **DMG Installer**: `src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/milk_*.dmg`
 
 ### Windows (via GitHub Actions)
+
 - **Executable**: `src-tauri/target/x86_64-pc-windows-msvc/release/milk.exe`
 - **MSI Installer**: `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/milk_*.msi`
 - **NSIS Installer**: `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/milk_*-setup.exe`
@@ -67,6 +71,7 @@ The workflow (`.github/workflows/build.yml`) automatically:
 ### Manual Trigger
 
 You can manually trigger a build:
+
 1. Go to **Actions** tab on GitHub
 2. Select **Build milk** workflow
 3. Click **Run workflow**
@@ -74,7 +79,9 @@ You can manually trigger a build:
 ## Configuration Files
 
 ### `.cargo/config.toml`
+
 Cross-compilation settings for Cargo:
+
 ```toml
 [target.x86_64-pc-windows-msvc]
 linker = "cargo-xwin"
@@ -85,7 +92,9 @@ rustflags = ["-C", "link-arg=-Wl,-rpath,@loader_path"]
 ```
 
 ### `tauri.conf.json`
+
 Bundle configuration:
+
 ```json
 {
   "bundle": {
@@ -98,6 +107,7 @@ Bundle configuration:
 ## Development Workflow
 
 ### For macOS Development
+
 ```bash
 # Run in development mode
 pnpm tauri:dev
@@ -110,11 +120,13 @@ open src-tauri/target/release/bundle/macos/milk.app
 ```
 
 ### For Windows Testing
+
 1. Build via GitHub Actions
 2. Download the artifact
 3. Test on a Windows machine or VM
 
 ### For Both Platforms
+
 ```bash
 # Run all tests
 pnpm test
@@ -150,17 +162,21 @@ git push origin v0.1.0
 ## Troubleshooting
 
 ### "Failed to build for Windows" locally
+
 **Expected behavior**. Build for Windows using GitHub Actions instead.
 
 ### GitHub Actions fails
+
 - Check the Actions logs for specific errors
 - Ensure all dependencies are listed in `package.json` and `Cargo.toml`
 - Verify secrets are set (if using code signing)
 
 ### Build size too large
+
 Current target: <15MB
 
 Check sizes:
+
 ```bash
 # macOS
 ls -lh src-tauri/target/release/milk
@@ -170,6 +186,7 @@ ls -lh milk.exe
 ```
 
 Optimize in `Cargo.toml`:
+
 ```toml
 [profile.release]
 opt-level = "z"     # Optimize for size

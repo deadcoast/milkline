@@ -39,6 +39,7 @@ pnpm tauri:build
 ```
 
 This will:
+
 1. Build the Svelte frontend (`pnpm build`)
 2. Compile the Rust backend in release mode
 3. Generate the executable and installers
@@ -56,15 +57,18 @@ pnpm tauri:build:debug
 After a successful build, artifacts are located in `src-tauri/target/release/`:
 
 ### Executable
+
 - `milk.exe` - Standalone executable (~10-15MB)
 
 ### Installers
+
 - `bundle/msi/milk_0.1.0_x64_en-US.msi` - MSI installer for Windows
 - `bundle/nsis/milk_0.1.0_x64-setup.exe` - NSIS installer for Windows
 
 ## Installer Features
 
 ### MSI Installer
+
 - Installs to Program Files
 - Creates Start Menu shortcuts
 - Registers file associations (.wsz, .wal)
@@ -72,6 +76,7 @@ After a successful build, artifacts are located in `src-tauri/target/release/`:
 - Supports silent installation: `msiexec /i milk_0.1.0_x64_en-US.msi /quiet`
 
 ### NSIS Installer
+
 - Modern installer UI
 - Per-user installation (no admin required)
 - File associations for Winamp skins
@@ -80,6 +85,7 @@ After a successful build, artifacts are located in `src-tauri/target/release/`:
 ## File Associations
 
 The application registers handlers for:
+
 - `.wsz` - Winamp Skin (ZIP format)
 - `.wal` - Winamp Skin (WAL format)
 
@@ -105,6 +111,7 @@ The portable version stores configuration in the same directory as the executabl
 ## Verification Steps
 
 ### 1. Binary Size Check
+
 ```bash
 # Windows PowerShell
 (Get-Item src-tauri/target/release/milk.exe).Length / 1MB
@@ -113,24 +120,28 @@ The portable version stores configuration in the same directory as the executabl
 Should be **<15MB**.
 
 ### 2. Installation Test
+
 1. Run the MSI installer
 2. Verify Start Menu shortcut creation
 3. Launch the application
 4. Verify first-run setup flow
 
 ### 3. Uninstallation Test
+
 1. Uninstall via Windows Settings or Control Panel
 2. Verify all files are removed
 3. Verify Start Menu shortcuts are removed
 4. Check that user data (config, playlists) is preserved in AppData
 
 ### 4. File Association Test
+
 1. Install the application
 2. Download a `.wsz` skin file
 3. Double-click the skin file
 4. Verify milk launches and loads the skin
 
 ### 5. Portable Version Test
+
 1. Extract portable ZIP to a folder
 2. Run `milk.exe`
 3. Verify application runs without installation
@@ -139,6 +150,7 @@ Should be **<15MB**.
 ## Performance Targets
 
 As per requirement 8.1:
+
 - **Executable size**: <15MB ✓
 - **RAM usage (idle)**: <100MB
 - **Startup time**: <2 seconds
@@ -146,19 +158,23 @@ As per requirement 8.1:
 ## Troubleshooting
 
 ### Build Fails with "linker error"
+
 - Ensure Visual Studio Build Tools are installed
 - Run `rustup target add x86_64-pc-windows-msvc`
 
 ### MSI Generation Fails
+
 - Install WiX Toolset 3.11+
 - Add WiX to PATH: `C:\Program Files (x86)\WiX Toolset v3.11\bin`
 
 ### Binary Size Too Large
+
 - Verify release profile settings in `Cargo.toml`
 - Check for unnecessary dependencies
 - Use `cargo bloat --release` to analyze binary size
 
 ### File Associations Not Working
+
 - Reinstall the application
 - Check Windows Default Apps settings
 - Verify registry entries (advanced users)
@@ -166,6 +182,7 @@ As per requirement 8.1:
 ## Distribution Checklist
 
 Before releasing:
+
 - [ ] Build release executable
 - [ ] Verify binary size <15MB
 - [ ] Test MSI installer

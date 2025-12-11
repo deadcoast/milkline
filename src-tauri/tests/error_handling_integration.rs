@@ -16,7 +16,7 @@ fn test_valid_path() {
     // Test that valid paths are accepted
     let temp_dir = TempDir::new().unwrap();
     let path = temp_dir.path().to_str().unwrap().to_string();
-    
+
     let result = validate_directory_path(path);
     assert!(result.is_ok());
     assert_eq!(result.unwrap(), true);
@@ -27,10 +27,10 @@ fn test_corrupted_config_recovery() {
     // Test that corrupted config files are handled gracefully
     let temp_dir = TempDir::new().unwrap();
     let config_path = temp_dir.path().join("config.json");
-    
+
     // Write corrupted JSON
     fs::write(&config_path, "{invalid json}").unwrap();
-    
+
     // Loading should return default config without crashing
     // This is tested in config_tests.rs property tests
 }
@@ -40,7 +40,7 @@ fn test_missing_config_creates_default() {
     // Test that missing config creates default
     let result = load_config();
     assert!(result.is_ok());
-    
+
     let config = result.unwrap();
     assert_eq!(config.volume, 0.7); // Default value
 }
@@ -94,7 +94,7 @@ fn test_skin_error_fallback() {
     // Test that invalid skin files fall back to default
     let result = load_skin("/nonexistent/skin.wsz".to_string());
     assert!(result.is_ok());
-    
+
     let skin = result.unwrap();
     assert_eq!(skin.name, "default");
 }
@@ -120,7 +120,7 @@ async fn test_playlist_creation_and_recovery() {
     // Test playlist creation and error handling
     let result = create_playlist("Test Playlist".to_string()).await;
     assert!(result.is_ok());
-    
+
     let playlist = result.unwrap();
     assert_eq!(playlist.name, "Test Playlist");
     assert!(playlist.tracks.is_empty());
@@ -155,16 +155,16 @@ fn test_first_run_detection() {
 #[test]
 fn test_config_save_and_load_roundtrip() {
     use milk_lib::Config;
-    
+
     // Create a config
     let mut config = load_config().unwrap();
     config.volume = 0.5;
     config.library_path = Some("/test/path".to_string());
-    
+
     // Save it
     let save_result = save_config(config.clone());
     assert!(save_result.is_ok());
-    
+
     // Load it back
     let loaded_config = load_config().unwrap();
     assert_eq!(loaded_config.volume, 0.5);
@@ -175,7 +175,7 @@ fn test_scan_library_with_invalid_path() {
     // Test library scanning with invalid path
     let result = scan_library("/nonexistent/path".to_string());
     assert!(result.is_err());
-    
+
     let error_msg = result.unwrap_err();
     assert!(error_msg.contains("can't find") || error_msg.contains("Invalid"));
 }
@@ -185,7 +185,7 @@ fn test_scan_library_with_file_instead_of_directory() {
     // Create a temporary file
     let temp_file = tempfile::NamedTempFile::new().unwrap();
     let file_path = temp_file.path().to_str().unwrap().to_string();
-    
+
     // Try to scan it as a directory
     let result = validate_directory_path(file_path);
     assert!(result.is_ok());

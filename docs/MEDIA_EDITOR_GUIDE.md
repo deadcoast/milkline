@@ -21,16 +21,19 @@ The milk media editor provides simple, intuitive tools for cropping images and v
 Before using the media editor, ensure you have **FFmpeg** installed on your system:
 
 **macOS:**
+
 ```bash
 brew install ffmpeg
 ```
 
 **Windows:**
+
 1. Download FFmpeg from [ffmpeg.org](https://ffmpeg.org/download.html)
 2. Extract the archive
 3. Add the `bin` folder to your system PATH
 
 **Linux:**
+
 ```bash
 # Debian/Ubuntu
 sudo apt-get install ffmpeg
@@ -43,6 +46,7 @@ sudo pacman -S ffmpeg
 ```
 
 To verify FFmpeg is installed correctly:
+
 ```bash
 ffmpeg -version
 ```
@@ -62,6 +66,7 @@ ffmpeg -version
 3. Select the file and click **"Open"**
 
 The media editor will automatically detect the file type and load the appropriate editor:
+
 - **Image files** → Image Editor
 - **Video files** → Video Editor
 
@@ -154,6 +159,7 @@ You can apply both crop and trim operations to a video simultaneously.
 4. Click **"Save As"** to export
 
 The exported video will:
+
 - Contain only the frames between the start and end times (trim)
 - Have the crop filter applied to all frames (crop)
 - Preserve audio from the trimmed segment
@@ -172,11 +178,13 @@ The exported video will:
 The media editor uses optimized default settings for exports:
 
 **Video Exports:**
+
 - **Video Codec:** H.264 (libx264)
 - **Audio Codec:** AAC
 - **Quality:** CRF 23 (high quality, reasonable file size)
 
 **Image Exports:**
+
 - **Format:** PNG (lossless)
 - Preserves original image quality
 
@@ -198,12 +206,14 @@ The media editor uses optimized default settings for exports:
 ### Input Formats
 
 **Images:**
+
 - PNG (`.png`)
 - JPEG (`.jpg`, `.jpeg`)
 - BMP (`.bmp`)
 - GIF (`.gif`)
 
 **Videos:**
+
 - MP4 (`.mp4`)
 - MOV (`.mov`)
 - MKV (`.mkv`)
@@ -220,6 +230,7 @@ The media editor uses optimized default settings for exports:
 **Problem:** FFmpeg is not installed or not in your system PATH.
 
 **Solution:**
+
 1. Install FFmpeg (see [Prerequisites](#prerequisites))
 2. Verify installation: `ffmpeg -version`
 3. Restart the milk application after installing FFmpeg
@@ -229,6 +240,7 @@ The media editor uses optimized default settings for exports:
 **Problem:** You're trying to open a file type that isn't supported.
 
 **Solution:**
+
 - Check the [Supported Formats](#supported-formats) section
 - Convert your file to a supported format using another tool
 - For videos, MP4 is the most universally supported format
@@ -238,6 +250,7 @@ The media editor uses optimized default settings for exports:
 **Problem:** Video processing is CPU-intensive and depends on video length and resolution.
 
 **Solution:**
+
 - This is normal behavior for video processing
 - Longer videos and higher resolutions take more time
 - Consider trimming the video to a shorter segment first
@@ -248,6 +261,7 @@ The media editor uses optimized default settings for exports:
 **Problem:** The source video may not have had audio, or there was an error during processing.
 
 **Solution:**
+
 - Check that the original video has audio
 - Try exporting again
 - Check the error messages for details
@@ -257,6 +271,7 @@ The media editor uses optimized default settings for exports:
 **Problem:** The preview is scaled to fit the window, which can affect precision.
 
 **Solution:**
+
 - The coordinates are automatically mapped to the source resolution
 - Try maximizing the window for a larger preview
 - The export will use the correct source coordinates
@@ -266,6 +281,7 @@ The media editor uses optimized default settings for exports:
 **Problem:** You haven't opened a media file yet.
 
 **Solution:**
+
 1. Click **"Open"** in the file menu
 2. Select a media file
 3. Make your edits
@@ -290,6 +306,7 @@ Currently, the media editor uses mouse-based interactions. Keyboard shortcuts ma
 ## Future Enhancements
 
 Planned features for future versions:
+
 - Real-time video preview playback
 - Aspect ratio locking for crops
 - Custom export quality settings
@@ -300,6 +317,7 @@ Planned features for future versions:
 ## Getting Help
 
 If you encounter issues not covered in this guide:
+
 1. Check the [Troubleshooting](#troubleshooting) section
 2. Verify FFmpeg is installed correctly
 3. Check the application logs for error details
