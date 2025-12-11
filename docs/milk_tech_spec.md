@@ -9,14 +9,14 @@
 
 ## Stack
 
-| Layer | Technology | Rationale |
-|-------|------------|-----------|
-| Runtime | **Tauri 2.x** | Rust backend, lightweight (~10MB vs Electron's 150MB+), native Windows feel |
-| Frontend | **Svelte** | Minimal boilerplate, reactive, compiles to vanilla JS — keeps bundle small |
-| Styling | **CSS3 + Winamp Skin Parser** | Native CSS for base, custom parser for `.wsz` skin compatibility |
-| Audio Viz | **Web Audio API + Canvas** | Hardware-accelerated, no dependencies |
-| State | **Svelte Stores + Tauri IPC** | Frontend state in Svelte, persistent config via Rust fs |
-| farmer | **Lottie / SVG + CSS Animations** | Vector-based, frame-controlled expressions |
+| Layer     | Technology                        | Rationale                                                                   |
+| --------- | --------------------------------- | --------------------------------------------------------------------------- |
+| Runtime   | **Tauri 2.x**                     | Rust backend, lightweight (~10MB vs Electron's 150MB+), native Windows feel |
+| Frontend  | **Svelte**                        | Minimal boilerplate, reactive, compiles to vanilla JS — keeps bundle small  |
+| Styling   | **CSS3 + Winamp Skin Parser**     | Native CSS for base, custom parser for `.wsz` skin compatibility            |
+| Audio Viz | **Web Audio API + Canvas**        | Hardware-accelerated, no dependencies                                       |
+| State     | **Svelte Stores + Tauri IPC**     | Frontend state in Svelte, persistent config via Rust fs                     |
+| farmer    | **Lottie / SVG + CSS Animations** | Vector-based, frame-controlled expressions                                  |
 
 ---
 
@@ -54,21 +54,21 @@
 
 ### Spotify
 
-| Feature | Endpoint | Auth |
-|---------|----------|------|
-| Playback Control | Web Playback SDK | OAuth 2.0 (Premium required) |
-| Now Playing | `/v1/me/player/currently-playing` | OAuth 2.0 |
-| Library Sync | `/v1/me/tracks` | OAuth 2.0 |
+| Feature          | Endpoint                          | Auth                         |
+| ---------------- | --------------------------------- | ---------------------------- |
+| Playback Control | Web Playback SDK                  | OAuth 2.0 (Premium required) |
+| Now Playing      | `/v1/me/player/currently-playing` | OAuth 2.0                    |
+| Library Sync     | `/v1/me/tracks`                   | OAuth 2.0                    |
 
 **Limitation**: Web Playback SDK requires Spotify Premium. Free tier = metadata only, no playback control.
 
 ### YouTube
 
-| Feature | Endpoint | Auth |
-|---------|----------|------|
-| Playlist Data | YouTube Data API v3 | API Key + OAuth |
-| Playback | IFrame API (embedded) | None |
-| Watch History | `/activities` | OAuth 2.0 |
+| Feature       | Endpoint              | Auth            |
+| ------------- | --------------------- | --------------- |
+| Playlist Data | YouTube Data API v3   | API Key + OAuth |
+| Playback      | IFrame API (embedded) | None            |
+| Watch History | `/activities`         | OAuth 2.0       |
 
 **Limitation**: YouTube ToS prohibits audio-only extraction. Playback must use embedded player (can be hidden/styled over).
 
@@ -90,6 +90,7 @@ Triggers:
 ```
 
 Asset structure:
+
 ```
 /assets/farmer/
 ├── vectors/
@@ -175,6 +176,7 @@ milk/
 Target: Winamp `.wsz` compatibility (stretch goal)
 
 Phase 1: Custom JSON skin format
+
 ```json
 {
   "name": "classic",
@@ -216,5 +218,7 @@ Phase 2: `.wsz` parser (Winamp skin archive = renamed .zip with BMPs)
 ---
 
 📚 [Back to Documentation Map](README.md)
+
+```
 
 ```

@@ -5,6 +5,7 @@
 The Media Editor is a feature window within the milk Tauri application that provides intuitive image and video editing capabilities. It integrates with the existing Tauri + Svelte architecture, using Rust backend commands for FFmpeg video processing and image manipulation, with a Svelte frontend for the UI.
 
 The design emphasizes:
+
 - Integration with existing milk application architecture
 - Tauri commands for backend media processing (Rust + FFmpeg)
 - Svelte components for the editing UI
@@ -88,64 +89,77 @@ milk/
 ### Frontend (Svelte)
 
 #### MediaEditorStore
+
 Svelte store that tracks the current media file and editing operations.
 
 ```typescript
 interface MediaEditorState {
   filePath: string | null;
-  mediaType: 'image' | 'video' | null;
-  crop: CropRect | null;        // {x, y, width, height}
-  trim: TrimState | null;       // {startSec, endSec, durationSec}
+  mediaType: "image" | "video" | null;
+  crop: CropRect | null; // {x, y, width, height}
+  trim: TrimState | null; // {startSec, endSec, durationSec}
   isLoading: boolean;
   error: string | null;
 }
 ```
 
 #### MediaEditorWindow.svelte
+
 Main component that routes between image and video editors.
 
 **Responsibilities:**
+
 - File open/save dialogs
 - Route to appropriate editor based on media type
 - Coordinate save operations via Tauri commands
 
 #### CropOverlay.svelte
+
 Reusable component for drawing and managing crop rectangles.
 
 **Props:**
+
 - `sourceWidth: number` - Original media width
 - `sourceHeight: number` - Original media height
 - `previewWidth: number` - Display preview width
 - `previewHeight: number` - Display preview height
 
 **Events:**
+
 - `on:cropChange` - Emits crop rectangle in source coordinates
 
 #### ImageEditor.svelte
+
 Hande preview and editing interface.
 
 **Responsibilities:**
+
 - Display image scaled to fit container
 - Integrate CropOverlay
 - Calculate preview rectangle for coordinate mapping
 
 #### VideoEditor.svelte
+
 Video preview and timeline interface.
 
 **Responsibilities:**
+
 - Display video preview frame
 - Provide timeline controls for trim points
 - Integrate CropOverlay
 
 #### Timeline.svelte
+
 Timeline component with start/end handles.
 
 **Props:**
+
 - `duration: number` - Total video duration in seconds
 - `startTime: number` - Current start time
 - `endTime: number` - Current end time
 
 **Events:**
+
 - `on:trimChange` - Emits {startSec, endSec}
 
 ### Backend (Rust Tauri Commands)
@@ -153,6 +167,7 @@ Timeline component with start/end handles.
 #### Image Operations
 
 **Command: `crop_image`**
+
 ```rust
 #[tauri::command]
 async fn crop_image(
@@ -167,6 +182,7 @@ Uses the `image` crate to load and crop images.
 #### Video Operations
 
 **Command: `probe_video_metadata`**
+
 ```rust
 #[tauri::command]
 async fn probe_video_metadata(
@@ -183,6 +199,7 @@ struct VideoMetadata {
 Uses FFprobe to extract video metadata.
 
 **Command: `trim_and_crop_video`**
+
 ```rust
 #[tauri::command]
 async fn trim_and_crop_video(
@@ -274,11 +291,13 @@ The application uses three coordinate systems:
 3. **Source Coordinates**: Position in the original media file (pixels)
 
 **Mapping Flow:**
+
 ```
 Widget Coords → Preview Coords → Source Coords
 ```
 
 **Transformation:**
+
 1. Subtract preview offset from widget coordinates
 2. Calculate scale factor: `source_dimension / preview_dimension`
 3. Multiply by scale factor to get source coordinates
@@ -287,6 +306,7 @@ Widget Coords → Preview Coords → Source Coords
 ### State Management
 
 State flows unidirectionally:
+
 ```
 User Input → UI Component → MediaState → Service → Backend Tool
 ```
@@ -295,53 +315,53 @@ The `MediaState` object is shared across components and serves as the single sou
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system—essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system—essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Crop coordinate mapping preserves bounds
 
-*For any* crop rectangle drawn in the preview area, when mapped to source coordinates, all coordinates SHALL be within the valid source media bounds (0 ≤ x < width, 0 ≤ y < height, width > 0, height > 0).
+_For any_ crop rectangle drawn in the preview area, when mapped to source coordinates, all coordinates SHALL be within the valid source media bounds (0 ≤ x < width, 0 ≤ y < height, width > 0, height > 0).
 
 **Validates: Requirements 1.4, 2.4**
 
 ### Property 2: Timeline trim constraints are maintained
 
-*For any* video timeline state, the start time SHALL always be less than or equal to the end time, and both SHALL be within the video duration bounds (0 ≤ start ≤ end ≤ duration).
+_For any_ video timeline state, the start time SHALL always be less than or equal to the end time, and both SHALL be within the video duration bounds (0 ≤ start ≤ end ≤ duration).
 
 **Validates: Requirements 3.2, 3.3, 3.4**
 
 ### Property 3: Media type determines editor routing
 
-*For any* loaded media file, if the file extension is in the image set {png, jpg, jpeg, bmp, gif}, the application SHALL route to the image editor, and if the extension is in the video set {mp4, mov, mkv}, the application SHALL route to the video editor.
+_For any_ loaded media file, if the file extension is in the image set {png, jpg, jpeg, bmp, gif}, the application SHALL route to the image editor, and if the extension is in the video set {mp4, mov, mkv}, the application SHALL route to the video editor.
 
 **Validates: Requirements 4.2, 4.3**
 
 ### Property 4: Export without crop preserves original dimensions
 
-*For any* media file, if no crop rectangle is defined when exporting, the output file SHALL have the same dimensions as the input file.
+_For any_ media file, if no crop rectangle is defined when exporting, the output file SHALL have the same dimensions as the input file.
 
 **Validates: Requirements 1.5, 2.5**
 
 ### Property 5: Crop rectangle normalization is consistent
 
-*For any* two crop rectangles with the same start and end points but drawn in opposite directions (top-left to bottom-right vs bottom-right to top-left), the normalized rectangles SHALL be identical.
+_For any_ two crop rectangles with the same start and end points but drawn in opposite directions (top-left to bottom-right vs bottom-right to top-left), the normalized rectangles SHALL be identical.
 
 **Validates: Requirements 1.2, 2.2, 6.2**
 
 ### Property 6: FFmpeg errors are propagated
 
-*For any* FFmpeg operation that returns a non-zero exit code, the system SHALL raise an FFmpegError containing the stderr output.
+_For any_ FFmpeg operation that returns a non-zero exit code, the system SHALL raise an FFmpegError containing the stderr output.
 
 **Validates: Requirements 8.1**
 
 ### Property 7: Video trim produces correct duration
 
-*For any* video export with trim points start_sec and end_sec, the output video duration SHALL be approximately (end_sec - start_sec) within a tolerance of 0.1 seconds.
+_For any_ video export with trim points start_sec and end_sec, the output video duration SHALL be approximately (end_sec - start_sec) within a tolerance of 0.1 seconds.
 
 **Validates: Requirements 3.5**
 
 ### Property 8: Coordinate scaling is invertible
 
-*For any* point in source coordinates, when scaled to preview coordinates and then back to source coordinates, the result SHALL be within 1 pixel of the original point.
+_For any_ point in source coordinates, when scaled to preview coordinates and then back to source coordinates, the result SHALL be within 1 pixel of the original point.
 
 **Validates: Requirements 1.4, 2.4, 6.3**
 
@@ -367,17 +387,20 @@ The `MediaState` object is shared across components and serves as the single sou
 ### Error Handling Strategy
 
 **User Errors:**
+
 - Display informational QMessageBox
 - Allow user to retry or cancel
 - Do not crash application
 
 **Backend Errors:**
+
 - Raise custom exceptions (FFmpegError)
 - Catch at UI boundary
 - Display error details in QMessageBox
 - Log full error for debugging
 
 **System Errors:**
+
 - Catch at top level
 - Display critical error dialog
 - Provide guidance for resolution
@@ -386,6 +409,7 @@ The `MediaState` object is shared across components and serves as the single sou
 ### Error Messages
 
 All error messages should:
+
 - Be clear and actionable
 - Include relevant context (file path, operation)
 - Avoid technical jargon for user-facing messages
@@ -400,12 +424,14 @@ All error messages should:
 Unit tests will verify specific examples and edge cases:
 
 **Image Operations Tests (`src-tauri/src/media_editor/image_ops.rs`):**
+
 - Loading various image formats
 - Cropping with valid rectangles
 - Cropping at image boundaries
 - Handling invalid crop rectangles
 
 **Video Operations Tests (`src-tauri/src/media_editor/video_ops.rs`):**
+
 - Probing duration and resolution
 - Trimming with valid time ranges
 - Trimming at video boundaries
@@ -415,12 +441,14 @@ Unit tests will verify specific examples and edge cases:
 #### Frontend Tests
 
 **Coordinate Mapping Tests (`src/lib/utils/coordinates.test.ts`):**
+
 - Mapping from widget to source coordinates
 - Handling different aspect ratios
 - Scaling calculations
 - Boundary clamping
 
 **Component Tests:**
+
 - Crop overlay mouse interactions (Svelte Testing Library)
 - Timeline slider constraints
 - File dialog interactions
@@ -433,6 +461,7 @@ Unit tests will verify specific examples and edge cases:
 Property-based tests will verify universal properties across all inputs using the **proptest** crate (already in dev-dependencies).
 
 **Configuration:**
+
 - Each property test SHALL run a minimum of 100 iterations
 - Each test SHALL be tagged with a comment referencing the design document property
 - Tag format: `// Feature: media-editor, Property {number}: {property_text}`
@@ -442,6 +471,7 @@ Property-based tests will verify universal properties across all inputs using th
 Property-based tests using **fast-check** library (already in package.json).
 
 **Configuration:**
+
 - Each property test SHALL run a minimum of 100 iterations
 - Each test SHALL be tagged with a comment referencing the design document property
 - Tag format: `// Feature: media-editor, Property {number}: {property_text}`
@@ -490,6 +520,7 @@ Property-based tests using **fast-check** library (already in package.json).
 ### Integration Testing
 
 Integration tests will verify end-to-end workflows:
+
 - Load image → crop → export → verify output
 - Load video → trim → export → verify output
 - Load video → crop → trim → export → verify output
@@ -498,6 +529,7 @@ Integration tests will verify end-to-end workflows:
 ### Test Data
 
 Tests will use:
+
 - Generated test images (solid colors, patterns)
 - Short generated test videos (FFmpeg test patterns)
 - Real sample files for integration tests
@@ -526,7 +558,7 @@ tokio = { version = "1", features = ["full"] }  # Already present
 ```json
 {
   "devDependencies": {
-    "fast-check": "^4.3.0"  // Already present for property-based testing
+    "fast-check": "^4.3.0" // Already present for property-based testing
   }
 }
 ```

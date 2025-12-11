@@ -25,11 +25,14 @@ This document describes how to test the file association handling for Winamp ski
 ### 1. Testing File Associations (Windows Only)
 
 **Prerequisites:**
+
 - Build and install the application using the MSI installer
 - Have a .wsz or .wal skin file available for testing
 
 **Steps:**
+
 1. Build the MSI installer:
+
    ```bash
    pnpm tauri build
    ```
@@ -43,6 +46,7 @@ This document describes how to test the file association handling for Winamp ski
 5. The application should launch and automatically load the selected skin
 
 **Expected Behavior:**
+
 - Application launches
 - Farmer buddy shows "Loading new skin..." message
 - Skin is applied to the interface
@@ -52,10 +56,12 @@ This document describes how to test the file association handling for Winamp ski
 ### 2. Testing Drag-and-Drop
 
 **Prerequisites:**
+
 - Application is running
 - Have a .wsz or .wal skin file available
 
 **Steps:**
+
 1. Launch the milk application
 
 2. Open File Explorer and navigate to a skin file
@@ -67,6 +73,7 @@ This document describes how to test the file association handling for Winamp ski
 5. Drop the file onto the application
 
 **Expected Behavior:**
+
 - While dragging: Dashed border appears around the window
 - While dragging: Drop overlay shows "Drop skin file here" message
 - After dropping: Farmer buddy shows "Loading new skin..." message
@@ -77,19 +84,23 @@ This document describes how to test the file association handling for Winamp ski
 ### 3. Testing Command-Line Arguments (Development)
 
 **Prerequisites:**
+
 - Application built in development mode
 
 **Steps:**
+
 1. Build the application:
+
    ```bash
    pnpm tauri build --debug
    ```
 
 2. Run the application with a skin file path as an argument:
+
    ```bash
    # Windows
    ./src-tauri/target/debug/milk.exe "C:\path\to\skin.wsz"
-   
+
    # macOS/Linux (if supported in future)
    ./src-tauri/target/debug/milk "/path/to/skin.wsz"
    ```
@@ -97,6 +108,7 @@ This document describes how to test the file association handling for Winamp ski
 3. Check the application logs for file association events
 
 **Expected Behavior:**
+
 - Application launches
 - Log shows: "Received file argument: [path]"
 - Log shows: "Detected skin file, will load on frontend"
@@ -141,4 +153,5 @@ The implementation includes comprehensive error handling:
 ## Requirements Validated
 
 This implementation validates **Requirement 4.1**:
+
 - WHEN a user selects a `.wsz` skin file THEN the Tauri Application SHALL extract the archive and parse the skin assets

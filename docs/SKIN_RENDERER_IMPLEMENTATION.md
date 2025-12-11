@@ -12,35 +12,35 @@ The `SkinRenderer.svelte` component includes a comprehensive mapping system that
 
 ```typescript
 const assetMap: Record<string, string> = {
-    // Main window
-    'main.bmp': 'main-bg',
-    'titlebar.bmp': 'titlebar',
-    
-    // Buttons
-    'cbuttons.bmp': 'control-buttons',
-    'playpaus.bmp': 'play-pause-button',
-    'shufrep.bmp': 'shuffle-repeat-buttons',
-    
-    // Position and volume
-    'posbar.bmp': 'position-bar',
-    'volume.bmp': 'volume-slider',
-    'balance.bmp': 'balance-slider',
-    
-    // Display elements
-    'numbers.bmp': 'numbers',
-    'text.bmp': 'text',
-    'monoster.bmp': 'mono-stereo',
-    
-    // Equalizer
-    'eqmain.bmp': 'eq-main',
-    'eq_ex.bmp': 'eq-extended',
-    
-    // Playlist
-    'pledit.bmp': 'playlist',
-    
-    // Misc
-    'mb.bmp': 'mini-browser',
-    'avs.bmp': 'visualizer'
+  // Main window
+  "main.bmp": "main-bg",
+  "titlebar.bmp": "titlebar",
+
+  // Buttons
+  "cbuttons.bmp": "control-buttons",
+  "playpaus.bmp": "play-pause-button",
+  "shufrep.bmp": "shuffle-repeat-buttons",
+
+  // Position and volume
+  "posbar.bmp": "position-bar",
+  "volume.bmp": "volume-slider",
+  "balance.bmp": "balance-slider",
+
+  // Display elements
+  "numbers.bmp": "numbers",
+  "text.bmp": "text",
+  "monoster.bmp": "mono-stereo",
+
+  // Equalizer
+  "eqmain.bmp": "eq-main",
+  "eq_ex.bmp": "eq-extended",
+
+  // Playlist
+  "pledit.bmp": "playlist",
+
+  // Misc
+  "mb.bmp": "mini-browser",
+  "avs.bmp": "visualizer",
 };
 ```
 
@@ -50,27 +50,27 @@ The renderer converts BMP/PNG byte arrays from the backend into data URLs that c
 
 ```typescript
 function byteArrayToDataUrl(bytes: number[], filename: string): string {
-    // Determine MIME type from filename extension
-    const ext = filename.toLowerCase().split('.').pop();
-    let mimeType = 'image/png';
-    
-    if (ext === 'bmp') {
-        mimeType = 'image/bmp';
-    } else if (ext === 'png') {
-        mimeType = 'image/png';
-    } else if (ext === 'jpg' || ext === 'jpeg') {
-        mimeType = 'image/jpeg';
-    }
+  // Determine MIME type from filename extension
+  const ext = filename.toLowerCase().split(".").pop();
+  let mimeType = "image/png";
 
-    // Convert byte array to base64
-    const uint8Array = new Uint8Array(bytes);
-    let binary = '';
-    for (let i = 0; i < uint8Array.length; i++) {
-        binary += String.fromCharCode(uint8Array[i]);
-    }
-    const base64 = btoa(binary);
-    
-    return `data:${mimeType};base64,${base64}`;
+  if (ext === "bmp") {
+    mimeType = "image/bmp";
+  } else if (ext === "png") {
+    mimeType = "image/png";
+  } else if (ext === "jpg" || ext === "jpeg") {
+    mimeType = "image/jpeg";
+  }
+
+  // Convert byte array to base64
+  const uint8Array = new Uint8Array(bytes);
+  let binary = "";
+  for (let i = 0; i < uint8Array.length; i++) {
+    binary += String.fromCharCode(uint8Array[i]);
+  }
+  const base64 = btoa(binary);
+
+  return `data:${mimeType};base64,${base64}`;
 }
 ```
 
@@ -80,18 +80,18 @@ Skin assets are applied to the DOM via CSS custom properties (variables):
 
 ```typescript
 function applySkinsToDOM(skin: ParsedSkin, assetUrls: Record<string, string>) {
-    const root = document.documentElement;
-    
-    // Apply window dimensions
-    if (skin.regions?.main) {
-        root.style.setProperty('--skin-width', `${skin.regions.main.width}px`);
-        root.style.setProperty('--skin-height', `${skin.regions.main.height}px`);
-    }
+  const root = document.documentElement;
 
-    // Apply asset URLs as CSS variables
-    for (const [regionName, dataUrl] of Object.entries(assetUrls)) {
-        root.style.setProperty(`--skin-${regionName}`, `url("${dataUrl}")`);
-    }
+  // Apply window dimensions
+  if (skin.regions?.main) {
+    root.style.setProperty("--skin-width", `${skin.regions.main.width}px`);
+    root.style.setProperty("--skin-height", `${skin.regions.main.height}px`);
+  }
+
+  // Apply asset URLs as CSS variables
+  for (const [regionName, dataUrl] of Object.entries(assetUrls)) {
+    root.style.setProperty(`--skin-${regionName}`, `url("${dataUrl}")`);
+  }
 }
 ```
 
@@ -100,39 +100,43 @@ function applySkinsToDOM(skin: ParsedSkin, assetUrls: Record<string, string>) {
 The Player component has been updated to use skin assets:
 
 #### Main Background
+
 ```css
 .player {
-    background-image: var(--skin-main-bg, none);
-    background-size: cover;
-    width: var(--skin-width, auto);
+  background-image: var(--skin-main-bg, none);
+  background-size: cover;
+  width: var(--skin-width, auto);
 }
 ```
 
 #### Control Buttons
+
 ```css
 .control-btn {
-    background-image: var(--skin-control-buttons, none);
-    background-size: contain;
+  background-image: var(--skin-control-buttons, none);
+  background-size: contain;
 }
 
 .control-btn.play-pause {
-    background-image: var(--skin-play-pause-button, none);
+  background-image: var(--skin-play-pause-button, none);
 }
 ```
 
 #### Position Bar
+
 ```css
 .seek-bar {
-    background-image: var(--skin-position-bar, none);
-    background-size: 100% 100%;
+  background-image: var(--skin-position-bar, none);
+  background-size: 100% 100%;
 }
 ```
 
 #### Volume Slider
+
 ```css
 .volume-slider {
-    background-image: var(--skin-volume-slider, none);
-    background-size: 100% 100%;
+  background-image: var(--skin-volume-slider, none);
+  background-size: 100% 100%;
 }
 ```
 
@@ -150,21 +154,21 @@ The implementation includes robust error handling:
 
 ```typescript
 async function loadAndApplySkin(path: string) {
-    try {
-        error = null;
-        currentSkin = await applySkin(path);
-        const assets = await getSkinAssets(path);
-        skinAssetUrls = mapAssetsToRegions(assets);
-        applySkinsToDOM(currentSkin, skinAssetUrls);
-    } catch (e) {
-        error = `Failed to load skin: ${e}`;
-        console.error(error);
-        
-        // Fall back to default skin
-        currentSkin = await getDefaultSkin();
-        skinAssetUrls = {};
-        applySkinsToDOM(currentSkin, skinAssetUrls);
-    }
+  try {
+    error = null;
+    currentSkin = await applySkin(path);
+    const assets = await getSkinAssets(path);
+    skinAssetUrls = mapAssetsToRegions(assets);
+    applySkinsToDOM(currentSkin, skinAssetUrls);
+  } catch (e) {
+    error = `Failed to load skin: ${e}`;
+    console.error(error);
+
+    // Fall back to default skin
+    currentSkin = await getDefaultSkin();
+    skinAssetUrls = {};
+    applySkinsToDOM(currentSkin, skinAssetUrls);
+  }
 }
 ```
 
@@ -175,7 +179,7 @@ async function loadAndApplySkin(path: string) {
 ```svelte
 <script>
     import SkinRenderer from '$lib/components/SkinRenderer.svelte';
-    
+
     let skinPath = '/path/to/skin.wsz';
 </script>
 
@@ -185,7 +189,7 @@ async function loadAndApplySkin(path: string) {
 ### Resetting to Default
 
 ```typescript
-import { SkinRenderer } from '$lib/components/SkinRenderer.svelte';
+import { SkinRenderer } from "$lib/components/SkinRenderer.svelte";
 
 // Get component reference
 let skinRenderer;
@@ -199,11 +203,13 @@ skinRenderer.resetToDefault();
 The implementation includes comprehensive tests:
 
 ### Unit Tests
+
 - Component rendering without crashing
 - Skin loading and display
 - Error handling and fallback behavior
 
 ### Property-Based Tests (Backend)
+
 - Skin parsing completeness (Property 8)
 - Asset data preservation
 - Skin application completeness (Property 9)
@@ -213,12 +219,14 @@ The implementation includes comprehensive tests:
 ## Supported Skin Files
 
 The renderer supports:
+
 - `.wsz` files (Winamp classic skins - ZIP archives)
 - `.wal` files (Winamp modern skins - also ZIP archives)
 
 ## Available Test Skins
 
 The project includes several test skins in `assets/winamp_skins/`:
+
 - `PioneerReplicAmp.wsz`
 - `SimplAmpChrome.wsz`
 - `SonyReplicAmp.wsz`
@@ -234,6 +242,7 @@ The backend provides three IPC commands:
 3. `get_skin_assets(skinPath: string)` - Get raw asset byte arrays
 
 All commands include:
+
 - Validation of skin structure
 - Automatic fallback to default skin on error
 - Graceful error handling

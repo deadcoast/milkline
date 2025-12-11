@@ -8,88 +8,88 @@ pub enum MilkError {
     // File System Errors
     #[error("File system error: {0}")]
     FileSystem(#[from] std::io::Error),
-    
+
     #[error("Invalid path: {0}")]
     InvalidPath(String),
-    
+
     #[error("Permission denied: {0}")]
     PermissionDenied(String),
-    
+
     #[error("Disk full: unable to save {0}")]
     DiskFull(String),
-    
+
     #[error("Corrupted file: {0}")]
     CorruptedFile(String),
-    
+
     // Network/API Errors
     #[error("Authentication failed: {0}")]
     AuthenticationFailed(String),
-    
+
     #[error("API rate limit exceeded")]
     RateLimitExceeded,
-    
+
     #[error("Network timeout: {0}")]
     NetworkTimeout(String),
-    
+
     #[error("Invalid API response: {0}")]
     InvalidResponse(String),
-    
+
     #[error("Network error: {0}")]
     NetworkError(String),
-    
+
     // Playback Errors
     #[error("Unsupported audio format: {0}")]
     UnsupportedFormat(String),
-    
+
     #[error("Audio decode error: {0}")]
     DecodeError(String),
-    
+
     #[error("Audio device unavailable")]
     AudioDeviceUnavailable,
-    
+
     // Configuration Errors
     #[error("Invalid configuration value: {0}")]
     InvalidConfig(String),
-    
+
     #[error("Configuration parse error: {0}")]
     ConfigParseError(String),
-    
+
     #[error("Missing required configuration: {0}")]
     MissingConfig(String),
-    
+
     // Skin Errors
     #[error("Skin parse error: {0}")]
     SkinParseError(String),
-    
+
     #[error("Invalid skin format: {0}")]
     InvalidSkinFormat(String),
-    
+
     #[error("Missing skin assets: {0}")]
     MissingSkinAssets(String),
-    
+
     // Metadata Errors
     #[error("Metadata extraction failed: {0}")]
     MetadataError(String),
-    
+
     // Playlist Errors
     #[error("Playlist not found: {0}")]
     PlaylistNotFound(String),
-    
+
     #[error("Invalid playlist operation: {0}")]
     InvalidPlaylistOperation(String),
-    
+
     // Storage Errors
     #[error("Secure storage error: {0}")]
     SecureStorageError(String),
-    
+
     // System Audio Errors
     #[error("System audio capture error: {0}")]
     SystemAudio(String),
-    
+
     // Generic Errors
     #[error("Internal error: {0}")]
     Internal(String),
-    
+
     #[error("{0}")]
     Other(String),
 }
@@ -135,18 +135,27 @@ impl MilkError {
                 format!("Your disk is full! I couldn't save: {}", operation)
             }
             MilkError::CorruptedFile(file) => {
-                format!("This file seems corrupted: {}. I'll use defaults instead.", file)
+                format!(
+                    "This file seems corrupted: {}. I'll use defaults instead.",
+                    file
+                )
             }
 
             // Network/API Errors
             MilkError::AuthenticationFailed(service) => {
-                format!("Authentication failed for {}. Let's try logging in again!", service)
+                format!(
+                    "Authentication failed for {}. Let's try logging in again!",
+                    service
+                )
             }
             MilkError::RateLimitExceeded => {
                 "Whoa, slow down! The API rate limit was exceeded. Let's wait a moment.".to_string()
             }
             MilkError::NetworkTimeout(service) => {
-                format!("Connection to {} timed out. Check your internet connection?", service)
+                format!(
+                    "Connection to {} timed out. Check your internet connection?",
+                    service
+                )
             }
             MilkError::InvalidResponse(details) => {
                 format!("Got an unexpected response: {}. Let's try again.", details)
@@ -157,10 +166,16 @@ impl MilkError {
 
             // Playback Errors
             MilkError::UnsupportedFormat(format) => {
-                format!("Sorry, I can't play {} files. Try MP3, FLAC, or WAV!", format)
+                format!(
+                    "Sorry, I can't play {} files. Try MP3, FLAC, or WAV!",
+                    format
+                )
             }
             MilkError::DecodeError(details) => {
-                format!("Couldn't decode this audio file: {}. It might be corrupted.", details)
+                format!(
+                    "Couldn't decode this audio file: {}. It might be corrupted.",
+                    details
+                )
             }
             MilkError::AudioDeviceUnavailable => {
                 "No audio device found! Check your speakers or headphones.".to_string()
@@ -168,7 +183,10 @@ impl MilkError {
 
             // Configuration Errors
             MilkError::InvalidConfig(field) => {
-                format!("Invalid configuration for: {}. I'll use the default.", field)
+                format!(
+                    "Invalid configuration for: {}. I'll use the default.",
+                    field
+                )
             }
             MilkError::ConfigParseError(_) => {
                 "Your config file got scrambled. Don't worry, I'll create a fresh one!".to_string()
@@ -182,10 +200,16 @@ impl MilkError {
                 "Couldn't load that skin. I'll use the default look instead!".to_string()
             }
             MilkError::InvalidSkinFormat(format) => {
-                format!("That's not a valid skin format: {}. Try a .wsz or .wal file!", format)
+                format!(
+                    "That's not a valid skin format: {}. Try a .wsz or .wal file!",
+                    format
+                )
             }
             MilkError::MissingSkinAssets(assets) => {
-                format!("This skin is missing some parts: {}. Using defaults!", assets)
+                format!(
+                    "This skin is missing some parts: {}. Using defaults!",
+                    assets
+                )
             }
 
             // Metadata Errors
@@ -208,12 +232,18 @@ impl MilkError {
 
             // System Audio Errors
             MilkError::SystemAudio(details) => {
-                format!("System audio capture issue: {}. Visualizer may not work with streaming.", details)
+                format!(
+                    "System audio capture issue: {}. Visualizer may not work with streaming.",
+                    details
+                )
             }
 
             // Generic Errors
             MilkError::Internal(details) => {
-                format!("Something unexpected happened: {}. Let's try again!", details)
+                format!(
+                    "Something unexpected happened: {}. Let's try again!",
+                    details
+                )
             }
             MilkError::Other(msg) => msg.clone(),
         }

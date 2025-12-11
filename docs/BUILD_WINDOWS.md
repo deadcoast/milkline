@@ -7,6 +7,7 @@ This document describes how to build and package the milk application for Window
 ### On Windows (Native Build - Recommended)
 
 1. **Install Rust**
+
    ```powershell
    # Download and run rustup-init.exe from https://rustup.rs/
    # Or use winget:
@@ -14,6 +15,7 @@ This document describes how to build and package the milk application for Window
    ```
 
 2. **Install Node.js and pnpm**
+
    ```powershell
    winget install OpenJS.NodeJS
    npm install -g pnpm
@@ -23,6 +25,7 @@ This document describes how to build and package the milk application for Window
    - Download from: https://visualstudio.microsoft.com/downloads/
    - Select "Desktop development with C++"
    - Or install via winget:
+
    ```powershell
    winget install Microsoft.VisualStudio.2022.BuildTools
    ```
@@ -37,6 +40,7 @@ This document describes how to build and package the milk application for Window
 ### On macOS/Linux (Cross-Compilation)
 
 Cross-compiling to Windows from macOS/Linux requires:
+
 1. Rust with Windows target: `rustup target add x86_64-pc-windows-msvc`
 2. Windows SDK and cross-compilation toolchain (complex setup)
 3. Wine for testing (optional)
@@ -61,6 +65,7 @@ pnpm run tauri:build:windows
 ```
 
 This will:
+
 - Build the Svelte frontend
 - Compile the Rust backend with optimizations
 - Create the executable at: `src-tauri/target/x86_64-pc-windows-msvc/release/milk.exe`
@@ -91,18 +96,21 @@ if ($sizeMB -lt 15) {
 ```
 
 This creates:
+
 - `dist/milk_portable_v0.1.0.zip` - Portable ZIP distribution
 - Contains: executable, README, and assets folder
 
 ### 5. Test the Build
 
 #### Test Executable
+
 ```powershell
 # Run the executable directly
 .\src-tauri\target\x86_64-pc-windows-msvc\release\milk.exe
 ```
 
 #### Test MSI Installer
+
 ```powershell
 # Install the MSI
 msiexec /i src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\milk_0.1.0_x64.msi
@@ -117,6 +125,7 @@ msiexec /x src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\milk_0.1.0
 ```
 
 #### Test Portable Distribution
+
 ```powershell
 # Extract the ZIP
 Expand-Archive -Path dist\milk_portable_v0.1.0.zip -DestinationPath test-portable
@@ -169,6 +178,7 @@ The bundle configuration in `src-tauri/tauri.conf.json`:
 ## File Associations
 
 The MSI installer automatically registers file associations for:
+
 - `.wsz` - Winamp Skin (ZIP format)
 - `.wal` - Winamp Skin (WAL format)
 
@@ -187,11 +197,13 @@ Configuration is in: `src-tauri/wix/file-associations.wxs`
 ### Executable Size Too Large
 
 **Possible causes**:
+
 1. Debug symbols not stripped (check `strip = true` in Cargo.toml)
 2. Dependencies with large assets
 3. LTO not enabled
 
 **Solutions**:
+
 ```powershell
 # Verify release profile settings
 cargo build --release --verbose
@@ -203,6 +215,7 @@ cargo bloat --release --crates
 ### Cross-Compilation Errors
 
 If attempting to cross-compile from macOS/Linux:
+
 - Use a Windows VM or CI/CD pipeline
 - Or use Docker with Windows SDK
 - Native builds are recommended
@@ -217,39 +230,39 @@ name: Build Windows Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      
+          node-version: "18"
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: x86_64-pc-windows-msvc
-      
+
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Build application
         run: pnpm run tauri:build:windows
-      
+
       - name: Create portable distribution
         run: .\scripts\create-portable.ps1
-      
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -318,6 +331,7 @@ The build should meet these requirements:
 ## Support
 
 For build issues:
+
 1. Check this documentation
 2. Review GitHub Issues
 3. Check Tauri documentation: https://tauri.app/

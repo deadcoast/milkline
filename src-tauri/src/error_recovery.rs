@@ -1,9 +1,9 @@
 // Error recovery mechanisms for milk application
-use crate::error::{MilkError, MilkResult};
 use crate::config::{Config, ConfigManager, FileConfigManager};
-use crate::spotify::{SpotifyBridge, StreamingService, Credentials};
+use crate::error::{MilkError, MilkResult};
+use crate::logging::{log_error, log_info, log_warn};
+use crate::spotify::{Credentials, SpotifyBridge, StreamingService};
 use crate::youtube::YouTubeBridge;
-use crate::logging::{log_info, log_warn, log_error};
 use std::time::Duration;
 use tokio::time::sleep;
 
@@ -19,14 +19,17 @@ pub struct ErrorRecovery;
 impl ErrorRecovery {
     /// Attempt to recover from a configuration error
     pub fn recover_config_error(error: &MilkError) -> MilkResult<Config> {
-        log_warn("Recovery", &format!("Attempting to recover from config error: {}", error));
-        
+        log_warn(
+            "Recovery",
+            &format!("Attempting to recover from config error: {}", error),
+        );
+
         match error {
             MilkError::ConfigParseError(_) | MilkError::CorruptedFile(_) => {
                 // Config is corrupted, create a fresh default config
                 log_info("Recovery", "Creating default configuration");
                 let default_config = FileConfigManager::get_default();
-                
+
                 // Try to save the default config
                 let manager = FileConfigManager;
                 match manager.save(&default_config) {
@@ -58,8 +61,11 @@ impl ErrorRecovery {
         service: &str,
         credentials: Option<Credentials>,
     ) -> MilkResult<String> {
-        log_info("Recovery", &format!("Attempting to refresh {} token", service));
-        
+        log_info(
+            "Recovery",
+            &format!("Attempting to refresh {} token", service),
+        );
+
         let credentials = credentials.ok_or_else(|| {
             MilkError::AuthenticationFailed(format!("{}: No credentials provided", service))
         })?;
@@ -67,13 +73,17 @@ impl ErrorRecovery {
         match service {
             "spotify" => {
                 let bridge = SpotifyBridge::new();
-                let token = bridge.refresh_token(credentials).await
+                let token = bridge
+                    .refresh_token(credentials)
+                    .await
                     .map_err(MilkError::from)?;
                 Ok(token.access_token)
             }
             "youtube" => {
                 let bridge = YouTubeBridge::new();
-                let token = bridge.refresh_token(credentials).await
+                let token = bridge
+                    .refresh_token(credentials)
+                    .await
                     .map_err(MilkError::from)?;
                 Ok(token.access_token)
             }
@@ -82,10 +92,7 @@ impl ErrorRecovery {
     }
 
     /// Retry an operation with exponential backoff
-    pub async fn retry_with_backoff<F, T, Fut>(
-        operation: F,
-        operation_name: &str,
-    ) -> MilkResult<T>
+    pub async fn retry_with_backoff<F, T, Fut>(operation: F, operation_name: &str) -> MilkResult<T>
     where
         F: Fn() -> Fut,
         Fut: std::future::Future<Output = MilkResult<T>>,
@@ -97,7 +104,10 @@ impl ErrorRecovery {
             match operation().await {
                 Ok(result) => {
                     if attempts > 0 {
-                        log_info("Recovery", &format!("{} succeeded after {} retries", operation_name, attempts));
+                        log_info(
+                            "Recovery",
+                            &format!("{} succeeded after {} retries", operation_name, attempts),
+                        );
                     }
                     return Ok(result);
                 }
@@ -109,15 +119,26 @@ impl ErrorRecovery {
 
                     // Check if error is recoverable
                     if !is_recoverable {
-                        log_error("Recovery", &format!("{} failed with non-recoverable error: {}", operation_name, e));
+                        log_error(
+                            "Recovery",
+                            &format!(
+                                "{} failed with non-recoverable error: {}",
+                                operation_name, e
+                            ),
+                        );
                         return Err(e);
                     }
 
                     if attempts < MAX_RETRIES {
                         // Calculate exponential backoff delay
                         let delay_ms = BASE_DELAY_MS * 2u64.pow(attempts - 1);
-                        log_warn("Recovery", &format!("{} failed (attempt {}/{}), retrying in {}ms: {}", 
-                            operation_name, attempts, MAX_RETRIES, delay_ms, e));
+                        log_warn(
+                            "Recovery",
+                            &format!(
+                                "{} failed (attempt {}/{}), retrying in {}ms: {}",
+                                operation_name, attempts, MAX_RETRIES, delay_ms, e
+                            ),
+                        );
                         sleep(Duration::from_millis(delay_ms)).await;
                     }
                 }
@@ -126,7 +147,13 @@ impl ErrorRecovery {
 
         // All retries exhausted
         let error_msg = last_error.unwrap_or_else(|| "Unknown error".to_string());
-        log_error("Recovery", &format!("{} failed after {} attempts: {}", operation_name, MAX_RETRIES, error_msg));
+        log_error(
+            "Recovery",
+            &format!(
+                "{} failed after {} attempts: {}",
+                operation_name, MAX_RETRIES, error_msg
+            ),
+        );
         Err(MilkError::Internal(error_msg))
     }
 
@@ -145,19 +172,22 @@ impl ErrorRecovery {
     /// Validate and fix invalid paths
     pub fn validate_and_fix_path(path: &str) -> MilkResult<String> {
         use std::path::Path;
-        
+
         let path_obj = Path::new(path);
-        
+
         // Check if path exists
         if !path_obj.exists() {
             return Err(MilkError::InvalidPath(path.to_string()));
         }
-        
+
         // Check if it's a directory
         if !path_obj.is_dir() {
-            return Err(MilkError::InvalidPath(format!("{} is not a directory", path)));
+            return Err(MilkError::InvalidPath(format!(
+                "{} is not a directory",
+                path
+            )));
         }
-        
+
         // Check if we have read permissions
         match std::fs::read_dir(path_obj) {
             Ok(_) => Ok(path.to_string()),
@@ -195,15 +225,11 @@ impl ErrorRecovery {
             MilkError::AuthenticationFailed(_) => {
                 "Please log in again to refresh your credentials.".to_string()
             }
-            MilkError::InvalidPath(_) => {
-                "Please select a valid directory path.".to_string()
-            }
+            MilkError::InvalidPath(_) => "Please select a valid directory path.".to_string(),
             MilkError::PermissionDenied(_) => {
                 "Please check file permissions or run as administrator.".to_string()
             }
-            MilkError::DiskFull(_) => {
-                "Free up some disk space and try again.".to_string()
-            }
+            MilkError::DiskFull(_) => "Free up some disk space and try again.".to_string(),
             MilkError::CorruptedFile(_) | MilkError::ConfigParseError(_) => {
                 "The file is corrupted. I'll create a fresh one for you.".to_string()
             }
@@ -245,7 +271,7 @@ mod tests {
         let corrupted_error = MilkError::ConfigParseError("test".to_string());
         let result = ErrorRecovery::recover_config_error(&corrupted_error);
         assert!(result.is_ok());
-        
+
         let config = result.unwrap();
         assert_eq!(config.volume, 0.7); // Default value
     }
@@ -254,10 +280,10 @@ mod tests {
     async fn test_retry_with_backoff_success() {
         use std::sync::atomic::{AtomicU32, Ordering};
         use std::sync::Arc;
-        
+
         let attempt = Arc::new(AtomicU32::new(0));
         let attempt_clone = Arc::clone(&attempt);
-        
+
         let operation = move || {
             let attempt = Arc::clone(&attempt_clone);
             async move {
@@ -277,9 +303,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_retry_with_backoff_non_recoverable() {
-        let operation = || async {
-            Err::<(), _>(MilkError::AudioDeviceUnavailable)
-        };
+        let operation = || async { Err::<(), _>(MilkError::AudioDeviceUnavailable) };
 
         let result = ErrorRecovery::retry_with_backoff(operation, "test_operation").await;
         assert!(result.is_err());

@@ -11,6 +11,7 @@ milk is a lightweight (~10MB) desktop audio player inspired by Winamp, built wit
 ## Essential Commands
 
 ### Development
+
 ```bash
 pnpm install                    # Install dependencies
 pnpm tauri:dev                  # Run development server (Rust + Svelte)
@@ -18,6 +19,7 @@ pnpm dev                        # Frontend only (for quick UI iteration)
 ```
 
 ### Testing
+
 ```bash
 pnpm test                       # Run all tests once (Vitest + proptest)
 pnpm test:watch                 # Run tests in watch mode
@@ -30,6 +32,7 @@ cargo test -- --nocapture       # Run with output
 ```
 
 ### Building
+
 ```bash
 pnpm tauri:build                # Production build (creates MSI + NSIS installers)
 pnpm tauri:build:debug          # Debug build with symbols
@@ -42,6 +45,7 @@ pnpm tauri:build:debug          # Debug build with symbols
 ```
 
 ### Code Quality
+
 ```bash
 # Rust
 cargo clippy                    # Linting
@@ -58,6 +62,7 @@ pnpm check:watch                # Type check in watch mode
 ### Backend (Rust - src-tauri/src/)
 
 **Core Modules**:
+
 - `lib.rs` - Main entry point, Tauri command registration, global state management
 - `config.rs` - Application configuration persistence (JSON in user config dir)
 - `library.rs` - Local audio file scanning and track detection
@@ -76,6 +81,7 @@ pnpm check:watch                # Type check in watch mode
 **IPC Commands**: All Tauri commands follow pattern: `#[tauri::command] fn command_name(...) -> Result<T, String>`. Commands return `Result` with `MilkError` converted to user-friendly messages via `.user_message()`.
 
 **Error Handling**: All errors convert through `MilkError` which provides:
+
 - `is_critical()` - Requires immediate user attention
 - `is_recoverable()` - Can be handled gracefully with fallback
 - `user_message()` - User-friendly error text displayed via farmer
@@ -85,6 +91,7 @@ pnpm check:watch                # Type check in watch mode
 ### Frontend (Svelte - src/lib/)
 
 **Store Architecture** (src/lib/stores/):
+
 - `playerStore.ts` - Playback state (current track, play/pause, queue, volume)
 - `playlistStore.ts` - Playlist CRUD operations
 - `configStore.ts` - App configuration state
@@ -94,6 +101,7 @@ pnpm check:watch                # Type check in watch mode
 - `index.ts` - Store exports
 
 **Components** (src/lib/components/):
+
 - `Player.svelte` - Audio player controls
 - `Playlist.svelte` - Playlist UI
 - `Visualizer.svelte` - Audio visualization (Web Audio API + Canvas)
@@ -102,6 +110,7 @@ pnpm check:watch                # Type check in watch mode
 - `SetupWizard.svelte` - First-run setup flow
 
 **IPC Layer** (src/lib/tauri/):
+
 - `ipc.ts` - Typed wrappers for all Tauri commands
 - Pattern: Each command has both unsafe (`scanLibrary`) and safe (`scanLibrarySafe`) variants
 - Safe variants use `handleError()` from `errorHandler.ts` for automatic error display
@@ -120,6 +129,7 @@ pnpm check:watch                # Type check in watch mode
 ### Adding New Tauri Commands
 
 1. **Define in Rust** (src-tauri/src/lib.rs or module):
+
    ```rust
    #[tauri::command]
    fn my_command(param: String) -> Result<MyType, String> {
@@ -138,25 +148,27 @@ pnpm check:watch                # Type check in watch mode
 2. **Register command** in `run()` function's `.invoke_handler()` macro
 
 3. **Add TypeScript wrapper** (src/lib/tauri/ipc.ts):
+
    ```typescript
    export async function myCommand(param: string): Promise<MyType> {
-       return await invoke<MyType>('my_command', { param });
+     return await invoke<MyType>("my_command", { param });
    }
 
    // Add safe variant with error handling
    export async function myCommandSafe(param: string): Promise<MyType | null> {
-       try {
-           return await myCommand(param);
-       } catch (error) {
-           handleError(error, 'Failed to do something');
-           return null;
-       }
+     try {
+       return await myCommand(param);
+     } catch (error) {
+       handleError(error, "Failed to do something");
+       return null;
+     }
    }
    ```
 
 ### Error Handling
 
 **Always** convert errors through `MilkError`:
+
 - Rust: `MilkError::from(e)` then `.user_message()`
 - Frontend: Use `handleError()` from `src/lib/utils/errorHandler.ts`
 - Log appropriately: `log_error()` for critical, `log_warn()` for recoverable, `log_info()` for normal operations
@@ -166,25 +178,28 @@ pnpm check:watch                # Type check in watch mode
 **Farmer-Player Sync is Critical**: If you modify `playerStore` state related to playback (isPlaying, currentTrack), ensure `farmerPlayerSync.ts` handles the transition. The sync runs automatically via subscription.
 
 **Store Pattern**:
+
 ```typescript
 function createMyStore() {
-    const { subscribe, set, update } = writable<State>(initial);
-    return {
-        subscribe,
-        myMethod: (arg: T) => update(state => ({ ...state, field: arg })),
-        reset: () => set(initial)
-    };
+  const { subscribe, set, update } = writable<State>(initial);
+  return {
+    subscribe,
+    myMethod: (arg: T) => update((state) => ({ ...state, field: arg })),
+    reset: () => set(initial),
+  };
 }
 ```
 
 ### Testing Practices
 
 **Frontend** (Vitest):
+
 - Test files: `*.test.ts` next to component/module
 - Mock Tauri IPC in setup: see `src/test/setup.ts`
 - Use `@testing-library/svelte` for component tests
 
 **Backend** (Rust):
+
 - Unit tests: `#[cfg(test)] mod tests` in same file
 - Property-based: Use `proptest!` macro for validation logic
 - Integration: Property tests in `src-tauri/src/*_tests.rs`
@@ -192,6 +207,7 @@ function createMyStore() {
 ## Build Configuration
 
 **Release Profile** (Cargo.toml):
+
 - `opt-level = "z"` - Optimize for size
 - `lto = true` - Link-time optimization
 - `codegen-units = 1` - Better optimization
@@ -199,6 +215,7 @@ function createMyStore() {
 - Target: <15MB executable
 
 **Tauri Config** (src-tauri/tauri.conf.json):
+
 - Single-page app mode (SPA) via `adapter-static`
 - Fixed dev server port: 1420
 - Capabilities defined in `src-tauri/capabilities/default.json`
@@ -206,6 +223,7 @@ function createMyStore() {
 ## Performance Requirements
 
 **Hard Targets**:
+
 - Executable size: <15MB
 - RAM usage (idle): <100MB
 - Startup time: <2 seconds
@@ -216,6 +234,7 @@ Track metrics using `get_performance_metrics()` command.
 ## Common Issues
 
 **Tauri Commands Not Working**:
+
 1. Check command is registered in `.invoke_handler()`
 2. Verify parameter names match between Rust (snake_case) and TypeScript (camelCase in invoke call)
 3. Check return type serialization (must impl `Serialize`)
@@ -229,6 +248,7 @@ Track metrics using `get_performance_metrics()` command.
 ## Documentation
 
 Full documentation in `docs/`:
+
 - **docs/README.md** - Documentation map
 - **docs/BUILD.md** - Comprehensive build guide
 - **docs/ERROR_HANDLING.md** - Error handling patterns

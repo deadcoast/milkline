@@ -17,6 +17,7 @@ This document summarizes the implementation of performance optimizations for the
 **File**: `src/lib/components/Playlist.svelte`
 
 **Changes**:
+
 - Added on-demand metadata loading triggered by mouse hover
 - Implemented `loadTrackMetadata()` function for lazy loading
 - Added `trackMetadataCache` Map for caching loaded metadata
@@ -24,6 +25,7 @@ This document summarizes the implementation of performance optimizations for the
 - Added visual indicator for loading state
 
 **Benefits**:
+
 - Reduces initial memory footprint
 - Faster playlist loading
 - Metadata loaded only when needed
@@ -33,6 +35,7 @@ This document summarizes the implementation of performance optimizations for the
 **File**: `src/lib/components/Visualizer.svelte`
 
 **Changes**:
+
 - Implemented adaptive frame rate system:
   - 30 FPS when window is focused (full quality)
   - 10 FPS when window is unfocused (reduced CPU)
@@ -43,6 +46,7 @@ This document summarizes the implementation of performance optimizations for the
 - Updated render loop with adaptive throttling logic
 
 **Benefits**:
+
 - Reduced CPU usage when not in focus
 - Minimal resource consumption when hidden
 - Maintains smooth visualization when active
@@ -52,6 +56,7 @@ This document summarizes the implementation of performance optimizations for the
 **File**: `src-tauri/src/performance.rs`
 
 **Changes**:
+
 - Added `memory_usage_bytes` field to `PerformanceMetrics`
 - Added `peak_memory_bytes` field to `PerformanceMetrics`
 - Implemented `update_memory_usage()` function (macOS support)
@@ -62,6 +67,7 @@ This document summarizes the implementation of performance optimizations for the
 **File**: `src-tauri/src/lib.rs`
 
 **Changes**:
+
 - Added `get_memory_usage()` IPC command
 - Added `get_peak_memory()` IPC command
 - Registered new commands in invoke handler
@@ -69,12 +75,14 @@ This document summarizes the implementation of performance optimizations for the
 **File**: `src/lib/tauri/ipc.ts`
 
 **Changes**:
+
 - Added `PerformanceMetrics` interface
 - Added `getPerformanceMetrics()` function
 - Added `getMemoryUsage()` function
 - Added `getPeakMemory()` function
 
 **Benefits**:
+
 - Real-time memory monitoring
 - Peak memory tracking
 - Performance regression detection
@@ -84,6 +92,7 @@ This document summarizes the implementation of performance optimizations for the
 **Backend File**: `src-tauri/src/metadata.rs`
 
 **Changes**:
+
 - Reduced cache size from 1000 to 500 entries
 - Added `with_cache_size()` constructor for custom sizes
 - Updated documentation with memory calculations
@@ -91,6 +100,7 @@ This document summarizes the implementation of performance optimizations for the
 **Frontend File**: `src/lib/stores/metadataCache.ts`
 
 **Changes**:
+
 - Reduced cache size from 1000 to 500 entries
 - Added `accessCount` tracking for better LRU eviction
 - Implemented frequency-aware eviction algorithm
@@ -98,6 +108,7 @@ This document summarizes the implementation of performance optimizations for the
 - Updated eviction to consider both recency and frequency
 
 **Benefits**:
+
 - Reduced memory footprint (~100KB total cache)
 - Better cache hit rates
 - More efficient eviction strategy
@@ -107,6 +118,7 @@ This document summarizes the implementation of performance optimizations for the
 **File**: `src/lib/components/PerformanceMonitor.svelte`
 
 **Changes**:
+
 - Created new component for real-time performance monitoring
 - Displays startup time, memory usage, cache statistics
 - Updates every 2 seconds
@@ -114,6 +126,7 @@ This document summarizes the implementation of performance optimizations for the
 - Color-coded warnings (memory > 100MB, cache hit rate)
 
 **Benefits**:
+
 - Easy performance monitoring during development
 - Visual feedback on optimization effectiveness
 - Helps identify performance bottlenecks
@@ -123,6 +136,7 @@ This document summarizes the implementation of performance optimizations for the
 **File**: `docs/PERFORMANCE_OPTIMIZATIONS.md`
 
 **Changes**:
+
 - Comprehensive documentation of all optimizations
 - Performance targets and metrics
 - Testing procedures
@@ -134,6 +148,7 @@ This document summarizes the implementation of performance optimizations for the
 ### Manual Testing Procedures
 
 1. **Memory Usage Test**:
+
    ```
    - Add PerformanceMonitor component to main page
    - Load a large playlist (100+ tracks)
@@ -142,6 +157,7 @@ This document summarizes the implementation of performance optimizations for the
    ```
 
 2. **Lazy Loading Test**:
+
    ```
    - Open a playlist with many tracks
    - Observe instant track display
@@ -150,6 +166,7 @@ This document summarizes the implementation of performance optimizations for the
    ```
 
 3. **Visualizer Throttling Test**:
+
    ```
    - Start audio playback with visualizer
    - Check console for "30 FPS" message
@@ -170,6 +187,7 @@ This document summarizes the implementation of performance optimizations for the
 **File**: `src-tauri/tests/performance_test.rs`
 
 Tests implemented:
+
 - ✅ Performance metrics initialization
 - ✅ Cache hit rate calculation
 - ✅ Memory tracking (macOS)
@@ -178,18 +196,19 @@ Tests implemented:
 
 ## Performance Targets
 
-| Metric | Target | Implementation |
-|--------|--------|----------------|
-| Startup Time | < 2 seconds | ✅ Tracked in performance module |
-| Memory Usage (Idle) | < 100MB | ✅ Optimized caches, lazy loading |
-| Visualizer FPS (Focused) | 30+ FPS | ✅ Maintained at 30 FPS |
-| Visualizer FPS (Unfocused) | Reduced | ✅ Throttled to 10 FPS |
-| Visualizer FPS (Hidden) | Minimal | ✅ Throttled to 5 FPS |
-| Cache Hit Rate | > 70% | ✅ Tracked and optimized |
+| Metric                     | Target      | Implementation                    |
+| -------------------------- | ----------- | --------------------------------- |
+| Startup Time               | < 2 seconds | ✅ Tracked in performance module  |
+| Memory Usage (Idle)        | < 100MB     | ✅ Optimized caches, lazy loading |
+| Visualizer FPS (Focused)   | 30+ FPS     | ✅ Maintained at 30 FPS           |
+| Visualizer FPS (Unfocused) | Reduced     | ✅ Throttled to 10 FPS            |
+| Visualizer FPS (Hidden)    | Minimal     | ✅ Throttled to 5 FPS             |
+| Cache Hit Rate             | > 70%       | ✅ Tracked and optimized          |
 
 ## Code Changes Summary
 
 ### Files Modified
+
 1. `src/lib/components/Playlist.svelte` - Lazy loading
 2. `src/lib/components/Visualizer.svelte` - Adaptive throttling
 3. `src/lib/stores/metadataCache.ts` - Optimized cache
@@ -199,6 +218,7 @@ Tests implemented:
 7. `src/lib/tauri/ipc.ts` - Performance API
 
 ### Files Created
+
 1. `src/lib/components/PerformanceMonitor.svelte` - Monitoring UI
 2. `src-tauri/tests/performance_test.rs` - Automated tests
 3. `docs/PERFORMANCE_OPTIMIZATIONS.md` - Documentation
@@ -208,11 +228,13 @@ Tests implemented:
 To verify the optimizations:
 
 1. **Build the application**:
+
    ```bash
    npm run tauri build
    ```
 
 2. **Run the application**:
+
    ```bash
    npm run tauri dev
    ```

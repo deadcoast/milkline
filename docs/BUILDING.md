@@ -17,21 +17,25 @@ Install WiX Toolset 3.11+: https://wixtoolset.org/
 ## Build Commands
 
 ### Development Build
+
 ```bash
 pnpm tauri:dev
 ```
 
 ### Production Build
+
 ```bash
 pnpm tauri:build
 ```
 
 This creates:
+
 - `src-tauri/target/release/milk.exe` - Standalone executable
 - `src-tauri/target/release/bundle/msi/*.msi` - MSI installer (if WiX installed)
 - `src-tauri/target/release/bundle/nsis/*-setup.exe` - NSIS installer (if NSIS installed)
 
 ### Create Portable Distribution
+
 ```powershell
 # Windows PowerShell
 .\scripts\create-portable.ps1
@@ -43,6 +47,7 @@ This creates:
 ```
 
 ### Verify Build
+
 ```powershell
 # Windows PowerShell
 .\scripts\verify-build.ps1
@@ -60,12 +65,15 @@ The application meets the following requirements:
 ## Troubleshooting
 
 ### "linker error" during build
+
 Install Visual Studio Build Tools with C++ support
 
 ### MSI not generated
+
 Install WiX Toolset 3.11+ and add to PATH
 
 ### Binary too large
+
 Check `Cargo.toml` release profile settings
 
 ## More Information

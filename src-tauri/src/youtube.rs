@@ -1,7 +1,7 @@
-use std::time::{SystemTime, UNIX_EPOCH};
+use crate::secure_storage::{PlatformSecureStorage, SecureStorage};
+use crate::spotify::{ApiError, Credentials, StreamingService, Token, TrackMetadata};
 use reqwest::Client;
-use crate::secure_storage::{SecureStorage, PlatformSecureStorage};
-use crate::spotify::{ApiError, Credentials, Token, TrackMetadata, StreamingService};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 const YOUTUBE_AUTH_URL: &str = "https://oauth2.googleapis.com/token";
 const YOUTUBE_API_BASE: &str = "https://www.googleapis.com/youtube/v3";
@@ -40,10 +40,13 @@ impl YouTubeBridge {
 
     /// Validate API key by making a test request
     pub async fn validate_api_key(&self, api_key: &str) -> Result<bool, ApiError> {
-        let url = format!("{}/videos?part=snippet&chart=mostPopular&maxResults=1&key={}", 
-            YOUTUBE_API_BASE, api_key);
+        let url = format!(
+            "{}/videos?part=snippet&chart=mostPopular&maxResults=1&key={}",
+            YOUTUBE_API_BASE, api_key
+        );
 
-        let response = self.client
+        let response = self
+            .client
             .get(&url)
             .send()
             .await
@@ -72,7 +75,7 @@ impl YouTubeBridge {
             .unwrap()
             .as_secs()
             + token.expires_in;
-        
+
         self.storage
             .store(TOKEN_EXPIRY_KEY, &expiry.to_string())
             .map_err(|e| ApiError::StorageError(e.to_string()))?;
@@ -96,7 +99,8 @@ impl YouTubeBridge {
 
     /// Check if token is expired
     fn is_token_expired(&self) -> Result<bool, ApiError> {
-        let expiry_str = self.storage
+        let expiry_str = self
+            .storage
             .retrieve(TOKEN_EXPIRY_KEY)
             .map_err(|e| ApiError::StorageError(e.to_string()))?;
 
@@ -104,12 +108,12 @@ impl YouTubeBridge {
             let expiry: u64 = expiry_str
                 .parse()
                 .map_err(|e| ApiError::ParseError(format!("Invalid expiry: {}", e)))?;
-            
+
             let now = SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .unwrap()
                 .as_secs();
-            
+
             // Consider token expired 60 seconds before actual expiry
             Ok(now >= expiry - 60)
         } else {
@@ -141,7 +145,10 @@ impl YouTubeBridge {
     }
 
     /// Public wrapper to get or refresh a valid token
-    pub async fn ensure_valid_token(&self, credentials: Option<Credentials>) -> Result<String, ApiError> {
+    pub async fn ensure_valid_token(
+        &self,
+        credentials: Option<Credentials>,
+    ) -> Result<String, ApiError> {
         self.get_valid_token(credentials).await
     }
 
@@ -149,37 +156,47 @@ impl YouTubeBridge {
     fn parse_duration(&self, duration: &str) -> Result<u64, ApiError> {
         // YouTube duration format: PT#H#M#S (e.g., PT4M13S, PT1H2M3S)
         let duration = duration.trim_start_matches("PT");
-        
+
         let mut hours = 0u64;
         let mut minutes = 0u64;
         let mut seconds = 0u64;
-        
+
         let mut current_num = String::new();
-        
+
         for ch in duration.chars() {
             if ch.is_ascii_digit() {
                 current_num.push(ch);
             } else {
-                let num: u64 = current_num.parse()
+                let num: u64 = current_num
+                    .parse()
                     .map_err(|e| ApiError::ParseError(format!("Invalid duration number: {}", e)))?;
-                
+
                 match ch {
                     'H' => hours = num,
                     'M' => minutes = num,
                     'S' => seconds = num,
-                    _ => return Err(ApiError::ParseError(format!("Invalid duration format: {}", duration))),
+                    _ => {
+                        return Err(ApiError::ParseError(format!(
+                            "Invalid duration format: {}",
+                            duration
+                        )))
+                    }
                 }
-                
+
                 current_num.clear();
             }
         }
-        
+
         Ok((hours * 3600 + minutes * 60 + seconds) * 1000)
     }
 }
 
 impl StreamingService for YouTubeBridge {
-    async fn authenticate(&self, credentials: Credentials, auth_code: String) -> Result<Token, ApiError> {
+    async fn authenticate(
+        &self,
+        credentials: Credentials,
+        auth_code: String,
+    ) -> Result<Token, ApiError> {
         let params = [
             ("grant_type", "authorization_code"),
             ("code", &auth_code),
@@ -188,7 +205,8 @@ impl StreamingService for YouTubeBridge {
             ("client_secret", &credentials.client_secret),
         ];
 
-        let response = self.client
+        let response = self
+            .client
             .post(YOUTUBE_AUTH_URL)
             .form(&params)
             .send()
@@ -196,7 +214,10 @@ impl StreamingService for YouTubeBridge {
             .map_err(|e| ApiError::NetworkError(e.to_string()))?;
 
         if !response.status().is_success() {
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(ApiError::AuthenticationError(error_text));
         }
 
@@ -218,19 +239,20 @@ impl StreamingService for YouTubeBridge {
         // 2. Detecting YouTube playback
         // 3. Extracting video ID
         // 4. Fetching video metadata
-        
+
         // For now, we'll implement a placeholder that returns None
         // In a real implementation, this would need system-level integration
         // or a browser extension to detect active YouTube playback
-        
+
         // Alternative approach: Use YouTube Data API to get video details
         // if we have a video ID from another source
-        
+
         Ok(None)
     }
 
     async fn refresh_token(&self, credentials: Credentials) -> Result<Token, ApiError> {
-        let refresh_token = self.get_refresh_token()?
+        let refresh_token = self
+            .get_refresh_token()?
             .ok_or_else(|| ApiError::AuthenticationError("No refresh token found".to_string()))?;
 
         let params = [
@@ -240,7 +262,8 @@ impl StreamingService for YouTubeBridge {
             ("client_secret", &credentials.client_secret),
         ];
 
-        let response = self.client
+        let response = self
+            .client
             .post(YOUTUBE_AUTH_URL)
             .form(&params)
             .send()
@@ -248,7 +271,10 @@ impl StreamingService for YouTubeBridge {
             .map_err(|e| ApiError::NetworkError(e.to_string()))?;
 
         if !response.status().is_success() {
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(ApiError::AuthenticationError(error_text));
         }
 
@@ -272,7 +298,8 @@ impl StreamingService for YouTubeBridge {
 impl YouTubeBridge {
     /// Get video metadata by video ID (helper method for testing)
     pub async fn get_video_metadata(&self, video_id: &str) -> Result<TrackMetadata, ApiError> {
-        let api_key = self.get_api_key()?
+        let api_key = self
+            .get_api_key()?
             .ok_or_else(|| ApiError::AuthenticationError("No API key found".to_string()))?;
 
         let url = format!(
@@ -280,7 +307,8 @@ impl YouTubeBridge {
             YOUTUBE_API_BASE, video_id, api_key
         );
 
-        let response = self.client
+        let response = self
+            .client
             .get(&url)
             .send()
             .await
@@ -288,13 +316,22 @@ impl YouTubeBridge {
 
         if !response.status().is_success() {
             let status = response.status();
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
-            
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
+
             if status == 401 || status == 403 {
-                return Err(ApiError::AuthenticationError(format!("API key invalid: {}", error_text)));
+                return Err(ApiError::AuthenticationError(format!(
+                    "API key invalid: {}",
+                    error_text
+                )));
             }
-            
-            return Err(ApiError::NetworkError(format!("Status {}: {}", status, error_text)));
+
+            return Err(ApiError::NetworkError(format!(
+                "Status {}: {}",
+                status, error_text
+            )));
         }
 
         let json: serde_json::Value = response
@@ -303,7 +340,8 @@ impl YouTubeBridge {
             .map_err(|e| ApiError::ParseError(e.to_string()))?;
 
         // Parse the response
-        let items = json.get("items")
+        let items = json
+            .get("items")
             .and_then(|v| v.as_array())
             .ok_or_else(|| ApiError::ParseError("Missing 'items' field".to_string()))?;
 
@@ -312,23 +350,28 @@ impl YouTubeBridge {
         }
 
         let item = &items[0];
-        let snippet = item.get("snippet")
+        let snippet = item
+            .get("snippet")
             .ok_or_else(|| ApiError::ParseError("Missing 'snippet' field".to_string()))?;
 
-        let title = snippet.get("title")
+        let title = snippet
+            .get("title")
             .and_then(|v| v.as_str())
             .ok_or_else(|| ApiError::ParseError("Missing video title".to_string()))?
             .to_string();
 
-        let channel = snippet.get("channelTitle")
+        let channel = snippet
+            .get("channelTitle")
             .and_then(|v| v.as_str())
             .ok_or_else(|| ApiError::ParseError("Missing channel title".to_string()))?
             .to_string();
 
-        let content_details = item.get("contentDetails")
+        let content_details = item
+            .get("contentDetails")
             .ok_or_else(|| ApiError::ParseError("Missing 'contentDetails' field".to_string()))?;
 
-        let duration_str = content_details.get("duration")
+        let duration_str = content_details
+            .get("duration")
             .and_then(|v| v.as_str())
             .ok_or_else(|| ApiError::ParseError("Missing duration".to_string()))?;
 
@@ -358,7 +401,7 @@ mod tests {
     #[test]
     fn test_duration_parsing() {
         let bridge = YouTubeBridge::new();
-        
+
         // Test various duration formats
         assert_eq!(bridge.parse_duration("PT4M13S").unwrap(), 253000); // 4:13
         assert_eq!(bridge.parse_duration("PT1H2M3S").unwrap(), 3723000); // 1:02:03
@@ -377,7 +420,7 @@ mod property_tests {
     // **Validates: Requirements 11.4**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_api_bridge_interface_compliance_youtube(
             client_id in "[a-zA-Z0-9]{10,50}",
@@ -397,10 +440,10 @@ mod property_tests {
 
             // Test that credentials can be cloned (required for trait usage)
             let _creds_clone = credentials.clone();
-            
+
             // Test that auth_code is a valid string
             prop_assert!(!auth_code.is_empty());
-            
+
             // Verify credentials have required fields
             prop_assert!(!credentials.client_id.is_empty());
             prop_assert!(!credentials.client_secret.is_empty());
@@ -410,7 +453,7 @@ mod property_tests {
 
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_api_bridge_interface_compliance_spotify(
             client_id in "[a-zA-Z0-9]{10,50}",
@@ -419,7 +462,7 @@ mod property_tests {
             auth_code in "[a-zA-Z0-9]{20,100}",
         ) {
             use crate::spotify::SpotifyBridge;
-            
+
             // Create credentials
             let credentials = Credentials {
                 client_id,
@@ -432,10 +475,10 @@ mod property_tests {
 
             // Test that credentials can be cloned (required for trait usage)
             let _creds_clone = credentials.clone();
-            
+
             // Test that auth_code is a valid string
             prop_assert!(!auth_code.is_empty());
-            
+
             // Verify credentials have required fields
             prop_assert!(!credentials.client_id.is_empty());
             prop_assert!(!credentials.client_secret.is_empty());
@@ -445,7 +488,7 @@ mod property_tests {
 
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_streaming_service_trait_consistency(
             client_id in "[a-zA-Z0-9]{10,50}",
@@ -453,7 +496,7 @@ mod property_tests {
             redirect_uri in "https?://[a-z]+\\.[a-z]+/[a-z]+",
         ) {
             use crate::spotify::SpotifyBridge;
-            
+
             // Create credentials
             let credentials = Credentials {
                 client_id: client_id.clone(),
@@ -473,7 +516,7 @@ mod property_tests {
 
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_duration_parsing_correctness(
             hours in 0u64..24,
@@ -481,7 +524,7 @@ mod property_tests {
             seconds in 0u64..60,
         ) {
             let bridge = YouTubeBridge::new();
-            
+
             // Build duration string
             let mut duration = String::from("PT");
             if hours > 0 {
@@ -493,18 +536,18 @@ mod property_tests {
             if seconds > 0 {
                 duration.push_str(&format!("{}S", seconds));
             }
-            
+
             // Skip empty duration (PT)
             if hours == 0 && minutes == 0 && seconds == 0 {
                 return Ok(());
             }
-            
+
             // Parse and verify
             let parsed_ms = bridge.parse_duration(&duration).unwrap();
             let expected_ms = (hours * 3600 + minutes * 60 + seconds) * 1000;
-            
-            prop_assert_eq!(parsed_ms, expected_ms, 
-                "Duration {} should parse to {}ms, got {}ms", 
+
+            prop_assert_eq!(parsed_ms, expected_ms,
+                "Duration {} should parse to {}ms, got {}ms",
                 duration, expected_ms, parsed_ms);
         }
     }

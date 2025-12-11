@@ -9,6 +9,7 @@ Comprehensive error handling system has been implemented for the milk applicatio
 ### 1. Backend Error Recovery Module (`src-tauri/src/error_recovery.rs`)
 
 **Features:**
+
 - Automatic configuration recovery from corrupted files
 - Token refresh for expired authentication
 - Retry logic with exponential backoff
@@ -19,6 +20,7 @@ Comprehensive error handling system has been implemented for the milk applicatio
 - User-friendly recovery suggestions
 
 **Key Functions:**
+
 - `recover_config_error()` - Automatically creates default config when corrupted
 - `recover_token_error()` - Refreshes expired OAuth tokens
 - `retry_with_backoff()` - Retries operations with exponential backoff (max 3 attempts)
@@ -29,6 +31,7 @@ Comprehensive error handling system has been implemented for the milk applicatio
 ### 2. Enhanced Frontend Error Handler (`src/lib/utils/errorHandler.ts`)
 
 **Features:**
+
 - Error categorization (FileSystem, Network, Playback, Configuration, etc.)
 - Critical vs recoverable error detection
 - Automatic recovery strategies
@@ -37,6 +40,7 @@ Comprehensive error handling system has been implemented for the milk applicatio
 - Success message handling
 
 **Key Functions:**
+
 - `handleError()` - Shows errors via farmer with appropriate severity
 - `handleErrorWithRecovery()` - Attempts automatic recovery before showing error
 - `getRecoveryStrategy()` - Determines if error can be recovered and how
@@ -48,6 +52,7 @@ Comprehensive error handling system has been implemented for the milk applicatio
 ### 3. Error Types and User Messages
 
 **Backend (`src-tauri/src/error.rs`):**
+
 - Comprehensive `MilkError` enum covering all error categories
 - User-friendly error messages via `user_message()` method
 - Error categorization via `category()` method
@@ -55,6 +60,7 @@ Comprehensive error handling system has been implemented for the milk applicatio
 - Automatic conversion from domain-specific errors (ConfigError, MetadataError, etc.)
 
 **Error Categories:**
+
 - FileSystem (invalid paths, permission denied, disk full, corrupted files)
 - Network (timeouts, rate limits, authentication failures)
 - Playback (unsupported formats, decode errors, device unavailable)
@@ -68,12 +74,14 @@ Comprehensive error handling system has been implemented for the milk applicatio
 ### 4. Integration with Farmer Buddy
 
 **Error Display:**
+
 - All errors are shown via farmer's error state
 - Critical errors marked with ⚠️ icon
 - User-friendly messages instead of technical jargon
 - Recovery suggestions included in error messages
 
 **Success Feedback:**
+
 - Success messages shown via farmer's celebrating state
 - Configurable duration (default 2 seconds)
 - Automatic return to idle state
@@ -81,6 +89,7 @@ Comprehensive error handling system has been implemented for the milk applicatio
 ### 5. Testing
 
 **Frontend Tests (`src/lib/utils/errorHandler.test.ts`):**
+
 - ✅ 31 tests passing
 - Error message extraction
 - Critical error detection
@@ -91,6 +100,7 @@ Comprehensive error handling system has been implemented for the milk applicatio
 - Farmer integration
 
 **Backend Tests (`src-tauri/tests/error_handling_integration.rs`):**
+
 - Invalid path detection
 - Corrupted config recovery
 - Missing config creation
@@ -105,31 +115,37 @@ Comprehensive error handling system has been implemented for the milk applicatio
 ## Error Recovery Strategies
 
 ### 1. Configuration Errors
+
 - **Problem:** Corrupted or missing config file
 - **Recovery:** Automatically create default configuration
 - **User Message:** "Your config file got scrambled. Don't worry, I'll create a fresh one!"
 
 ### 2. Authentication Errors
+
 - **Problem:** Expired OAuth tokens
 - **Recovery:** Automatically refresh tokens using refresh token
 - **User Message:** "Please log in again to refresh your credentials."
 
 ### 3. Network Errors
+
 - **Problem:** Timeouts or connection failures
 - **Recovery:** Retry up to 3 times with exponential backoff (1s, 2s, 4s)
 - **User Message:** "Check your internet connection and try again."
 
 ### 4. Rate Limit Errors
+
 - **Problem:** API rate limit exceeded
 - **Recovery:** Wait 60 seconds before retrying
 - **User Message:** "Too many requests. Let's wait a moment."
 
 ### 5. Skin Errors
+
 - **Problem:** Invalid or corrupted skin files
 - **Recovery:** Fall back to default skin
 - **User Message:** "Couldn't load that skin. I'll use the default look instead!"
 
 ### 6. Metadata Errors
+
 - **Problem:** Failed to extract metadata from audio file
 - **Recovery:** Fall back to filename parsing
 - **User Message:** "Couldn't read the song info. I'll guess from the filename!"
@@ -169,33 +185,30 @@ ErrorRecovery::retry_with_backoff(
 ```typescript
 // Simple error handling
 try {
-    await invoke('load_config');
+  await invoke("load_config");
 } catch (error) {
-    handleError(error, 'Loading configuration');
+  handleError(error, "Loading configuration");
 }
 
 // Error handling with recovery
-await handleErrorWithRecovery(
-    error,
-    'Loading configuration',
-    async () => {
-        // Retry operation after recovery
-        await invoke('load_config');
-    }
-);
+await handleErrorWithRecovery(error, "Loading configuration", async () => {
+  // Retry operation after recovery
+  await invoke("load_config");
+});
 
 // Retry with exponential backoff
 const result = await withRetry(
-    () => invoke('spotify_get_now_playing'),
-    'Get now playing',
-    3,  // max retries
-    1000  // initial delay (ms)
+  () => invoke("spotify_get_now_playing"),
+  "Get now playing",
+  3, // max retries
+  1000, // initial delay (ms)
 );
 ```
 
 ## Requirements Validation
 
 ### Requirement 6.3
+
 ✅ **WHEN a user provides invalid input (non-existent path, invalid credentials) THEN farmer SHALL transition to error state and display helpful error message**
 
 - All error paths connected to farmer's error state
@@ -203,6 +216,7 @@ const result = await withRetry(
 - Recovery suggestions provided
 
 ### Requirement 10.3
+
 ✅ **WHEN configuration file is corrupted or missing THEN the Tauri Application SHALL create default configuration and notify user via farmer**
 
 - Automatic config recovery implemented
@@ -232,6 +246,7 @@ const result = await withRetry(
 ## Conclusion
 
 The comprehensive error handling system ensures that:
+
 1. All errors are caught and handled gracefully
 2. Users receive friendly, actionable error messages via farmer
 3. Automatic recovery is attempted when possible

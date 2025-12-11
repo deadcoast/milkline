@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::Path;
 use std::io;
+use std::path::Path;
 
 /// Track data model representing an audio file in the library
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -136,12 +136,12 @@ mod tests {
     #[test]
     fn test_scan_directory_with_audio_files() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Create test audio files
         fs::write(temp_dir.path().join("song1.mp3"), b"fake mp3 data").unwrap();
         fs::write(temp_dir.path().join("song2.flac"), b"fake flac data").unwrap();
         fs::write(temp_dir.path().join("song3.wav"), b"fake wav data").unwrap();
-        
+
         let tracks = LibraryScanner::scan_directory(temp_dir.path()).unwrap();
         assert_eq!(tracks.len(), 3);
     }
@@ -149,12 +149,12 @@ mod tests {
     #[test]
     fn test_scan_directory_filters_non_audio() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Create mixed files
         fs::write(temp_dir.path().join("song.mp3"), b"fake mp3 data").unwrap();
         fs::write(temp_dir.path().join("image.jpg"), b"fake jpg data").unwrap();
         fs::write(temp_dir.path().join("document.txt"), b"fake txt data").unwrap();
-        
+
         let tracks = LibraryScanner::scan_directory(temp_dir.path()).unwrap();
         assert_eq!(tracks.len(), 1);
         assert_eq!(tracks[0].extension, "mp3");
@@ -163,14 +163,14 @@ mod tests {
     #[test]
     fn test_scan_directory_recursive() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Create nested directory structure
         let subdir = temp_dir.path().join("subdir");
         fs::create_dir(&subdir).unwrap();
-        
+
         fs::write(temp_dir.path().join("root.mp3"), b"fake mp3 data").unwrap();
         fs::write(subdir.join("nested.flac"), b"fake flac data").unwrap();
-        
+
         let tracks = LibraryScanner::scan_directory(temp_dir.path()).unwrap();
         assert_eq!(tracks.len(), 2);
     }
@@ -196,8 +196,8 @@ mod tests {
 mod property_tests {
     use super::*;
     use proptest::prelude::*;
-    use tempfile::TempDir;
     use std::fs;
+    use tempfile::TempDir;
 
     // Helper to count files with supported extensions in a directory
     fn count_supported_files(path: &Path) -> usize {
@@ -222,7 +222,8 @@ mod property_tests {
 
     // Generator for file names with various extensions
     fn arb_file_name() -> impl Strategy<Value = (String, bool)> {
-        prop::string::string_regex("[a-zA-Z0-9_-]{1,20}").unwrap()
+        prop::string::string_regex("[a-zA-Z0-9_-]{1,20}")
+            .unwrap()
             .prop_flat_map(|name| {
                 prop_oneof![
                     Just((format!("{}.mp3", name), true)),
@@ -248,31 +249,31 @@ mod property_tests {
     // **Validates: Requirements 1.2**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_library_scanning_completeness(files in arb_file_list()) {
             let temp_dir = TempDir::new().unwrap();
-            
+
             // Create files in the temp directory
             for (file_name, _is_supported) in &files {
                 let file_path = temp_dir.path().join(file_name);
                 fs::write(&file_path, b"fake audio data").unwrap();
             }
-            
+
             // Scan the directory
             let scanned_tracks = LibraryScanner::scan_directory(temp_dir.path()).unwrap();
-            
+
             // Count expected supported files
             let expected_count = count_supported_files(temp_dir.path());
-            
+
             // The scanner should find exactly the number of supported files
             prop_assert_eq!(scanned_tracks.len(), expected_count);
-            
+
             // Verify all scanned tracks have supported extensions
             for track in &scanned_tracks {
                 prop_assert!(LibraryScanner::is_supported_extension(&track.extension));
             }
-            
+
             // Verify no duplicates
             let unique_ids: std::collections::HashSet<_> = scanned_tracks.iter().map(|t| &t.id).collect();
             prop_assert_eq!(unique_ids.len(), scanned_tracks.len());
@@ -281,7 +282,7 @@ mod property_tests {
 
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_library_scanning_recursive(
             root_files in arb_file_list(),
@@ -290,25 +291,25 @@ mod property_tests {
             let temp_dir = TempDir::new().unwrap();
             let subdir = temp_dir.path().join("subdir");
             fs::create_dir(&subdir).unwrap();
-            
+
             // Create files in root directory
             for (file_name, _) in &root_files {
                 let file_path = temp_dir.path().join(file_name);
                 fs::write(&file_path, b"fake audio data").unwrap();
             }
-            
+
             // Create files in subdirectory
             for (file_name, _) in &subdir_files {
                 let file_path = subdir.join(file_name);
                 fs::write(&file_path, b"fake audio data").unwrap();
             }
-            
+
             // Scan the directory
             let scanned_tracks = LibraryScanner::scan_directory(temp_dir.path()).unwrap();
-            
+
             // Count expected supported files in both directories
             let expected_count = count_supported_files(temp_dir.path());
-            
+
             // Should find all supported files recursively
             prop_assert_eq!(scanned_tracks.len(), expected_count);
         }

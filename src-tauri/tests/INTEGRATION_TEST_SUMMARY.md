@@ -9,12 +9,14 @@ Location: `src-tauri/tests/media_editor_integration.rs`
 These tests verify complete workflows from the Rust backend perspective:
 
 #### 1. Image Workflow Tests
+
 - **test_image_workflow_load_crop_export_verify**: Complete workflow testing image loading, cropping, exporting, and verification
   - Creates a 400x300 test image
   - Applies a 200x150 crop at position (50, 50)
   - Verifies output dimensions and pixel data preservation
 
-#### 2. Video Workflow Tests  
+#### 2. Video Workflow Tests
+
 - **test_video_workflow_load_trim_export_verify**: Complete workflow for video trimming
   - Creates a 10-second test video (640x480)
   - Trims from 2-7 seconds
@@ -27,21 +29,25 @@ These tests verify complete workflows from the Rust backend perspective:
   - Verifies both operations applied correctly
 
 #### 3. Error Handling Tests
+
 - **test_error_handling_invalid_image_file**: Verifies proper error handling for non-existent image files
 - **test_error_handling_invalid_video_file**: Verifies FFmpeg error propagation for invalid video files
 - **test_error_handling_invalid_crop_rectangle**: Tests validation of crop rectangles outside image bounds
 - **test_error_handling_invalid_trim_times**: Tests graceful handling of trim times beyond video duration
 
 #### 4. Tauri Command Tests (Async)
+
 - **test_tauri_command_crop_image**: Tests the async Tauri command wrapper for image cropping
 - **test_tauri_command_probe_video_metadata**: Tests video metadata extraction via Tauri command
 - **test_tauri_command_trim_and_crop_video**: Tests video processing via Tauri command
 
 #### 5. Advanced Workflow Tests
+
 - **test_multiple_operations_in_sequence**: Tests chaining multiple operations (trim → crop)
 - **test_edge_case_crop_entire_image**: Tests cropping entire image (no actual cropping)
 
 ### Test Results
+
 ```
 running 12 tests
 test test_edge_case_crop_entire_image ... ok
@@ -77,7 +83,9 @@ The following frontend unit tests already exist and cover component-level functi
 For true end-to-end testing that involves the full Tauri application with UI interactions, the following approaches are recommended:
 
 ### Option 1: Manual E2E Testing
+
 Create a manual test checklist:
+
 1. Launch application
 2. Open media editor window
 3. Load an image file
@@ -87,13 +95,16 @@ Create a manual test checklist:
 7. Repeat for video with trim + crop
 
 ### Option 2: Tauri WebDriver Testing
+
 Use Tauri's WebDriver integration for automated E2E tests:
+
 - Requires setting up WebDriver
 - Can automate full UI interactions
 - Tests actual IPC communication
 - More complex setup but provides highest confidence
 
 ### Option 3: Playwright/Cypress with Tauri
+
 - Use Playwright or Cypress for UI automation
 - Requires custom Tauri adapter
 - Good for testing complex user workflows
@@ -101,6 +112,7 @@ Use Tauri's WebDriver integration for automated E2E tests:
 ## Coverage Summary
 
 ### ✅ Fully Tested
+
 - Rust backend operations (image crop, video trim/crop)
 - Error handling and validation
 - Tauri command invocations
@@ -109,6 +121,7 @@ Use Tauri's WebDriver integration for automated E2E tests:
 - Component rendering and interactions
 
 ### ⚠️ Requires Manual/E2E Testing
+
 - Full UI workflow with file dialogs
 - Actual file system operations in production environment
 - Cross-platform compatibility
@@ -118,12 +131,14 @@ Use Tauri's WebDriver integration for automated E2E tests:
 ## Running the Tests
 
 ### Rust Integration Tests
+
 ```bash
 cd src-tauri
 cargo test --test media_editor_integration -- --test-threads=1
 ```
 
 ### Frontend Unit Tests
+
 ```bash
 pnpm vitest --run
 ```
@@ -131,12 +146,14 @@ pnpm vitest --run
 ## Test Dependencies
 
 ### Rust
+
 - `proptest`: Property-based testing
 - `tempfile`: Temporary file/directory management
 - `image`: Image processing
 - FFmpeg: Must be installed on system
 
 ### Frontend
+
 - `vitest`: Test runner
 - `@testing-library/svelte`: Component testing
 - `fast-check`: Property-based testing

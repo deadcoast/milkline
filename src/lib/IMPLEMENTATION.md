@@ -78,6 +78,7 @@
 ### Next Steps:
 
 The foundation is now ready for implementing:
+
 - Task 7: Player component with playback controls
 - Task 8: Playlist management system
 - Task 10: Winamp skin parser and renderer

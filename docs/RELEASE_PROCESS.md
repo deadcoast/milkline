@@ -52,6 +52,7 @@ Create or update `CHANGELOG.md`:
 ## [0.1.0] - 2024-XX-XX
 
 ### Added
+
 - Initial release
 - Local audio playback (mp3, flac, wav)
 - Winamp skin support (.wsz, .wal)
@@ -61,9 +62,11 @@ Create or update `CHANGELOG.md`:
 - First-run setup wizard
 
 ### Fixed
+
 - [List any bug fixes]
 
 ### Changed
+
 - [List any changes]
 ```
 
@@ -301,12 +304,14 @@ Create `release-v0.1.0/RELEASE_NOTES.md`:
 ## Installation
 
 ### MSI Installer
+
 1. Download `milk_0.1.0_x64.msi`
 2. Double-click to install
 3. Follow the installation wizard
 4. Launch from Start Menu
 
 ### Portable Version
+
 1. Download `milk_portable_v0.1.0.zip`
 2. Extract to desired location
 3. Run `milk.exe`
@@ -421,6 +426,7 @@ For automated releases, see the GitHub Actions workflow in `.github/workflows/re
 ## Support
 
 For issues during the release process:
+
 1. Check this documentation
 2. Review build logs
 3. Check GitHub Issues

@@ -21,10 +21,11 @@ This guide describes how to test the milk installation packages.
    - Location: `src-tauri/target/release/bundle/msi/`
 
 2. **Install Application**
+
    ```powershell
    # Interactive installation
    .\milk_0.1.0_x64_en-US.msi
-   
+
    # Silent installation (for testing)
    msiexec /i milk_0.1.0_x64_en-US.msi /quiet
    ```
@@ -181,9 +182,11 @@ This guide describes how to test the milk installation packages.
 ### Startup Time Test
 
 1. **Measure Cold Start**
+
    ```powershell
    Measure-Command { Start-Process "milk.exe" }
    ```
+
    - [ ] Startup time <2 seconds (Requirement 8.3)
 
 2. **Measure Warm Start**
@@ -214,6 +217,7 @@ This guide describes how to test the milk installation packages.
 ```powershell
 (Get-Item "milk.exe").Length / 1MB
 ```
+
 - [ ] Executable size <15MB (Requirement 8.1)
 
 ## Functional Testing

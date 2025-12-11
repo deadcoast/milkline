@@ -22,11 +22,11 @@ This directory contains the core frontend logic for the milk player application.
 Import stores from the stores directory:
 
 ```typescript
-import { playerStore, playlistStore, configStore } from '$lib/stores';
+import { playerStore, playlistStore, configStore } from "$lib/stores";
 
 // Subscribe to store changes
-playerStore.subscribe(state => {
-  console.log('Player state:', state);
+playerStore.subscribe((state) => {
+  console.log("Player state:", state);
 });
 
 // Update store
@@ -38,11 +38,11 @@ playerStore.setPlaying(true);
 Import IPC functions from the tauri directory:
 
 ```typescript
-import { loadConfig, scanLibrary } from '$lib/tauri';
+import { loadConfig, scanLibrary } from "$lib/tauri";
 
 // Call backend commands
 const config = await loadConfig();
-const tracks = await scanLibrary('/path/to/music');
+const tracks = await scanLibrary("/path/to/music");
 ```
 
 ### Types
@@ -50,16 +50,16 @@ const tracks = await scanLibrary('/path/to/music');
 Import types for TypeScript support:
 
 ```typescript
-import type { Track, Playlist, AppConfig } from '$lib/types';
+import type { Track, Playlist, AppConfig } from "$lib/types";
 
 const track: Track = {
-  id: '1',
-  title: 'Song Title',
-  artist: 'Artist Name',
-  album: 'Album Name',
+  id: "1",
+  title: "Song Title",
+  artist: "Artist Name",
+  album: "Album Name",
   duration: 180,
-  source: 'local',
-  metadata: {}
+  source: "local",
+  metadata: {},
 };
 ```
 

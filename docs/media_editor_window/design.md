@@ -6,10 +6,10 @@ I’ll give you a **future-proof architecture** + **file layout** + **starter co
 
 ## 1. Tech choices
 
-* **GUI:** PySide6 (Qt for Python)
-* **Images (preview & crop):** Pillow
-* **Video (trim & crop):** FFmpeg via `subprocess` (you install ffmpeg separately)
-* **Structure:** small “app” package with SRP modules
+- **GUI:** PySide6 (Qt for Python)
+- **Images (preview & crop):** Pillow
+- **Video (trim & crop):** FFmpeg via `subprocess` (you install ffmpeg separately)
+- **Structure:** small “app” package with SRP modules
 
 ImageMagick can be layered in later as an alternative backend, but for a first pass, Pillow + ffmpeg is enough.
 
@@ -246,8 +246,8 @@ if __name__ == "__main__":
 
 ### `ui/main_window.py`
 
-* Menu: Open, Save As
-* A `QStackedWidget` to swap between image-editor and video-editor views
+- Menu: Open, Save As
+- A `QStackedWidget` to swap between image-editor and video-editor views
 
 ```python
 # media_editor/ui/main_window.py
@@ -604,30 +604,27 @@ class VideoEditorWidget(QWidget):
 
 Later you can add:
 
-* Crop overlay on a preview frame
-* A proper video widget for playback
-* Keyframe snapping, etc.
+- Crop overlay on a preview frame
+- A proper video widget for playback
+- Keyframe snapping, etc.
 
 ---
 
 ## 9. How this matches your 3 use cases
 
 1. **Dynamic canvas crop (images/videos)**
-
-   * Images: drag crop box in `ImageEditorWidget`; export uses `crop_image`.
-   * Videos: later you can add a crop overlay to `VideoEditorWidget` and pass rect → `trim_and_crop_video()`.
+   - Images: drag crop box in `ImageEditorWidget`; export uses `crop_image`.
+   - Videos: later you can add a crop overlay to `VideoEditorWidget` and pass rect → `trim_and_crop_video()`.
 
 2. **Timeline trim**
-
-   * `VideoEditorWidget` uses two sliders to define `[start_sec, end_sec]` and calls ffmpeg.
+   - `VideoEditorWidget` uses two sliders to define `[start_sec, end_sec]` and calls ffmpeg.
 
 3. **Load/save (import/export)**
-
-   * `MainWindow` handles Open / Save As and delegates to the appropriate editor.
+   - `MainWindow` handles Open / Save As and delegates to the appropriate editor.
 
 ---
 
 If you want, next step I can:
 
-* Add **video crop overlay** to match the image behavior (single shared crop logic).
-* Or add a **config module** for future features (output presets, codecs, etc.).
+- Add **video crop overlay** to match the image behavior (single shared crop logic).
+- Or add a **config module** for future features (output presets, codecs, etc.).

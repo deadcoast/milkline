@@ -1,8 +1,8 @@
+use crate::secure_storage::{PlatformSecureStorage, SecureStorage};
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::time::{SystemTime, UNIX_EPOCH};
-use reqwest::Client;
-use crate::secure_storage::{SecureStorage, PlatformSecureStorage};
 
 const SPOTIFY_AUTH_URL: &str = "https://accounts.spotify.com/api/token";
 const SPOTIFY_NOW_PLAYING_URL: &str = "https://api.spotify.com/v1/me/player/currently-playing";
@@ -67,13 +67,22 @@ pub struct TrackMetadata {
 /// Trait for streaming service integration
 pub trait StreamingService {
     /// Authenticate with the service using OAuth 2.0
-    fn authenticate(&self, credentials: Credentials, auth_code: String) -> impl std::future::Future<Output = Result<Token, ApiError>> + Send;
-    
+    fn authenticate(
+        &self,
+        credentials: Credentials,
+        auth_code: String,
+    ) -> impl std::future::Future<Output = Result<Token, ApiError>> + Send;
+
     /// Get currently playing track metadata
-    fn get_now_playing(&self) -> impl std::future::Future<Output = Result<Option<TrackMetadata>, ApiError>> + Send;
-    
+    fn get_now_playing(
+        &self,
+    ) -> impl std::future::Future<Output = Result<Option<TrackMetadata>, ApiError>> + Send;
+
     /// Refresh an expired access token
-    fn refresh_token(&self, credentials: Credentials) -> impl std::future::Future<Output = Result<Token, ApiError>> + Send;
+    fn refresh_token(
+        &self,
+        credentials: Credentials,
+    ) -> impl std::future::Future<Output = Result<Token, ApiError>> + Send;
 }
 
 /// Spotify API bridge implementation
@@ -110,7 +119,7 @@ impl SpotifyBridge {
             .unwrap()
             .as_secs()
             + token.expires_in;
-        
+
         self.storage
             .store(TOKEN_EXPIRY_KEY, &expiry.to_string())
             .map_err(|e| ApiError::StorageError(e.to_string()))?;
@@ -134,7 +143,8 @@ impl SpotifyBridge {
 
     /// Check if token is expired
     fn is_token_expired(&self) -> Result<bool, ApiError> {
-        let expiry_str = self.storage
+        let expiry_str = self
+            .storage
             .retrieve(TOKEN_EXPIRY_KEY)
             .map_err(|e| ApiError::StorageError(e.to_string()))?;
 
@@ -142,12 +152,12 @@ impl SpotifyBridge {
             let expiry: u64 = expiry_str
                 .parse()
                 .map_err(|e| ApiError::ParseError(format!("Invalid expiry: {}", e)))?;
-            
+
             let now = SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .unwrap()
                 .as_secs();
-            
+
             // Consider token expired 60 seconds before actual expiry
             Ok(now >= expiry - 60)
         } else {
@@ -179,13 +189,20 @@ impl SpotifyBridge {
     }
 
     /// Public wrapper to get or refresh a valid token
-    pub async fn ensure_valid_token(&self, credentials: Option<Credentials>) -> Result<String, ApiError> {
+    pub async fn ensure_valid_token(
+        &self,
+        credentials: Option<Credentials>,
+    ) -> Result<String, ApiError> {
         self.get_valid_token(credentials).await
     }
 }
 
 impl StreamingService for SpotifyBridge {
-    async fn authenticate(&self, credentials: Credentials, auth_code: String) -> Result<Token, ApiError> {
+    async fn authenticate(
+        &self,
+        credentials: Credentials,
+        auth_code: String,
+    ) -> Result<Token, ApiError> {
         let params = [
             ("grant_type", "authorization_code"),
             ("code", &auth_code),
@@ -194,7 +211,8 @@ impl StreamingService for SpotifyBridge {
             ("client_secret", &credentials.client_secret),
         ];
 
-        let response = self.client
+        let response = self
+            .client
             .post(SPOTIFY_AUTH_URL)
             .form(&params)
             .send()
@@ -202,7 +220,10 @@ impl StreamingService for SpotifyBridge {
             .map_err(|e| ApiError::NetworkError(e.to_string()))?;
 
         if !response.status().is_success() {
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(ApiError::AuthenticationError(error_text));
         }
 
@@ -218,10 +239,14 @@ impl StreamingService for SpotifyBridge {
     }
 
     async fn get_now_playing(&self) -> Result<Option<TrackMetadata>, ApiError> {
-        let access_token = self.get_access_token()?
-            .ok_or(ApiError::AuthenticationError("No access token found".to_string()))?;
+        let access_token = self
+            .get_access_token()?
+            .ok_or(ApiError::AuthenticationError(
+                "No access token found".to_string(),
+            ))?;
 
-        let response = self.client
+        let response = self
+            .client
             .get(SPOTIFY_NOW_PLAYING_URL)
             .bearer_auth(&access_token)
             .send()
@@ -235,13 +260,19 @@ impl StreamingService for SpotifyBridge {
 
         if !response.status().is_success() {
             let status = response.status();
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
-            
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
+
             if status == 401 {
                 return Err(ApiError::TokenExpired);
             }
-            
-            return Err(ApiError::NetworkError(format!("Status {}: {}", status, error_text)));
+
+            return Err(ApiError::NetworkError(format!(
+                "Status {}: {}",
+                status, error_text
+            )));
         }
 
         let json: serde_json::Value = response
@@ -250,15 +281,18 @@ impl StreamingService for SpotifyBridge {
             .map_err(|e| ApiError::ParseError(e.to_string()))?;
 
         // Parse the response
-        let item = json.get("item")
+        let item = json
+            .get("item")
             .ok_or_else(|| ApiError::ParseError("Missing 'item' field".to_string()))?;
 
-        let title = item.get("name")
+        let title = item
+            .get("name")
             .and_then(|v| v.as_str())
             .ok_or_else(|| ApiError::ParseError("Missing track name".to_string()))?
             .to_string();
 
-        let artists = item.get("artists")
+        let artists = item
+            .get("artists")
             .and_then(|v| v.as_array())
             .ok_or_else(|| ApiError::ParseError("Missing artists".to_string()))?;
 
@@ -269,22 +303,24 @@ impl StreamingService for SpotifyBridge {
             .ok_or_else(|| ApiError::ParseError("Missing artist name".to_string()))?
             .to_string();
 
-        let album = item.get("album")
+        let album = item
+            .get("album")
             .and_then(|a| a.get("name"))
             .and_then(|v| v.as_str())
             .ok_or_else(|| ApiError::ParseError("Missing album name".to_string()))?
             .to_string();
 
-        let duration_ms = item.get("duration_ms")
+        let duration_ms = item
+            .get("duration_ms")
             .and_then(|v| v.as_u64())
             .ok_or_else(|| ApiError::ParseError("Missing duration".to_string()))?;
 
-        let is_playing = json.get("is_playing")
+        let is_playing = json
+            .get("is_playing")
             .and_then(|v| v.as_bool())
             .unwrap_or(false);
 
-        let progress_ms = json.get("progress_ms")
-            .and_then(|v| v.as_u64());
+        let progress_ms = json.get("progress_ms").and_then(|v| v.as_u64());
 
         Ok(Some(TrackMetadata {
             title,
@@ -297,7 +333,8 @@ impl StreamingService for SpotifyBridge {
     }
 
     async fn refresh_token(&self, credentials: Credentials) -> Result<Token, ApiError> {
-        let refresh_token = self.get_refresh_token()?
+        let refresh_token = self
+            .get_refresh_token()?
             .ok_or_else(|| ApiError::AuthenticationError("No refresh token found".to_string()))?;
 
         let params = [
@@ -307,7 +344,8 @@ impl StreamingService for SpotifyBridge {
             ("client_secret", &credentials.client_secret),
         ];
 
-        let response = self.client
+        let response = self
+            .client
             .post(SPOTIFY_AUTH_URL)
             .form(&params)
             .send()
@@ -315,7 +353,10 @@ impl StreamingService for SpotifyBridge {
             .map_err(|e| ApiError::NetworkError(e.to_string()))?;
 
         if !response.status().is_success() {
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(ApiError::AuthenticationError(error_text));
         }
 
@@ -388,26 +429,35 @@ mod property_tests {
             arb_non_empty_string(),
             1u64..=3600000u64, // duration between 1ms and 1 hour
             any::<bool>(),
-        ).prop_flat_map(|(title, artist, album, duration_ms, is_playing)| {
-            let progress_strategy = prop::option::of(0u64..=duration_ms);
-            (Just(title), Just(artist), Just(album), Just(duration_ms), Just(is_playing), progress_strategy)
-        }).prop_map(|(title, artist, album, duration_ms, is_playing, progress_ms)| {
-            TrackMetadata {
-                title,
-                artist,
-                album,
-                duration_ms,
-                is_playing,
-                progress_ms,
-            }
-        })
+        )
+            .prop_flat_map(|(title, artist, album, duration_ms, is_playing)| {
+                let progress_strategy = prop::option::of(0u64..=duration_ms);
+                (
+                    Just(title),
+                    Just(artist),
+                    Just(album),
+                    Just(duration_ms),
+                    Just(is_playing),
+                    progress_strategy,
+                )
+            })
+            .prop_map(
+                |(title, artist, album, duration_ms, is_playing, progress_ms)| TrackMetadata {
+                    title,
+                    artist,
+                    album,
+                    duration_ms,
+                    is_playing,
+                    progress_ms,
+                },
+            )
     }
 
     // **Feature: milk-player, Property 6: Streaming metadata completeness**
     // **Validates: Requirements 2.2, 3.2**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_streaming_metadata_completeness(metadata in arb_track_metadata()) {
             // All required fields should be non-empty
@@ -415,10 +465,10 @@ mod property_tests {
             prop_assert!(!metadata.artist.is_empty(), "Artist should not be empty");
             prop_assert!(!metadata.album.is_empty(), "Album should not be empty");
             prop_assert!(metadata.duration_ms > 0, "Duration should be greater than 0");
-            
+
             // If progress is present, it should be valid
             if let Some(progress) = metadata.progress_ms {
-                prop_assert!(progress <= metadata.duration_ms, 
+                prop_assert!(progress <= metadata.duration_ms,
                     "Progress should not exceed duration");
             }
         }
@@ -426,15 +476,15 @@ mod property_tests {
 
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_metadata_serialization_roundtrip(metadata in arb_track_metadata()) {
             // Serialize to JSON
             let json = serde_json::to_string(&metadata).unwrap();
-            
+
             // Deserialize back
             let deserialized: TrackMetadata = serde_json::from_str(&json).unwrap();
-            
+
             // Should be equal
             prop_assert_eq!(metadata, deserialized);
         }
@@ -444,30 +494,30 @@ mod property_tests {
     // **Validates: Requirements 2.3, 3.3**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_streaming_metadata_sync_timing(
             metadata1 in arb_track_metadata(),
             metadata2 in arb_track_metadata(),
         ) {
             use std::time::{Instant, Duration};
-            
+
             // Simulate a metadata update scenario
             // In a real scenario, this would involve polling the API
             // For the property test, we verify that the update mechanism
             // can handle rapid metadata changes efficiently
-            
+
             let start = Instant::now();
-            
+
             // Simulate processing two consecutive metadata updates
             let json1 = serde_json::to_string(&metadata1).unwrap();
             let _parsed1: TrackMetadata = serde_json::from_str(&json1).unwrap();
-            
+
             let json2 = serde_json::to_string(&metadata2).unwrap();
             let _parsed2: TrackMetadata = serde_json::from_str(&json2).unwrap();
-            
+
             let elapsed = start.elapsed();
-            
+
             // The processing should be fast enough to support 2-second polling
             // We expect each update to take much less than 2 seconds
             // Setting a generous threshold of 100ms for both updates
@@ -481,7 +531,7 @@ mod property_tests {
 
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_metadata_update_consistency(
             old_metadata in arb_track_metadata(),
@@ -489,21 +539,21 @@ mod property_tests {
         ) {
             // When metadata changes, all fields should be updated atomically
             // This test verifies that we don't have partial updates
-            
+
             // Simulate storing old metadata
             let old_json = serde_json::to_string(&old_metadata).unwrap();
-            
+
             // Simulate updating to new metadata
             let new_json = serde_json::to_string(&new_metadata).unwrap();
-            
+
             // Parse both
             let parsed_old: TrackMetadata = serde_json::from_str(&old_json).unwrap();
             let parsed_new: TrackMetadata = serde_json::from_str(&new_json).unwrap();
-            
+
             // Verify that parsed metadata matches original (no corruption)
             prop_assert_eq!(&parsed_old, &old_metadata);
             prop_assert_eq!(&parsed_new, &new_metadata);
-            
+
             // Verify that if metadata changed, at least one field is different
             if old_metadata != new_metadata {
                 prop_assert!(

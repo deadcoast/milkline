@@ -145,9 +145,10 @@ impl SkinParser {
         }
 
         // Check for main.bmp (required for classic Winamp skins)
-        let has_main_bmp = skin.assets.keys().any(|name| {
-            name.to_lowercase() == "main.bmp"
-        });
+        let has_main_bmp = skin
+            .assets
+            .keys()
+            .any(|name| name.to_lowercase() == "main.bmp");
 
         if !has_main_bmp {
             return Err(SkinError::MissingAsset("main.bmp".to_string()));
@@ -193,7 +194,8 @@ mod tests {
             0x36, 0x00, 0x00, 0x00, // Pixel data offset
         ];
 
-        zip.start_file::<_, ()>("main.bmp", FileOptions::default()).unwrap();
+        zip.start_file::<_, ()>("main.bmp", FileOptions::default())
+            .unwrap();
         zip.write_all(&bmp_data).unwrap();
 
         // Add region.txt
@@ -265,7 +267,8 @@ mod property_tests {
         let mut zip = ZipWriter::new(file);
 
         for (name, data) in assets {
-            zip.start_file::<_, ()>(name, FileOptions::default()).unwrap();
+            zip.start_file::<_, ()>(name, FileOptions::default())
+                .unwrap();
             zip.write_all(&data).unwrap();
         }
 
@@ -285,8 +288,7 @@ mod property_tests {
 
     // Property test generators
     fn arb_asset_name() -> impl Strategy<Value = String> {
-        prop::string::string_regex("[a-zA-Z0-9_-]{1,20}\\.(bmp|png|txt)")
-            .unwrap()
+        prop::string::string_regex("[a-zA-Z0-9_-]{1,20}\\.(bmp|png|txt)").unwrap()
     }
 
     fn arb_asset_data() -> impl Strategy<Value = Vec<u8>> {
@@ -297,7 +299,7 @@ mod property_tests {
     // **Validates: Requirements 4.1, 4.2**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_skin_parsing_completeness(
             asset_names in prop::collection::vec(arb_asset_name(), 1..10),
@@ -308,23 +310,23 @@ mod property_tests {
                 .into_iter()
                 .zip(asset_data.into_iter())
                 .collect();
-            
+
             // Add at least one BMP to ensure valid skin
             assets.push(("main.bmp".to_string(), create_minimal_bmp()));
-            
+
             // Create WSZ file
             let wsz_assets: Vec<(&str, Vec<u8>)> = assets
                 .iter()
                 .map(|(name, data)| (name.as_str(), data.clone()))
                 .collect();
             let temp_wsz = create_wsz_with_assets(wsz_assets);
-            
+
             // Parse the skin
             let result = SkinParser::parse_wsz(temp_wsz.path());
             prop_assert!(result.is_ok());
-            
+
             let skin = result.unwrap();
-            
+
             // All assets should be present in the parsed skin
             for (name, _) in &assets {
                 prop_assert!(
@@ -332,7 +334,7 @@ mod property_tests {
                     "Asset {} should be present in parsed skin", name
                 );
             }
-            
+
             // Number of assets should match
             prop_assert_eq!(skin.assets.len(), assets.len());
         }
@@ -342,7 +344,7 @@ mod property_tests {
     // **Validates: Requirements 4.1, 4.2**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_skin_asset_data_preservation(
             asset_name in arb_asset_name(),
@@ -354,10 +356,10 @@ mod property_tests {
                 ("main.bmp", create_minimal_bmp()),
             ];
             let temp_wsz = create_wsz_with_assets(assets);
-            
+
             // Parse the skin
             let skin = SkinParser::parse_wsz(temp_wsz.path()).unwrap();
-            
+
             // Asset data should be preserved exactly
             if let Some(parsed_data) = skin.assets.get(&asset_name) {
                 prop_assert_eq!(parsed_data, &asset_data);
@@ -369,7 +371,7 @@ mod property_tests {
     // **Validates: Requirements 4.3**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_skin_application_completeness(
             num_assets in 1usize..10
@@ -380,20 +382,20 @@ mod property_tests {
                 let name = format!("asset_{}.bmp", i);
                 assets.push((name, create_minimal_bmp()));
             }
-            
+
             let wsz_assets: Vec<(&str, Vec<u8>)> = assets
                 .iter()
                 .map(|(name, data)| (name.as_str(), data.clone()))
                 .collect();
             let temp_wsz = create_wsz_with_assets(wsz_assets);
-            
+
             // Parse and validate the skin
             let skin = SkinParser::parse_wsz(temp_wsz.path()).unwrap();
             let validation_result = SkinParser::validate_skin(&skin);
-            
+
             // Skin should be valid (has image assets)
             prop_assert!(validation_result.is_ok());
-            
+
             // All assets should be accessible
             for (name, _) in &assets {
                 prop_assert!(
@@ -408,7 +410,7 @@ mod property_tests {
     // **Validates: Requirements 4.4**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_skin_error_fallback_invalid_skin(
             non_image_assets in prop::collection::vec(
@@ -422,21 +424,21 @@ mod property_tests {
                 .filter(|(name, _)| !name.ends_with(".bmp") && !name.ends_with(".png"))
                 .map(|(name, data)| (name.as_str(), data.clone()))
                 .collect();
-            
+
             // Skip if we accidentally got image files
             if assets.is_empty() {
                 return Ok(());
             }
-            
+
             let temp_wsz = create_wsz_with_assets(assets);
-            
+
             // Parse the skin
             let skin = SkinParser::parse_wsz(temp_wsz.path()).unwrap();
-            
+
             // Validation should fail (no image assets)
             let validation_result = SkinParser::validate_skin(&skin);
             prop_assert!(validation_result.is_err());
-            
+
             // Default skin should always be valid
             let default_skin = SkinParser::get_default_skin();
             prop_assert_eq!(default_skin.name, "default");
@@ -451,7 +453,7 @@ mod property_tests {
         // Attempting to parse a non-existent file should return an error
         let result = SkinParser::parse_wsz(Path::new("/nonexistent/path/skin.wsz"));
         assert!(result.is_err());
-        
+
         // But we can always fall back to default
         let default_skin = SkinParser::get_default_skin();
         assert_eq!(default_skin.name, "default");
@@ -461,13 +463,15 @@ mod property_tests {
     fn test_corrupted_zip_fallback() {
         // Create a file with invalid ZIP data
         let mut temp_file = NamedTempFile::new().unwrap();
-        temp_file.write_all(b"This is not a valid ZIP file").unwrap();
+        temp_file
+            .write_all(b"This is not a valid ZIP file")
+            .unwrap();
         temp_file.flush().unwrap();
-        
+
         // Parsing should fail
         let result = SkinParser::parse_wsz(temp_file.path());
         assert!(result.is_err());
-        
+
         // Default skin should be available
         let default_skin = SkinParser::get_default_skin();
         assert_eq!(default_skin.name, "default");
@@ -477,7 +481,7 @@ mod property_tests {
     // **Validates: Requirements 4.5**
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         #[test]
         fn prop_skin_persistence_round_trip(
             _skin_name in "[a-zA-Z0-9_-]{1,20}"
@@ -485,34 +489,34 @@ mod property_tests {
             use crate::config::{Config, ConfigManager, FileConfigManager};
             use std::fs;
             use tempfile::TempDir;
-            
+
             // Create a temporary directory for config
             let temp_dir = TempDir::new().unwrap();
             let config_path = temp_dir.path().join("config.json");
-            
+
             // Create a valid skin file
             let assets = vec![("main.bmp", create_minimal_bmp())];
             let temp_wsz = create_wsz_with_assets(assets);
             let skin_path = temp_wsz.path().to_str().unwrap().to_string();
-            
+
             // Parse the skin
             let skin = SkinParser::parse_wsz(temp_wsz.path()).unwrap();
             prop_assert!(SkinParser::validate_skin(&skin).is_ok());
-            
+
             // Save skin path to config
             let mut config = FileConfigManager::get_default();
             config.last_skin = Some(skin_path.clone());
-            
+
             let json = serde_json::to_string_pretty(&config).unwrap();
             fs::write(&config_path, json).unwrap();
-            
+
             // Load config back
             let loaded_json = fs::read_to_string(&config_path).unwrap();
             let loaded_config: Config = serde_json::from_str(&loaded_json).unwrap();
-            
+
             // Skin path should be preserved
             prop_assert_eq!(loaded_config.last_skin.as_ref(), Some(&skin_path));
-            
+
             // Should be able to load the skin again
             if let Some(saved_path) = &loaded_config.last_skin {
                 let reloaded_skin = SkinParser::parse_wsz(Path::new(saved_path));

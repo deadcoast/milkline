@@ -25,8 +25,7 @@ pub fn crop_image(
     crop_rect: &CropRect,
 ) -> Result<(), String> {
     // Load the image
-    let img = image::open(&input_path)
-        .map_err(|e| format!("Failed to load image: {}", e))?;
+    let img = image::open(&input_path).map_err(|e| format!("Failed to load image: {}", e))?;
 
     // Get image dimensions
     let (img_width, img_height) = img.dimensions();
@@ -85,14 +84,13 @@ pub async fn crop_image_command(
 mod tests {
     use super::*;
     use image::{ImageBuffer, Rgb};
-    use tempfile::TempDir;
     use std::path::PathBuf;
+    use tempfile::TempDir;
 
     /// Helper function to create a test image with a solid color
     fn create_test_image(width: u32, height: u32, color: [u8; 3]) -> DynamicImage {
-        let img: ImageBuffer<Rgb<u8>, Vec<u8>> = ImageBuffer::from_fn(width, height, |_, _| {
-            Rgb(color)
-        });
+        let img: ImageBuffer<Rgb<u8>, Vec<u8>> =
+            ImageBuffer::from_fn(width, height, |_, _| Rgb(color));
         DynamicImage::ImageRgb8(img)
     }
 
@@ -106,7 +104,7 @@ mod tests {
     #[test]
     fn test_crop_image_with_valid_rectangle() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Create a 100x100 red image
         let img = create_test_image(100, 100, [255, 0, 0]);
         let input_path = save_test_image(&temp_dir, "input.png", &img);
@@ -132,7 +130,7 @@ mod tests {
     #[test]
     fn test_crop_at_image_boundaries() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Create a 100x100 image
         let img = create_test_image(100, 100, [0, 255, 0]);
         let input_path = save_test_image(&temp_dir, "input.png", &img);
@@ -157,7 +155,7 @@ mod tests {
     #[test]
     fn test_crop_with_rectangle_extending_beyond_bounds() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Create a 100x100 image
         let img = create_test_image(100, 100, [0, 0, 255]);
         let input_path = save_test_image(&temp_dir, "input.png", &img);
@@ -167,7 +165,7 @@ mod tests {
         let crop_rect = CropRect {
             x: 50,
             y: 50,
-            width: 100, // Would extend to x=150, but image is only 100 wide
+            width: 100,  // Would extend to x=150, but image is only 100 wide
             height: 100, // Would extend to y=150, but image is only 100 tall
         };
 
@@ -183,7 +181,7 @@ mod tests {
     #[test]
     fn test_crop_with_invalid_origin() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Create a 100x100 image
         let img = create_test_image(100, 100, [255, 255, 0]);
         let input_path = save_test_image(&temp_dir, "input.png", &img);
@@ -205,7 +203,7 @@ mod tests {
     #[test]
     fn test_crop_with_zero_dimensions() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Create a 100x100 image
         let img = create_test_image(100, 100, [255, 0, 255]);
         let input_path = save_test_image(&temp_dir, "input.png", &img);
@@ -227,7 +225,7 @@ mod tests {
     #[test]
     fn test_crop_with_nonexistent_input() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         let input_path = temp_dir.path().join("nonexistent.png");
         let output_path = temp_dir.path().join("output.png");
 
@@ -248,13 +246,13 @@ mod tests {
 
     proptest! {
         #![proptest_config(ProptestConfig::with_cases(100))]
-        
+
         /// Feature: media-editor, Property 4: Export without crop preserves original dimensions
-        /// 
+        ///
         /// For any media file, if no crop rectangle is defined when exporting (i.e., the crop
         /// rectangle covers the entire image), the output file SHALL have the same dimensions
         /// as the input file.
-        /// 
+        ///
         /// Validates: Requirements 1.5
         #[test]
         fn prop_export_without_crop_preserves_dimensions(
@@ -265,7 +263,7 @@ mod tests {
             b in 0u8..=255,
         ) {
             let temp_dir = TempDir::new().unwrap();
-            
+
             // Create a test image with random dimensions and color
             let img = create_test_image(width, height, [r, g, b]);
             let input_path = save_test_image(&temp_dir, "input.png", &img);

@@ -83,12 +83,14 @@ cd test\portable
 ## Troubleshooting
 
 ### "link.exe not found"
+
 ```powershell
 # Install Visual Studio Build Tools
 winget install Microsoft.VisualStudio.2022.BuildTools
 ```
 
 ### MSI not generated
+
 ```powershell
 # Install WiX Toolset
 choco install wixtoolset
@@ -96,6 +98,7 @@ choco install wixtoolset
 ```
 
 ### Size exceeds 15MB
+
 ```powershell
 # Check what's taking space
 cd src-tauri
@@ -112,6 +115,7 @@ git push origin v0.1.0
 ```
 
 GitHub Actions will:
+
 - Build all artifacts
 - Run tests
 - Create GitHub Release (draft)
@@ -132,6 +136,7 @@ GitHub Actions will:
 ## Support
 
 Issues? Check:
+
 1. This guide
 2. [BUILD_WINDOWS.md](./BUILD_WINDOWS.md)
 3. GitHub Issues

@@ -1,77 +1,77 @@
 /* CSS Variables for theming - milk player */
 
 :root {
-    /* Color palette - default skin */
-    --color-primary: #0066cc;
-    --color-secondary: #00cc66;
-    --color-background: #000000;
-    --color-surface: #1a1a1a;
-    --color-text: #ffffff;
-    --color-text-secondary: #cccccc;
-    --color-border: #333333;
-    --color-accent: #ff6600;
+  /* Color palette - default skin */
+  --color-primary: #0066cc;
+  --color-secondary: #00cc66;
+  --color-background: #000000;
+  --color-surface: #1a1a1a;
+  --color-text: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-border: #333333;
+  --color-accent: #ff6600;
 
-    /* Player colors */
-    --color-player-bg: #000000;
-    --color-player-surface: #1a1a1a;
-    --color-player-text: #00ff00;
-    --color-player-highlight: #00cc00;
+  /* Player colors */
+  --color-player-bg: #000000;
+  --color-player-surface: #1a1a1a;
+  --color-player-text: #00ff00;
+  --color-player-highlight: #00cc00;
 
-    /* Visualizer colors */
-    --color-visualizer-bar: #00ff00;
-    --color-visualizer-bg: #000000;
+  /* Visualizer colors */
+  --color-visualizer-bar: #00ff00;
+  --color-visualizer-bg: #000000;
 
-    /* Button states */
-    --color-button-normal: #333333;
-    --color-button-hover: #555555;
-    --color-button-active: #777777;
-    --color-button-disabled: #1a1a1a;
+  /* Button states */
+  --color-button-normal: #333333;
+  --color-button-hover: #555555;
+  --color-button-active: #777777;
+  --color-button-disabled: #1a1a1a;
 
-    /* Spacing */
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --spacing-xl: 32px;
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
 
-    /* Typography */
-    --font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --font-family-mono: 'Courier New', Courier, monospace;
-    --font-size-xs: 10px;
-    --font-size-sm: 12px;
-    --font-size-md: 14px;
-    --font-size-lg: 16px;
-    --font-size-xl: 20px;
+  /* Typography */
+  --font-family-primary: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --font-family-mono: "Courier New", Courier, monospace;
+  --font-size-xs: 10px;
+  --font-size-sm: 12px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
 
-    /* Layout */
-    --player-width: 275px;
-    --player-height: 116px;
-    --playlist-width: 275px;
-    --playlist-height: 232px;
+  /* Layout */
+  --player-width: 275px;
+  --player-height: 116px;
+  --playlist-width: 275px;
+  --playlist-height: 232px;
 
-    /* Borders */
-    --border-radius-sm: 2px;
-    --border-radius-md: 4px;
-    --border-width: 1px;
+  /* Borders */
+  --border-radius-sm: 2px;
+  --border-radius-md: 4px;
+  --border-width: 1px;
 
-    /* Transitions */
-    --transition-fast: 0.1s ease;
-    --transition-normal: 0.2s ease;
-    --transition-slow: 0.3s ease;
+  /* Transitions */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
 
-    /* Z-index layers */
-    --z-base: 1;
-    --z-dropdown: 100;
-    --z-modal: 200;
-    --z-tooltip: 300;
+  /* Z-index layers */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-modal: 200;
+  --z-tooltip: 300;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.5);
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* Skin-specific overrides will be injected here dynamically */
 [data-skin] {
-    /* Skin variables will be set via JavaScript */
+  /* Skin variables will be set via JavaScript */
 }

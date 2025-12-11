@@ -1,23 +1,28 @@
 // Video operations module
 // This module contains video trimming, cropping, and metadata extraction functions
 
-use crate::media_editor::types::{CropRect, VideoMetadata, ExportConfig};
-use std::process::Command;
+use crate::media_editor::types::{CropRect, ExportConfig, VideoMetadata};
 use serde_json::Value;
+use std::process::Command;
 
 /// Probe video metadata using FFprobe
-/// 
+///
 /// Uses FFprobe to extract duration, width, and height from a video file.
 /// Returns VideoMetadata on success, or an error string on failure.
 pub fn probe_video_metadata(path: &str) -> Result<VideoMetadata, String> {
     // Run FFprobe to get video metadata in JSON format
     let output = Command::new("ffprobe")
         .args([
-            "-v", "error",
-            "-select_streams", "v:0",
-            "-show_entries", "stream=width,height,duration",
-            "-show_entries", "format=duration",
-            "-of", "json",
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "stream=width,height,duration",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "json",
             path,
         ])
         .output()
@@ -37,7 +42,7 @@ pub fn probe_video_metadata(path: &str) -> Result<VideoMetadata, String> {
     let streams = json["streams"]
         .as_array()
         .ok_or_else(|| "No streams found in video".to_string())?;
-    
+
     if streams.is_empty() {
         return Err("No video streams found".to_string());
     }
@@ -52,10 +57,12 @@ pub fn probe_video_metadata(path: &str) -> Result<VideoMetadata, String> {
 
     // Try to get duration from stream first, then from format
     let duration_sec = if let Some(duration) = stream["duration"].as_str() {
-        duration.parse::<f64>()
+        duration
+            .parse::<f64>()
             .map_err(|e| format!("Failed to parse stream duration: {}", e))?
     } else if let Some(duration) = json["format"]["duration"].as_str() {
-        duration.parse::<f64>()
+        duration
+            .parse::<f64>()
             .map_err(|e| format!("Failed to parse format duration: {}", e))?
     } else {
         return Err("Duration not found in video metadata".to_string());
@@ -75,7 +82,7 @@ pub async fn probe_video_metadata_command(path: String) -> Result<VideoMetadata,
 }
 
 /// Trim and optionally crop a video using FFmpeg
-/// 
+///
 /// Uses FFmpeg to trim video between start_sec and end_sec, and optionally apply
 /// a crop filter. Uses the provided ExportConfig for codec and quality settings.
 pub fn trim_and_crop_video(
@@ -91,7 +98,7 @@ pub fn trim_and_crop_video(
     // 2. Use -t for duration instead of -to
     // 3. Add -avoid_negative_ts make_zero for timestamp handling
     let duration = end_sec - start_sec;
-    
+
     let mut args = vec![
         "-y".to_string(), // Overwrite output file
         "-i".to_string(),
@@ -106,10 +113,7 @@ pub fn trim_and_crop_video(
 
     // Add crop filter if provided
     if let Some(crop) = crop_rect {
-        let crop_filter = format!(
-            "crop={}:{}:{}:{}",
-            crop.width, crop.height, crop.x, crop.y
-        );
+        let crop_filter = format!("crop={}:{}:{}:{}", crop.width, crop.height, crop.x, crop.y);
         args.push("-vf".to_string());
         args.push(crop_filter);
     }
@@ -148,7 +152,14 @@ pub async fn trim_and_crop_video_command(
     crop_rect: Option<CropRect>,
     config: ExportConfig,
 ) -> Result<(), String> {
-    trim_and_crop_video(&input_path, &output_path, start_sec, end_sec, crop_rect, &config)
+    trim_and_crop_video(
+        &input_path,
+        &output_path,
+        start_sec,
+        end_sec,
+        crop_rect,
+        &config,
+    )
 }
 
 #[cfg(test)]
@@ -158,16 +169,28 @@ mod tests {
     use tempfile::TempDir;
 
     /// Helper function to create a test video file
-    fn create_test_video(path: &str, duration_sec: f64, width: u32, height: u32) -> Result<(), String> {
+    fn create_test_video(
+        path: &str,
+        duration_sec: f64,
+        width: u32,
+        height: u32,
+    ) -> Result<(), String> {
         // Use 30 fps for better granularity in trimming tests
         // Also set keyframe interval to 1 for frame-accurate seeking
         let output = StdCommand::new("ffmpeg")
             .args([
                 "-y",
-                "-f", "lavfi",
-                "-i", &format!("testsrc=duration={}:size={}x{}:rate=30", duration_sec, width, height),
-                "-pix_fmt", "yuv420p",
-                "-g", "1", // Set keyframe interval to 1 (every frame is a keyframe)
+                "-f",
+                "lavfi",
+                "-i",
+                &format!(
+                    "testsrc=duration={}:size={}x{}:rate=30",
+                    duration_sec, width, height
+                ),
+                "-pix_fmt",
+                "yuv420p",
+                "-g",
+                "1", // Set keyframe interval to 1 (every frame is a keyframe)
                 path,
             ])
             .output()
@@ -196,7 +219,7 @@ mod tests {
         // Verify dimensions
         assert_eq!(metadata.width, 320);
         assert_eq!(metadata.height, 240);
-        
+
         // Verify duration (allow small tolerance)
         assert!((metadata.duration_sec - 5.0).abs() < 0.5);
     }
@@ -254,7 +277,15 @@ mod tests {
             quality: "23".to_string(),
         };
 
-        trim_and_crop_video(input_path_str, output_path_str, 0.0, 3.0, Some(crop), &config).unwrap();
+        trim_and_crop_video(
+            input_path_str,
+            output_path_str,
+            0.0,
+            3.0,
+            Some(crop),
+            &config,
+        )
+        .unwrap();
 
         // Verify output exists
         assert!(output_path.exists());
@@ -290,7 +321,15 @@ mod tests {
             quality: "23".to_string(),
         };
 
-        trim_and_crop_video(input_path_str, output_path_str, 3.0, 7.0, Some(crop), &config).unwrap();
+        trim_and_crop_video(
+            input_path_str,
+            output_path_str,
+            3.0,
+            7.0,
+            Some(crop),
+            &config,
+        )
+        .unwrap();
 
         // Verify output exists
         assert!(output_path.exists());
@@ -336,7 +375,7 @@ mod tests {
 
             // Should return an error
             prop_assert!(result.is_err());
-            
+
             // Error message should contain "FFmpeg failed"
             if let Err(err_msg) = result {
                 prop_assert!(err_msg.contains("FFmpeg failed") || err_msg.contains("Failed to execute FFmpeg"));
@@ -382,7 +421,7 @@ mod tests {
             let output_metadata = probe_video_metadata(output_path_str).unwrap();
             let expected_duration = end_sec - start_sec;
             let actual_duration = output_metadata.duration_sec;
-            
+
             // Allow 0.1 second tolerance as specified in the property
             prop_assert!(
                 (actual_duration - expected_duration).abs() < 0.1,
